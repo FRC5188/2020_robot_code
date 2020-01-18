@@ -1,15 +1,13 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import edu.wpi.first.wpilibj.VictorSP;
-import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
+import frc.robot.Subsystem;
 
-public class DriveTrain {
+
+public class DriveTrain implements Subsystem{
 
     //motor controllers
     WPI_TalonFX leftMotor1;
@@ -37,6 +35,42 @@ public class DriveTrain {
 
         this.leftMotor2.follow(leftMotor1);
         this.rightMotor2.follow(rightMotor1);
+    }
+
+    @Override
+    public void Init() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void InitShuffle() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void Operate() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void Test() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void updateShuffle() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void Kill() {
+        // TODO Auto-generated method stub
+
     }
 
 

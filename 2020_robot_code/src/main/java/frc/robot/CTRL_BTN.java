@@ -1,4 +1,4 @@
-package modules;
+package frc.robot;
 
 public enum CTRL_BTN {
 	A(1),
