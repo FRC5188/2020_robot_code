@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.subsystems.DriveTrain;
@@ -21,8 +22,8 @@ import frc.robot.subsystems.DriveTrain;
  */
 public class Robot extends TimedRobot {
   
-  XboxController drivController = new XboxController(Constants.driverPort);
-  DriveTrain dt = new DriveTrain();
+  XboxController driveController = new XboxController(Constants.driverPort);
+  DriveTrain dt = new DriveTrain(driveController);
 
   
   /**
@@ -31,6 +32,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    dt.Init();
+    dt.InitShuffle();
 
   }
 
@@ -75,6 +78,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    dt.Operate();
   }
 
   /**
