@@ -59,7 +59,7 @@ public class DriveTrain implements Subsystem{
     }
 
     private void teleopDefaultDrive() {
-        diffDrive.curvatureDrive(driveCtrl.getRawAxis(Axis.LY), driveCtrl.getRawAxis(Axis.RX), driveCtrl.getRawButton(Buttons.L));
+        diffDrive.curvatureDrive(driveCtrl.getRawAxis(Axis.LY)/2, driveCtrl.getRawAxis(Axis.RX), driveCtrl.getRawButton(Buttons.L));
     }
 
 
