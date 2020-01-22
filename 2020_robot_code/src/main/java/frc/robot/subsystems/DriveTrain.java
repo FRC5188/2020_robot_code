@@ -78,6 +78,7 @@ public class DriveTrain implements Subsystem{
     private void teleopDefaultDrive() {
         // default shifter to low for now
         double shifterVal = 0.5;
+        double turnShifter = .65; // explore this farther
         double throttle = driveCtrl.getRawAxis(Axis.LY);
         double turn = driveCtrl.getRawAxis(Axis.RX);
 
@@ -92,7 +93,7 @@ public class DriveTrain implements Subsystem{
              isQuickTurn = true;
          }
 
-        diffDrive.curvatureDrive(throttle * shifterVal, turn, isQuickTurn);
+        diffDrive.curvatureDrive(throttle * shifterVal, turn * turnShifter, isQuickTurn);
 
     }
 
