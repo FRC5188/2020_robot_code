@@ -2,13 +2,13 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.cscore.AxisCamera;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import frc.robot.CTRL_AXIS;
 import frc.robot.Constants;
 import frc.robot.Subsystem;
 import frc.robot.Constants.Axis;
@@ -25,11 +25,12 @@ public class DriveTrain implements Subsystem{
     DifferentialDrive diffDrive;
 
     XboxController driveCtrl;
-    //contructor
+    //constructor
     public DriveTrain(XboxController controller){
         this.driveCtrl = controller;
 
         this.initCANMotors();
+        this.initCurrentLimit();
         this.initDiffDrive();
 
     }
@@ -49,17 +50,44 @@ public class DriveTrain implements Subsystem{
         this.leftMotor2.follow(leftMotor1);
         this.rightMotor2.follow(rightMotor1);
     }
+    private void initCurrentLimit(){
+        //create current config, new for 2020
+        //it is a little long........ :(
+        SupplyCurrentLimitConfiguration supplyCurrentConfig;
+        supplyCurrentConfig = new SupplyCurrentLimitConfiguration(
+            true, Constants.SupplyCurrentLimit, Constants.SupplyTriggerCurremt, Constants.SupplyCurrentDuration
+        );
+
+        //apply current limits
+        leftMotor1.configSupplyCurrentLimit(supplyCurrentConfig);
+        leftMotor2.configSupplyCurrentLimit(supplyCurrentConfig);
+
+    }
     
     private void initDiffDrive() {
-        // SpeedControllerGroup leftDrive = new SpeedControllerGroup(leftMotor1, leftMotor2);
-        // SpeedControllerGroup rightDrive = new SpeedControllerGroup(rightMotor1, rightMotor2);
-
         diffDrive = new DifferentialDrive(leftMotor1, rightMotor1);
 
     }
 
     private void teleopDefaultDrive() {
-        diffDrive.curvatureDrive(driveCtrl.getRawAxis(Axis.LY)/2, driveCtrl.getRawAxis(Axis.RX), driveCtrl.getRawButton(Buttons.L));
+        // default shifter to low for now
+        double shifterVal = 0.5;
+        double throttle = driveCtrl.getRawAxis(Axis.LY);
+        double turn = driveCtrl.getRawAxis(Axis.RX);
+
+        // allow for manual quick turn enable 
+        boolean isQuickTurn = driveCtrl.getRawButton(Constants.Buttons.R);
+
+        // if left bumper button pressed, activate shifter
+         if(driveCtrl.getRawButton(Constants.Buttons.L)){
+             shifterVal = 1;
+         }
+         if(Math.abs(throttle) < .02){
+             isQuickTurn = true;
+         }
+
+        diffDrive.curvatureDrive(throttle * shifterVal, turn, isQuickTurn);
+
     }
 
 

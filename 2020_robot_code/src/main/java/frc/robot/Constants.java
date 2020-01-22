@@ -9,7 +9,13 @@ public class Constants{
   public static final int rightFalcon2 = 3;
 
   public static final int driverPort = 0;
+
+  //current limiting params
+  public static final int SupplyTriggerCurremt = 40; // don't activate current limit until current exceeds 30 A...
+  public static final int SupplyCurrentDuration = 50; //... for at least 50 ms
+  public static final int SupplyCurrentLimit = 30; // once current-limiting is activated, hold at 20A
   
+
 	public static class Buttons {
 
     public static int
