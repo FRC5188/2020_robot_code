@@ -31,6 +31,7 @@ public class DriveTrain implements Subsystem{
 
         this.initCANMotors();
         this.initCurrentLimit();
+        this.initRamping();
         this.initDiffDrive();
 
     }
@@ -60,10 +61,15 @@ public class DriveTrain implements Subsystem{
 
         //apply current limits
         leftMotor1.configSupplyCurrentLimit(supplyCurrentConfig);
-        leftMotor2.configSupplyCurrentLimit(supplyCurrentConfig);
+        rightMotor1.configSupplyCurrentLimit(supplyCurrentConfig);
 
     }
-    
+
+    private void initRamping(){
+        leftMotor1.configOpenloopRamp(Constants.openRampDuration);
+        rightMotor1.configOpenloopRamp(Constants.openRampDuration); 
+    }
+
     private void initDiffDrive() {
         diffDrive = new DifferentialDrive(leftMotor1, rightMotor1);
 
