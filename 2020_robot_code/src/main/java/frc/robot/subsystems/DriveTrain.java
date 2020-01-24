@@ -81,7 +81,19 @@ public class DriveTrain implements Subsystem{
         double turnShifter = .65; // explore this farther
         double throttle = driveCtrl.getRawAxis(Axis.LY);
         double turn = driveCtrl.getRawAxis(Axis.RX);
-
+        // Put Throttle and Turn to the power of cThrottle and cTurn to have a better distribution curve
+        double cThrottle = 3;
+        double cTurn = 5;
+        double deadSpace = 0.2;
+        double minimumThreshold = 0.001;
+        // Map turn and throttle to be from "deadSpace" to 1.0
+        // So that a small bump actually moves the robot ( < deadSpace doesn't move)
+        // minimumThreshold is the minimum the controller has to move to map it. (Otherwise it'd move without user input)
+        throttle = throttle > 0 ? Math.pow(Math.abs(throttle),cThrottle) : -Math.pow(Math.abs(throttle),cThrottle);
+        turn = turn > 0 ? Math.pow(Math.abs(turn),cTurn) : -Math.pow(Math.abs(turn),cTurn);
+        throttle = throttle * (1-deadSpace) + (Math.abs(throttle) < minimumThreshold ? 0.0 : (throttle > 0 ? deadSpace : -deadSpace));
+        turn = turn * (1-deadSpace) + (Math.abs(turn) < minimumThreshold ? 0.0 : (turn > 0 ? deadSpace : -deadSpace));
+        
         // allow for manual quick turn enable 
         boolean isQuickTurn = driveCtrl.getRawButton(Constants.Buttons.R);
 
@@ -96,6 +108,7 @@ public class DriveTrain implements Subsystem{
         diffDrive.curvatureDrive(throttle * shifterVal, turn * turnShifter, isQuickTurn);
 
     }
+
 
 
     @Override
