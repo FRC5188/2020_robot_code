@@ -30,9 +30,12 @@ public class Robot extends TimedRobot {
   private NetworkTableEntry pidP;
   private NetworkTableEntry pidI;
   private NetworkTableEntry pidD;
+  private NetworkTableEntry setPoint;
   XboxController driveController = new XboxController(Constants.driverPort);
   DriveTrain dt = new DriveTrain(driveController);
   PIDController distCont;
+
+
   
   /**
    * This function is run when the robot is first started up and should be
@@ -42,14 +45,21 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     dt.Init();
     dt.InitShuffle();
+
+    //shuffle board entrys to update pid values
+
     this.inst = NetworkTableInstance.getDefault();
     this.table = inst.getTable("SmartDashboard");
     this.pidP = table.getEntry("pid/p");
     this.pidI = table.getEntry("pid/i");
     this.pidD = table.getEntry("pid/d");
+    this.setPoint = table.getEntry("pid/setPoint");
     this.pidP.setDouble(0.05);
     this.pidI.setDouble(0.00);
     this.pidD.setDouble(0.00);
+    this.setPoint.setDouble(0.00);
+
+    //make new controller
     distCont = new PIDController(0.05, 0, 0.02);
     distCont.setSetpoint(0.0);
   }
@@ -90,18 +100,44 @@ public class Robot extends TimedRobot {
  
   }
 
+  @Override
+  public void disabledPeriodic() {
+    // TODO Auto-generated method stub
+    super.disabledPeriodic();
+
+    //put this here so encoders can be zeroed in disabled mode, 
+    //since pid runs as soon as enabled. kinda bad....
+
+    System.out.println(dt.getEncoderInches());
+    if(driveController.getRawButton(Constants.Buttons.X)){
+      dt.resetEncoders();
+
+    }
+  }
+
   /**
    * This function is called periodically during operator control.
    */
   @Override
   public void teleopPeriodic() {
     //dt.Operate();
-    System.out.println(dt.getEncoder());
+    System.out.println(dt.getEncoderInches());
 
+    //update controller values
     distCont.setPID(this.pidP.getValue().getDouble(), this.pidI.getValue().getDouble(), this.pidD.getValue().getDouble());
+    
+    //if x button pressed, reset enocders
     if(driveController.getRawButton(Constants.Buttons.X)){
       dt.resetEncoders();
+
     }
+
+    //calculate output from controller
+    double PIDOutput = distCont.calculate(dt.getEncoderInches(), this.setPoint.getValue().getDouble());
+    
+    //use output
+    dt.tankDrive(PIDOutput, PIDOutput);
+
   }
 
   /**
