@@ -127,6 +127,9 @@ public class DriveTrain implements Subsystem{
         return this.leftMotor1.getSelectedSensorPosition()/Constants.ENCODER_TICKS_PER_INCH;
         
     }
+    public void tankDrive(double left, double right){
+        diffDrive.tankDrive(left, right);
+    }
 
 
     @Override
