@@ -74,6 +74,15 @@ public class DriveTrain implements Subsystem{
         diffDrive = new DifferentialDrive(leftMotor1, rightMotor1);
 
     }
+    public void resetEncoders(){
+        leftMotor1.setSelectedSensorPosition(0);
+        leftMotor2.setSelectedSensorPosition(0);
+        rightMotor1.setSelectedSensorPosition(0);
+        rightMotor2.setSelectedSensorPosition(0);
+        
+
+        
+    } 
 
     private void teleopDefaultDrive() {
         // default shifter to low for now
@@ -109,6 +118,15 @@ public class DriveTrain implements Subsystem{
 
     }
 
+    public double getEncoderTicks(){
+        return this.leftMotor1.getSelectedSensorPosition();
+
+    }
+    
+    public double getEncoderInches(){
+        return this.leftMotor1.getSelectedSensorPosition()/Constants.ENCODER_TICKS_PER_INCH;
+        
+    }
 
 
     @Override

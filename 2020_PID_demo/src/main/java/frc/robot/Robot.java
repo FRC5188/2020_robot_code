@@ -7,9 +7,13 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import frc.robot.subsystems.DriveTrain;
 
 
@@ -21,10 +25,14 @@ import frc.robot.subsystems.DriveTrain;
  * project.
  */
 public class Robot extends TimedRobot {
-  
+  private NetworkTableInstance inst;
+  private NetworkTable table;
+  private NetworkTableEntry pidP;
+  private NetworkTableEntry pidI;
+  private NetworkTableEntry pidD;
   XboxController driveController = new XboxController(Constants.driverPort);
   DriveTrain dt = new DriveTrain(driveController);
-
+  PIDController distCont;
   
   /**
    * This function is run when the robot is first started up and should be
@@ -34,10 +42,19 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     dt.Init();
     dt.InitShuffle();
-
+    this.inst = NetworkTableInstance.getDefault();
+    this.table = inst.getTable("SmartDashboard");
+    this.pidP = table.getEntry("pid/p");
+    this.pidI = table.getEntry("pid/i");
+    this.pidD = table.getEntry("pid/d");
+    this.pidP.setDouble(0.05);
+    this.pidI.setDouble(0.00);
+    this.pidD.setDouble(0.00);
+    distCont = new PIDController(0.05, 0, 0.02);
+    distCont.setSetpoint(0.0);
   }
 
-  /**
+  /** 
    * This function is called every robot packet, no matter the mode. Use
    * this for items like diagnostics that you want ran during disabled,
    * autonomous, teleoperated and test.
@@ -78,7 +95,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    dt.Operate();
+    //dt.Operate();
+    System.out.println(dt.getEncoder());
+
+    distCont.setPID(this.pidP.getValue().getDouble(), this.pidI.getValue().getDouble(), this.pidD.getValue().getDouble());
+    if(driveController.getRawButton(Constants.Buttons.X)){
+      dt.resetEncoders();
+    }
   }
 
   /**
