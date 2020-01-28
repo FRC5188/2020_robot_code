@@ -11,11 +11,11 @@ public class Constants{
   public static final int driverPort = 0;
 
   //current limiting params
-  public static final int SupplyTriggerCurremt = 15; // don't activate current limit until current exceeds 30 A...
+  public static final int SupplyTriggerCurremt = 35; // don't activate current limit until current exceeds 30 A...
   public static final int SupplyCurrentDuration = 50; //... for at least 50 ms
-  public static final int SupplyCurrentLimit = 10; // once current-limiting is activated, hold at 20A
+  public static final int SupplyCurrentLimit = 30; // once current-limiting is activated, hold at 20A
   
-  public static final double openRampDuration = 0.5; //seconds from zero to full throttle 
+  public static final double openRampDuration = 0.8; //seconds from zero to full throttle 
 	public static class Buttons {
 
     public static int
