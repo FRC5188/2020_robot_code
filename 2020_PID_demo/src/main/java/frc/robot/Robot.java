@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DriveTrain;
 
 
@@ -122,6 +123,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     //dt.Operate();
     System.out.println(dt.getEncoderInches());
+    SmartDashboard.putNumber("Error", dt.getEncoderInches()-this.setPoint.getValue().getDouble()); //this is so we can look at a graph of the values
 
     //update controller values
     distCont.setPID(this.pidP.getValue().getDouble(), this.pidI.getValue().getDouble(), this.pidD.getValue().getDouble());
