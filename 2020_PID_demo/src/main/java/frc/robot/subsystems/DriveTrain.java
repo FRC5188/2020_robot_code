@@ -82,19 +82,20 @@ public class DriveTrain implements Subsystem{
         
 
         
-    } 
+    }
 
+    // default shifter to low for now
+    // Put Throttle and Turn to the power of cThrottle and cTurn to have a better distribution curve
+    // explore turnShifter farther..
+    private static final double turnShifter = 0.65;
+    private static final double cThrottle = 3;
+    private static final double cTurn = 5;
+    private static final double deadSpace = 0.2;
+    private static final double minimumThreshold = 0.001;
     private void teleopDefaultDrive() {
-        // default shifter to low for now
         double shifterVal = 0.5;
-        double turnShifter = .65; // explore this farther
         double throttle = driveCtrl.getRawAxis(Axis.LY);
         double turn = driveCtrl.getRawAxis(Axis.RX);
-        // Put Throttle and Turn to the power of cThrottle and cTurn to have a better distribution curve
-        double cThrottle = 3;
-        double cTurn = 5;
-        double deadSpace = 0.2;
-        double minimumThreshold = 0.001;
         // Map turn and throttle to be from "deadSpace" to 1.0
         // So that a small bump actually moves the robot ( < deadSpace doesn't move)
         // minimumThreshold is the minimum the controller has to move to map it. (Otherwise it'd move without user input)
