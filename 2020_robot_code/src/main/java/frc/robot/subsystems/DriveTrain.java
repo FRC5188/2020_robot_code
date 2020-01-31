@@ -117,7 +117,7 @@ private double minimumThreshold = 0.001;
         boolean isQuickTurn = driveCtrl.getRawButton(Constants.Buttons.R);
 
         // if left bumper button pressed, activate shifter
-         if(driveCtrl.getRawButton(Constants.Buttons.L)){
+         if(driveCtrl.getRawButton(Constants.Buttons.L)) {
              shifterVal = 1;
          }
          if(Math.abs(throttle) < .02){
