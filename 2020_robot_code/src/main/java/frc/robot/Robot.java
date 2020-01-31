@@ -7,9 +7,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DriveTrain;
 
 
@@ -21,9 +26,16 @@ import frc.robot.subsystems.DriveTrain;
  * project.
  */
 public class Robot extends TimedRobot {
-  
+  private NetworkTableInstance inst;
+  private NetworkTable table;
+  private NetworkTableEntry pidP;
+  private NetworkTableEntry pidI;
+  private NetworkTableEntry pidD;
+  private NetworkTableEntry setPoint;
   XboxController driveController = new XboxController(Constants.driverPort);
   DriveTrain dt = new DriveTrain(driveController);
+  PIDController distCont;
+
 
   
   /**
@@ -35,9 +47,25 @@ public class Robot extends TimedRobot {
     dt.Init();
     dt.InitShuffle();
 
+    //shuffle board entrys to update pid values
+
+    this.inst = NetworkTableInstance.getDefault();
+    this.table = inst.getTable("SmartDashboard");
+    this.pidP = table.getEntry("pid/p");
+    this.pidI = table.getEntry("pid/i");
+    this.pidD = table.getEntry("pid/d");
+    this.setPoint = table.getEntry("pid/setPoint");
+    this.pidP.setDouble(0.05);
+    this.pidI.setDouble(0.00);
+    this.pidD.setDouble(0.00);
+    this.setPoint.setDouble(0.00);
+
+    //make new controller
+    distCont = new PIDController(0.05, 0, 0.02);
+    distCont.setSetpoint(0.0);
   }
 
-  /**
+  /** 
    * This function is called every robot packet, no matter the mode. Use
    * this for items like diagnostics that you want ran during disabled,
    * autonomous, teleoperated and test.
@@ -73,12 +101,45 @@ public class Robot extends TimedRobot {
  
   }
 
+  @Override
+  public void disabledPeriodic() {
+    // TODO Auto-generated method stub
+    super.disabledPeriodic();
+
+    //put this here so encoders can be zeroed in disabled mode, 
+    //since pid runs as soon as enabled. kinda bad....
+
+    System.out.println(dt.getEncoderInches());
+    if(driveController.getRawButton(Constants.Buttons.X)){
+      dt.resetEncoders();
+
+    }
+  }
+
   /**
    * This function is called periodically during operator control.
    */
   @Override
   public void teleopPeriodic() {
-    dt.Operate();
+    //dt.Operate();
+    System.out.println(dt.getEncoderInches());
+    SmartDashboard.putNumber("Error", dt.getEncoderInches()-this.setPoint.getValue().getDouble()); //this is so we can look at a graph of the values
+
+    //update controller values
+    distCont.setPID(this.pidP.getValue().getDouble(), this.pidI.getValue().getDouble(), this.pidD.getValue().getDouble());
+    
+    //if x button pressed, reset enocders
+    if(driveController.getRawButton(Constants.Buttons.X)){
+      dt.resetEncoders();
+
+    }
+
+    //calculate output from controller
+    double PIDOutput = distCont.calculate(dt.getEncoderInches(), this.setPoint.getValue().getDouble());
+    
+    //use output
+    dt.tankDrive(PIDOutput, PIDOutput);
+
   }
 
   /**
