@@ -20,7 +20,7 @@ public class TaskGroupDefault  extends TaskGroup {
 
     @Override
     public Queue<AutoTask> retrieveTasks() {
-        tasks.add(new TaskMove(1.0));
+        tasks.add(new TaskMove(24.0));
         return tasks;
     }
 

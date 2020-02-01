@@ -27,7 +27,10 @@ import frc.robot.subsystems.DriveTrain;
  * project.
  */
 public class Robot extends TimedRobot {
-  private NetworkTableInstance inst;
+
+  private static Robot inst;
+
+  private NetworkTableInstance ntInst;
   private NetworkTable table;
   private NetworkTableEntry pidP;
   private NetworkTableEntry pidI;
@@ -44,14 +47,15 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    inst = this;
     dt.init();
     dt.initShuffle();
-    autoManager.init();
+    autoManager.init(this);
 
     //shuffle board entrys to update pid values
 
-    this.inst = NetworkTableInstance.getDefault();
-    this.table = inst.getTable("SmartDashboard");
+    this.ntInst = NetworkTableInstance.getDefault();
+    this.table = ntInst.getTable("SmartDashboard");
     this.pidP = table.getEntry("pid/p");
     this.pidI = table.getEntry("pid/i");
     this.pidD = table.getEntry("pid/d");
@@ -64,6 +68,16 @@ public class Robot extends TimedRobot {
     //make new controller
     distCont = new PIDController(0.05, 0, 0.02);
     distCont.setSetpoint(0.0);
+
+    
+  }
+  /*
+  public static Robot getInst() {
+    return inst;
+  }
+  */
+  public DriveTrain getDriveTrain() {
+    return this.dt;
   }
 
   /** 
@@ -109,7 +123,7 @@ public class Robot extends TimedRobot {
     //put this here so encoders can be zeroed in disabled mode, 
     //since pid runs as soon as enabled. kinda bad....
 
-    System.out.println(dt.getEncoderInches());
+    System.out.println(dt.getLeftEncoderInches());
     if(driveController.getRawButton(Constants.Buttons.X)){
       dt.resetEncoders();
 
@@ -122,8 +136,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     //dt.Operate();
-    System.out.println(dt.getEncoderInches());
-    SmartDashboard.putNumber("Error", dt.getEncoderInches()-this.setPoint.getValue().getDouble()); //this is so we can look at a graph of the values
+    System.out.println(dt.getLeftEncoderInches());
+    SmartDashboard.putNumber("Error", dt.getLeftEncoderInches()-this.setPoint.getValue().getDouble()); //this is so we can look at a graph of the values
 
     //update controller values
     distCont.setPID(this.pidP.getValue().getDouble(), this.pidI.getValue().getDouble(), this.pidD.getValue().getDouble());
@@ -135,7 +149,7 @@ public class Robot extends TimedRobot {
     }
 
     //calculate output from controller
-    double PIDOutput = distCont.calculate(dt.getEncoderInches(), this.setPoint.getValue().getDouble());
+    double PIDOutput = distCont.calculate(dt.getLeftEncoderInches(), this.setPoint.getValue().getDouble());
     
     //use output
     dt.tankDrive(PIDOutput, PIDOutput);

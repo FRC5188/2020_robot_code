@@ -7,6 +7,10 @@
 
 package frc.robot.autonomous.tasks;
 
+import edu.wpi.first.wpilibj.controller.PIDController;
+import frc.robot.Constants;
+import frc.robot.Robot;
+import frc.robot.autonomous.AutoRequestHandler;
 import frc.robot.autonomous.utils.AutoTask;
 import frc.robot.autonomous.utils.TaskState;
 
@@ -15,21 +19,63 @@ import frc.robot.autonomous.utils.TaskState;
  */
 public class TaskMove extends AutoTask {
 
+    PIDController pidController;
     double distance;
+    double tolerance;
+    int time;
+    int timer = 0;
+    double startDist;
+    /**
+     * Distance is in Inches 
+     * TODO: Determine best unit
+     * @param distance
+     */
     public TaskMove(double distance) {
         this.distance = distance;
+        this.tolerance = Constants.TASK_MOVE_DEFAULT_TOLERANCE;
+        this.time = Constants.TASK_MOVE_DEFAULT_TIME;
+    }
+    /**
+     * Distance is in Inches
+     * Tolerance is in inches away,
+     * Time is ticks of time to stay in the range
+     * TODO: Determine best unit
+     * @param distance
+     * @param tolerance
+     **/
+    public TaskMove(double distance, double tolerance, int time) {
+        this.distance = distance;
+        this.tolerance = tolerance;
+        this.time = time;
     }
 
 	@Override
     public void init() {
-        // TODO Auto-generated method stub
-
+        this.pidController = new PIDController(Constants.TASK_MOVE_PID_P,Constants.TASK_MOVE_PID_I,Constants.TASK_MOVE_PID_D);
+        this.state = TaskState.RUNNING;
+        this.startDist = getAverageEncoderDist();
+        this.pidController.setSetpoint(this.startDist + this.distance);
+        //this.pidController.setTolerance(this.tolerance*0.75);
     }
 
+    public double getAverageEncoderDist() {
+        AutoRequestHandler reqHandler = AutoRequestHandler.getInst();
+        return 0.5*(reqHandler.getLeftEncoderDistance()+reqHandler.getRightEncoderDistance());
+    }
     @Override
     public TaskState periodic() {
-        // TODO Auto-generated method stub
-        
+        if(this.state == TaskState.CANCELLED) return this.state;
+        double avgDist = getAverageEncoderDist();
+        AutoRequestHandler reqHandler = AutoRequestHandler.getInst();
+        reqHandler.addThrottle(this.pidController.calculate(avgDist));
+        if(Math.abs(avgDist-startDist) < this.tolerance) {
+            timer += 1;
+            if(timer > time) {
+                this.isFinished = true;
+                this.state = TaskState.FINISHED;
+            }
+        } else if(timer > 0)
+            timer = 0;
         return this.state;
     }
 
@@ -47,8 +93,7 @@ public class TaskMove extends AutoTask {
 
     @Override
     public void cancel() {
-        // TODO Auto-generated method stub
-
+        this.state = TaskState.CANCELLED;
     }
 
     @Override

@@ -121,6 +121,8 @@ public class DriveTrain implements Subsystem{
         // if left bumper button pressed, activate shifter
          if(driveCtrl.getRawButton(Constants.Buttons.L)) {
              shifterVal = 1;
+         } else if(shifterVal != 0.5) {
+             shifterVal = 0.5;
          }
          if(Math.abs(throttle) < .02){
              isQuickTurn = true;
@@ -130,15 +132,24 @@ public class DriveTrain implements Subsystem{
 
     }
 
+    public void autonomousDefaultDrive(double throttle, double turn) {
+        // TODO: If subsys is killed, don't run.
+        diffDrive.curvatureDrive(Constants.AUTONOMOUS_MAX_THROTTLE*throttle, Constants.AUTONOMOUS_MAX_TURN*turn, false);
+    }
+
     public double getEncoderTicks(){
         return this.leftMotor1.getSelectedSensorPosition();
 
     }
     
-    public double getEncoderInches(){
+    public double getLeftEncoderInches(){
         return this.leftMotor1.getSelectedSensorPosition()/Constants.ENCODER_TICKS_PER_INCH;
-        
     }
+
+    public double getRightEncoderInches(){
+        return this.rightMotor1.getSelectedSensorPosition()/Constants.ENCODER_TICKS_PER_INCH;
+    }
+
     public void tankDrive(double left, double right){
         diffDrive.tankDrive(left, right);
     }
