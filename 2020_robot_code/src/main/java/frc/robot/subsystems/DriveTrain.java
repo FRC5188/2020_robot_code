@@ -21,9 +21,9 @@ import frc.robot.Constants.Buttons;
 public class DriveTrain implements Subsystem{
 
     private NetworkTableInstance inst;
-  private NetworkTable table;
-  private NetworkTableEntry xEntry;
-  private NetworkTableEntry yEntry;
+    private NetworkTable table;
+    private NetworkTableEntry xEntry;
+    private NetworkTableEntry yEntry;
 
     //motor controllers
     WPI_TalonFX leftMotor1;

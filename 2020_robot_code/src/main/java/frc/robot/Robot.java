@@ -37,7 +37,6 @@ public class Robot extends TimedRobot {
   PIDController distCont;
 
 
-  
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -46,7 +45,6 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     dt.Init();
     dt.InitShuffle();
-
     //shuffle board entrys to update pid values
 
     this.inst = NetworkTableInstance.getDefault();
