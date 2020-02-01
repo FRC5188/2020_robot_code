@@ -20,11 +20,6 @@ import frc.robot.Constants.Buttons;
 
 public class DriveTrain implements Subsystem{
 
-    private NetworkTableInstance inst;
-    private NetworkTable table;
-    private NetworkTableEntry xEntry;
-    private NetworkTableEntry yEntry;
-
     //motor controllers
     WPI_TalonFX leftMotor1;
     WPI_TalonFX leftMotor2;
@@ -77,28 +72,30 @@ public class DriveTrain implements Subsystem{
     }
 
     private void initRamping(){
+    
         leftMotor1.configOpenloopRamp(Constants.openRampDuration);
         rightMotor1.configOpenloopRamp(Constants.openRampDuration); 
         leftMotor2.configOpenloopRamp(Constants.openRampDuration);
         rightMotor2.configOpenloopRamp(Constants.openRampDuration);
+    
     }
 
     private void initDiffDrive() {
+    
         diffDrive = new DifferentialDrive(leftMotor1, rightMotor1);
     
     }
-    public void resetEncoders(){
+    public void resetEncoders() {
+
         leftMotor1.setSelectedSensorPosition(0);
         leftMotor2.setSelectedSensorPosition(0);
         rightMotor1.setSelectedSensorPosition(0);
         rightMotor2.setSelectedSensorPosition(0);
-        
-
-        
+    
     }
 
     // default shifter to low for now
-    // Put Throttle and Turn to the power of cThrottle and cTurn to have a better distribution curve
+    // Throttle and Turn are put to the power of cThrottle and cTurn to have a better distribution curve
     // explore turnShifter farther..
     private static final double turnShifter = 0.65;
     private static final double cThrottle = 3;
@@ -112,12 +109,12 @@ public class DriveTrain implements Subsystem{
         // Map turn and throttle to be from "deadSpace" to 1.0
         // So that a small bump actually moves the robot ( < deadSpace doesn't move)
         // minimumThreshold is the minimum the controller has to move to map it. (Otherwise it'd move without user input)
-        /*
+        
         throttle = throttle > 0 ? Math.pow(Math.abs(throttle),cThrottle) : -Math.pow(Math.abs(throttle),cThrottle);
         turn = turn > 0 ? Math.pow(Math.abs(turn),cTurn) : -Math.pow(Math.abs(turn),cTurn);
         throttle = throttle * (1-deadSpace) + (Math.abs(throttle) < minimumThreshold ? 0.0 : (throttle > 0 ? deadSpace : -deadSpace));
         turn = turn * (1-deadSpace) + (Math.abs(turn) < minimumThreshold ? 0.0 : (turn > 0 ? deadSpace : -deadSpace));
-        */
+        
         // allow for manual quick turn enable 
         boolean isQuickTurn = driveCtrl.getRawButton(Constants.Buttons.R);
 
@@ -151,44 +148,35 @@ public class DriveTrain implements Subsystem{
     }
 
     @Override
-    public void Init() {
-        // TODO Auto-generated method stub
+    public void init() {
 
     }
 
     @Override
-    public void InitShuffle() {
-        // TODO Auto-generated method stub
-         NetworkTableInstance inst;
-         NetworkTable table;
+    public void initShuffle() {
+
     }
 
     @Override
-    public void Operate() {
-        // TODO Auto-generated method stub
+    public void operate() {
+
         this.teleopDefaultDrive();
 
     }
 
     @Override
-    public void Test() {
-        // TODO Auto-generated method stub
-
+    public void test() {
+        
     }
 
     @Override
     public void updateShuffle() {
-        // TODO Auto-generated method stub
         
-
     }
 
     @Override
-    public void Kill() {
-        // TODO Auto-generated method stub
-
+    public void kill() {
+        
     }
-
-
 
 }

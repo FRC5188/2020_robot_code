@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.autonomous.AutoManager;
 import frc.robot.subsystems.DriveTrain;
 
 
@@ -35,7 +36,7 @@ public class Robot extends TimedRobot {
   XboxController driveController = new XboxController(Constants.driverPort);
   DriveTrain dt = new DriveTrain(driveController);
   PIDController distCont;
-
+  AutoManager autoManager = new AutoManager();
 
   /**
    * This function is run when the robot is first started up and should be
@@ -43,8 +44,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    dt.Init();
-    dt.InitShuffle();
+    dt.init();
+    dt.initShuffle();
+    autoManager.init();
+
     //shuffle board entrys to update pid values
 
     this.inst = NetworkTableInstance.getDefault();
@@ -101,7 +104,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    // TODO Auto-generated method stub
     super.disabledPeriodic();
 
     //put this here so encoders can be zeroed in disabled mode, 

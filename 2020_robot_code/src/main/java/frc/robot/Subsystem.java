@@ -2,16 +2,16 @@ package frc.robot;
 
 public interface Subsystem{
 
-    public void Init();
+    public void init();
 
-    public void InitShuffle();
+    public void initShuffle();
 
-    public void Operate();
+    public void operate();
 
-    public void Test();
+    public void test();
 
     public void updateShuffle();
 
-    public void Kill();
+    public void kill();
 
 }
