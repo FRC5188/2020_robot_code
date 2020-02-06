@@ -14,6 +14,7 @@ public class AutoRequestHandler {
     // Input Variables
     private double leftEncoderDistance;
     private double rightEncoderDistance;
+    private double gyroAngle;
 
     public AutoRequestHandler(Robot robot) {
         inst = this;
@@ -31,10 +32,13 @@ public class AutoRequestHandler {
      * Maybe request data from sensors here? (for processing by tasks?)
      **/
     public void startPeriodic() {
-        this.throttle = 0.0f;
-        this.turn = 0.0f;
+        this.throttle = 0.0;
+        this.turn = 0.0;
+        this.gyroAngle = 0.0;
         this.leftEncoderDistance = robot.getDriveTrain().getLeftEncoderInches();
         this.rightEncoderDistance = robot.getDriveTrain().getRightEncoderInches();
+        // TODO: Get Gyro Info
+        // this.gyroAngle = ??????
     }
 
     public double getLeftEncoderDistance() {
@@ -52,6 +56,10 @@ public class AutoRequestHandler {
     public void addTurn(double amt) {
         this.turn += amt;
     }
+
+	public double getGyroAngle() {
+		return this.gyroAngle;
+	}
 
     /** 
      * Ran at the end of when the AutoManager periodic function gets called.

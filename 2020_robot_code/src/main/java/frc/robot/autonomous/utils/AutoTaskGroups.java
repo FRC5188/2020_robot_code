@@ -30,7 +30,7 @@ public enum AutoTaskGroups {
     }
     
     public String getName() {
-        return friendlyName;
+        return this.friendlyName;
     }
 
 }

@@ -10,8 +10,6 @@ package frc.robot.autonomous.taskgroups;
 import java.util.Queue;
 
 import frc.robot.autonomous.tasks.ParallelTask;
-import frc.robot.autonomous.tasks.SequentialTask;
-import frc.robot.autonomous.tasks.TaskFollowBall;
 import frc.robot.autonomous.tasks.TaskMove;
 import frc.robot.autonomous.tasks.TaskTurn;
 import frc.robot.autonomous.utils.AutoTask;
@@ -30,14 +28,6 @@ public class TaskGroupShoot extends TaskGroup {
         tasks.add(new ParallelTask(
             new TaskMove(1.0),
             new TaskTurn(90) 
-        ));
-
-        tasks.add(new ParallelTask(
-            new TaskFollowBall(),
-            new SequentialTask(
-                new TaskTurn(90.0),
-                new TaskMove(1.0)
-            )
         ));
         
         return tasks;

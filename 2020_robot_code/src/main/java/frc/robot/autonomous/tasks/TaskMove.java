@@ -9,7 +9,6 @@ package frc.robot.autonomous.tasks;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.autonomous.AutoRequestHandler;
 import frc.robot.autonomous.utils.AutoTask;
 import frc.robot.autonomous.utils.TaskState;
@@ -34,6 +33,7 @@ public class TaskMove extends AutoTask {
         this.distance = distance;
         this.tolerance = Constants.TASK_MOVE_DEFAULT_TOLERANCE;
         this.time = Constants.TASK_MOVE_DEFAULT_TIME;
+        this.state = TaskState.NOT_STARTED;
     }
     /**
      * Distance is in Inches
@@ -47,6 +47,7 @@ public class TaskMove extends AutoTask {
         this.distance = distance;
         this.tolerance = tolerance;
         this.time = time;
+        this.state = TaskState.NOT_STARTED;
     }
 
 	@Override
@@ -64,7 +65,7 @@ public class TaskMove extends AutoTask {
     }
     @Override
     public TaskState periodic() {
-        if(this.state == TaskState.CANCELLED) return this.state;
+        if(this.state == TaskState.CANCELLED || this.state == TaskState.FINISHED) return this.state;
         double avgDist = getAverageEncoderDist();
         AutoRequestHandler reqHandler = AutoRequestHandler.getInst();
         reqHandler.addThrottle(this.pidController.calculate(avgDist));
@@ -104,8 +105,7 @@ public class TaskMove extends AutoTask {
 
     @Override
     public boolean isFinished() {
-        // TODO Auto-generated method stub
-        return false;
+        return this.isFinished;
     }
 
 }

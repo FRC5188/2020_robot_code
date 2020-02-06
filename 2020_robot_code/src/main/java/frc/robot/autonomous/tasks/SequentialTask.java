@@ -35,15 +35,17 @@ public class SequentialTask extends AutoTask {
     public TaskState periodic() {
         if(tasks.size() == 0)
             return TaskState.FINISHED;
+
         AutoTask task = tasks.peek();
 
+        TaskState state = tasks.peek().periodic();
         if(task.isFinished()) {
             tasks.poll().end();
             if(tasks.size() == 0)
                 return TaskState.FINISHED;
             tasks.peek().init();
         }
-        return tasks.peek().periodic();
+        return state;
     }
 
     @Override
@@ -53,12 +55,13 @@ public class SequentialTask extends AutoTask {
 
     @Override
     public void end() {
-        tasks.poll().end();
+        
     }
 
     @Override
     public void cancel() {
-        tasks.poll().cancel();
+        if(tasks.size() != 0)
+            tasks.peek().cancel();
     }
 
     @Override

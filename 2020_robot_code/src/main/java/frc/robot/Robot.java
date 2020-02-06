@@ -10,7 +10,6 @@ package frc.robot;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.controller.PIDController;
@@ -28,17 +27,24 @@ import frc.robot.subsystems.DriveTrain;
  */
 public class Robot extends TimedRobot {
 
-  private static Robot inst;
+  /*
+    Not the right class for network table stuff? Maybe add a Wrapper
 
+    TODO: Remove debugging stuff
+  */
   private NetworkTableInstance ntInst;
   private NetworkTable table;
   private NetworkTableEntry pidP;
   private NetworkTableEntry pidI;
   private NetworkTableEntry pidD;
   private NetworkTableEntry setPoint;
+  /*
+  Perhaps not the right class for a PID controller? (Appears to be for Debugging)
+  */
+  PIDController distCont;
+
   XboxController driveController = new XboxController(Constants.driverPort);
   DriveTrain dt = new DriveTrain(driveController);
-  PIDController distCont;
   AutoManager autoManager = new AutoManager();
 
   /**
@@ -47,13 +53,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    inst = this;
     dt.init();
     dt.initShuffle();
     autoManager.init(this);
 
     //shuffle board entrys to update pid values
 
+    // TODO: remove debugging stuff
     this.ntInst = NetworkTableInstance.getDefault();
     this.table = ntInst.getTable("SmartDashboard");
     this.pidP = table.getEntry("pid/p");
@@ -69,13 +75,8 @@ public class Robot extends TimedRobot {
     distCont = new PIDController(0.05, 0, 0.02);
     distCont.setSetpoint(0.0);
 
-    
   }
-  /*
-  public static Robot getInst() {
-    return inst;
-  }
-  */
+
   public DriveTrain getDriveTrain() {
     return this.dt;
   }
@@ -113,7 +114,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
- 
+    // Was removed (for a reason?)
+    autoManager.periodic();
   }
 
   @Override
@@ -136,6 +138,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     //dt.Operate();
+
+
+    // TODO: Temporary debugging : 
     System.out.println(dt.getLeftEncoderInches());
     SmartDashboard.putNumber("Error", dt.getLeftEncoderInches()-this.setPoint.getValue().getDouble()); //this is so we can look at a graph of the values
 

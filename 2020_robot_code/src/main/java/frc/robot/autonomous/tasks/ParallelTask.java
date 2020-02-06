@@ -36,7 +36,7 @@ public class ParallelTask extends AutoTask {
                 case FINISHED:
                     break;
                 case NOT_STARTED:
-                    break;
+                    break; // Should never happen?
                 case RUNNING:
                     return TaskState.RUNNING;
                 case UNKNOWN:
