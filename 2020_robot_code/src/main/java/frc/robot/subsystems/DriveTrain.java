@@ -3,9 +3,14 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import frc.robot.Constants;
 import frc.robot.Subsystem;
 import frc.robot.Constants.Axis;
@@ -19,6 +24,8 @@ public class DriveTrain implements Subsystem{
     WPI_TalonFX rightMotor1;
     WPI_TalonFX rightMotor2;
     DifferentialDrive diffDrive;
+    DifferentialDriveOdometry odometry;
+    AHRS ahrsGyro;
 
     XboxController driveCtrl;
     //constructor
@@ -29,10 +36,13 @@ public class DriveTrain implements Subsystem{
         this.initCurrentLimit();
         this.initRamping();
         this.initDiffDrive();
+        this.initGyro();
+        this.initOdometry();
 
     }
 
     private void initCANMotors() {
+        // TODO: Test if will fail with motor not connected?
         this.leftMotor1 = new WPI_TalonFX(Constants.leftFalcon1);
         this.leftMotor2 = new WPI_TalonFX(Constants.leftFalcon2);
         this.rightMotor1 = new WPI_TalonFX(Constants.rightFalcon1);
@@ -78,6 +88,19 @@ public class DriveTrain implements Subsystem{
         diffDrive = new DifferentialDrive(leftMotor1, rightMotor1);
     
     }
+
+    private void initGyro() {
+
+        ahrsGyro = new AHRS(Port.kMXP);
+
+    }
+
+    private void initOdometry() {
+
+        odometry = new DifferentialDriveOdometry(new Rotation2d(Math.toRadians(ahrsGyro.getYaw())));
+
+    }
+
     public void resetEncoders() {
 
         leftMotor1.setSelectedSensorPosition(0);
@@ -130,11 +153,27 @@ public class DriveTrain implements Subsystem{
         diffDrive.curvatureDrive(Constants.AUTONOMOUS_MAX_THROTTLE*throttle, Constants.AUTONOMOUS_MAX_TURN*turn, false);
     }
 
-    public double getEncoderTicks(){
-        return this.leftMotor1.getSelectedSensorPosition();
+    public void updateOdometry() {
+        odometry.update(new Rotation2d(Math.toRadians(ahrsGyro.getYaw())), getLeftEncoderTicks(), getRightEncoderTicks());
+        
+    }
 
+    public double getGyroAngle() {
+        return ahrsGyro.getYaw();
+    }
+
+    public Pose2d getOdometryPosition() {
+        return odometry.getPoseMeters();
+    }
+
+    public double getLeftEncoderTicks(){
+        return this.leftMotor1.getSelectedSensorPosition();
     }
     
+    public double getRightEncoderTicks(){
+        return this.rightMotor1.getSelectedSensorPosition();
+    }
+
     public double getLeftEncoderInches(){
         return this.leftMotor1.getSelectedSensorPosition()/Constants.ENCODER_TICKS_PER_INCH;
     }

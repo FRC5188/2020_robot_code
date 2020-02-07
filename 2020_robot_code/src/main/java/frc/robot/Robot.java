@@ -124,12 +124,15 @@ public class Robot extends TimedRobot {
 
     //put this here so encoders can be zeroed in disabled mode, 
     //since pid runs as soon as enabled. kinda bad....
-
+    
+    // stop putting things in here
+    /*
     System.out.println(dt.getLeftEncoderInches());
     if(driveController.getRawButton(Constants.Buttons.X)){
       dt.resetEncoders();
 
     }
+    */
   }
 
   /**

@@ -38,7 +38,7 @@ public class AutoRequestHandler {
         this.leftEncoderDistance = robot.getDriveTrain().getLeftEncoderInches();
         this.rightEncoderDistance = robot.getDriveTrain().getRightEncoderInches();
         // TODO: Get Gyro Info
-        // this.gyroAngle = ??????
+        this.gyroAngle = robot.getDriveTrain().getGyroAngle();
     }
 
     public double getLeftEncoderDistance() {
@@ -67,7 +67,7 @@ public class AutoRequestHandler {
      * Is used in order to be able to turn/move at same time, etc.
      **/
     public void endPeriodic() {
-        robot.getDriveTrain().autonomousDefaultDrive(this.throttle, this.turn);
+        //robot.getDriveTrain().autonomousDefaultDrive(this.throttle, this.turn);
     }
 
 }
