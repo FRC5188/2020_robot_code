@@ -69,7 +69,8 @@ public class TaskTurn extends AutoTask {
             curAngle -= 360;
         else if (this.angle-curAngle > 180)
             curAngle += 360;
-        /* How does this work? :
+        /*  ^^^^^^^^^^^^^^^^^^^^^
+            How does this (above) work? :
             If the robot has a measure of -100, and it needs to go to 150, 
             then it would be best for it to go in the negative direction.
             So, we find the difference between the angles (250), and see if its > 180.

@@ -9,6 +9,7 @@ package frc.robot.autonomous;
 
 import java.util.Queue;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Robot;
 import frc.robot.autonomous.utils.AutoTask;
 import frc.robot.autonomous.utils.AutoTaskGroups;
@@ -30,6 +31,12 @@ public class AutoManager {
     }
 
     public void periodic() {
+        if(!DriverStation.getInstance().isAutonomous()) {
+            if(tasks.isEmpty()) return;
+            if(tasks.peek().isFinished()) return;
+            tasks.peek().cancel();
+            return;
+        }
         reqHandler.startPeriodic();
         AutoTask currentTask = tasks.peek(); // Get task, but don't remove it
         if(currentTask == null) return; // Error, no tasks left to do
