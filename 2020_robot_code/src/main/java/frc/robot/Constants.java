@@ -8,6 +8,11 @@ public class Constants{
   public static final int rightFalcon1 = 2;
   public static final int rightFalcon2 = 3;
 
+  public static final int shooterTopFalcon = 4;
+  public static final int shooterBottomFalcon = 5;
+  public static final int beltTop775Pro = 6;
+  public static final int beltBottom775Pro = 7;
+
   public static final int driverPort = 0;
 
   //current limiting params
