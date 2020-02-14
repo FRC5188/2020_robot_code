@@ -1,7 +1,10 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -12,19 +15,20 @@ import frc.robot.Constants;
 import frc.robot.Subsystem;
 import frc.robot.Constants.Axis;
 
-public class Shooter implements Subsystem{
+public class Shooter implements Subsystem {
 
     WPI_TalonFX shooterTop;
     WPI_TalonFX shooterBottom;
-    WPI_TalonFX beltTop;
-    WPI_TalonFX beltBottom;
+    VictorSPX beltTop;
+    TalonSRX beltBottom;
 
     double shooterSpeed;
     double beltSpeed;
 
     XboxController shooterCtrl;
-     //constructor
-    public Shooter(XboxController controller){
+
+    // constructor
+    public Shooter(XboxController controller) {
         this.shooterCtrl = controller;
 
         this.initCANMotors();
@@ -36,8 +40,8 @@ public class Shooter implements Subsystem{
         // TODO: Test if will fail with motor not connected?
         this.shooterTop = new WPI_TalonFX(Constants.shooterTopFalcon);
         this.shooterBottom = new WPI_TalonFX(Constants.shooterBottomFalcon);
-        this.beltTop = new WPI_TalonFX(Constants.beltTop775Pro);
-        this.beltBottom = new WPI_TalonFX(Constants.beltBottom775Pro);
+        this.beltTop = new VictorSPX(Constants.beltTop775Pro);
+        this.beltBottom = new TalonSRX(Constants.beltBottom775Pro);
 
         //enable braking mode
         shooterTop.setNeutralMode(NeutralMode.Brake);
@@ -60,8 +64,8 @@ public class Shooter implements Subsystem{
         shooterTop.configSupplyCurrentLimit(supplyCurrentConfig);
         shooterBottom.configSupplyCurrentLimit(supplyCurrentConfig);
         
-        beltTop.configSupplyCurrentLimit(supplyCurrentConfig);
-        beltBottom.configSupplyCurrentLimit(supplyCurrentConfig);
+        //beltTop.configSupplyCurrentLimit(supplyCurrentConfig);
+        //beltBottom.configSupplyCurrentLimit(supplyCurrentConfig);
 
     }
 
@@ -76,7 +80,7 @@ public class Shooter implements Subsystem{
         }
         if(shooterCtrl.getRawButton(Constants.Buttons.B))
         {
-            beltTop.set(beltSpeed);
+            beltTop.set(ControlMode.PercentOutput, beltSpeed);
         }
     }
 

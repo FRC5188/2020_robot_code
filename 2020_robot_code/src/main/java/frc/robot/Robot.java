@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -16,6 +18,7 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomous.AutoManager;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Shooter;
 
 
 /**
@@ -34,18 +37,13 @@ public class Robot extends TimedRobot {
   */
   private NetworkTableInstance ntInst;
   private NetworkTable table;
-  private NetworkTableEntry pidP;
-  private NetworkTableEntry pidI;
-  private NetworkTableEntry pidD;
-  private NetworkTableEntry setPoint;
-  /*
-  Perhaps not the right class for a PID controller? (Appears to be for Debugging)
-  */
-  PIDController distCont;
+ 
+  ArrayList <Subsystem> subsystems = new ArrayList<>();
 
   XboxController driveController = new XboxController(Constants.driverPort);
   DriveTrain dt = new DriveTrain(driveController);
   AutoManager autoManager = new AutoManager();
+  Shooter shooter = new Shooter(driveController);
 
   /**
    * This function is run when the robot is first started up and should be
@@ -53,6 +51,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    subsystems.add(dt);
     dt.init();
     dt.initShuffle();
     autoManager.init(this);
@@ -62,19 +61,11 @@ public class Robot extends TimedRobot {
     // TODO: remove debugging stuff
     this.ntInst = NetworkTableInstance.getDefault();
     this.table = ntInst.getTable("SmartDashboard");
-    this.pidP = table.getEntry("pid/p");
-    this.pidI = table.getEntry("pid/i");
-    this.pidD = table.getEntry("pid/d");
-    this.setPoint = table.getEntry("pid/setPoint");
-    this.pidP.setDouble(0.05);
-    this.pidI.setDouble(0.00);
-    this.pidD.setDouble(0.00);
-    this.setPoint.setDouble(0.00);
 
-    //make new controller
-    distCont = new PIDController(0.05, 0, 0.02);
-    distCont.setSetpoint(0.0);
-
+    for(Subsystem subsystem: subsystems){
+      subsystem.init();
+      subsystem.initShuffle();
+    }
   }
 
   public DriveTrain getDriveTrain() {
@@ -141,27 +132,11 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     //dt.Operate();
-
-
-    // TODO: Temporary debugging : 
-    System.out.println(dt.getLeftEncoderInches());
-    SmartDashboard.putNumber("Error", dt.getLeftEncoderInches()-this.setPoint.getValue().getDouble()); //this is so we can look at a graph of the values
-
-    //update controller values
-    distCont.setPID(this.pidP.getValue().getDouble(), this.pidI.getValue().getDouble(), this.pidD.getValue().getDouble());
-    
-    //if x button pressed, reset enocders
-    if(driveController.getRawButton(Constants.Buttons.X)){
-      dt.resetEncoders();
-
+    for(Subsystem subsystem: subsystems){
+      subsystem.operate();
     }
 
-    //calculate output from controller
-    double PIDOutput = distCont.calculate(dt.getLeftEncoderInches(), this.setPoint.getValue().getDouble());
-    
-    //use output
-    dt.tankDrive(PIDOutput, PIDOutput);
-
+  
   }
 
   /**
