@@ -118,6 +118,7 @@ public class DriveTrain implements Subsystem{
     private static final double cTurn = 5;
     private static final double deadSpace = 0.2;
     private static final double minimumThreshold = 0.001;
+    
     private void teleopDefaultDrive() {
         double shifterVal = 0.5;
         double throttle = driveCtrl.getRawAxis(Axis.LY);

@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -14,23 +15,37 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants;
 import frc.robot.Subsystem;
 import frc.robot.Constants.Axis;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Solenoid;
 
 public class Shooter implements Subsystem {
 
+    NetworkTableInstance inst;
+
     WPI_TalonFX shooterTop;
     WPI_TalonFX shooterBottom;
-    VictorSPX beltTop;
+    TalonSRX beltTop;
     TalonSRX beltBottom;
+
+    DigitalInput frontLBsensor;
+    DigitalInput backLBsensor;
 
     double shooterSpeed;
     double beltSpeed;
+    double shooterSpeedError;
+
+    Solenoid lifterSolenoid;
+
+    private final boolean down = false;
+    private final boolean up = true;
 
     XboxController shooterCtrl;
 
     // constructor
     public Shooter(XboxController controller) {
         this.shooterCtrl = controller;
-
+        lifterSolenoid = new Solenoid(Constants.lifterSolenoid);
+        lifterSolenoid.set(down);
         this.initCANMotors();
         this.initCurrentLimit();
 
@@ -40,7 +55,7 @@ public class Shooter implements Subsystem {
         // TODO: Test if will fail with motor not connected?
         this.shooterTop = new WPI_TalonFX(Constants.shooterTopFalcon);
         this.shooterBottom = new WPI_TalonFX(Constants.shooterBottomFalcon);
-        this.beltTop = new VictorSPX(Constants.beltTop775Pro);
+        this.beltTop = new TalonSRX(Constants.beltTop775Pro);
         this.beltBottom = new TalonSRX(Constants.beltBottom775Pro);
 
         //enable braking mode
@@ -70,17 +85,27 @@ public class Shooter implements Subsystem {
     }
 
     private void teleopDefaultShooter() {
-        NetworkTableInstance inst = NetworkTableInstance.getDefault();
         shooterSpeed = inst.getEntry("Shooter_Speed").getNumber(0.0f).doubleValue();
         beltSpeed = inst.getEntry("Belt_Speed").getNumber(0.0f).doubleValue();
 
-        if(shooterCtrl.getRawButton(Constants.Buttons.A))
+        if(shooterCtrl.getRawButton(Constants.Buttons.R))
         {
-            shooterTop.set(shooterSpeed);
+            shooterBottom.set(ControlMode.Velocity, shooterSpeed);
+            if((shooterSpeed + shooterSpeedError) > shooterBottom.getSelectedSensorVelocity() & (shooterSpeed - shooterSpeedError) < shooterBottom.getSelectedSensorVelocity()){
+                beltBottom.set(ControlMode.PercentOutput, beltSpeed);
+            }
         }
-        if(shooterCtrl.getRawButton(Constants.Buttons.B))
+        if(shooterCtrl.getRawButton(Constants.Buttons.L))
         {
-            beltTop.set(ControlMode.PercentOutput, beltSpeed);
+
+            if(frontLBsensor.get() & !backLBsensor.get()){
+                beltBottom.set(ControlMode.PercentOutput, -beltSpeed);
+            }
+
+        }
+        if(shooterCtrl.getXButtonPressed())
+        {
+            lifterSolenoid.set(!lifterSolenoid.get());
         }
     }
 
@@ -107,12 +132,13 @@ public class Shooter implements Subsystem {
     
     @Override
     public void init() {
-
+        frontLBsensor = new DigitalInput(Constants.frontLBsensor);
+        backLBsensor = new DigitalInput(Constants.backLBsensor);
     }
 
     @Override
     public void initShuffle() {
-        NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        this.inst = NetworkTableInstance.getDefault();
         inst.getEntry("Shooter_Speed").setNumber(0.0f);
         inst.getEntry("Belt_Speed").setNumber(0.0f);
     }

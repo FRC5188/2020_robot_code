@@ -12,8 +12,20 @@ public class Constants{
   public static final int shooterBottomFalcon = 5;
   public static final int beltTop775Pro = 6;
   public static final int beltBottom775Pro = 7;
+  public static final int intakeMotor = 9;
+
+  public static final int wheelSpinner = 8;
 
   public static final int driverPort = 0;
+
+  public static final int frontLBsensor = 0;
+  public static final int backLBsensor = 1;
+
+  //solenoid channel 
+  public static final int lifterSolenoid = 0;
+  public static final int climbSolenoid = 1;
+  public static final int leftIntakeSolenoid = 2;
+  public static final int rightIntakeSolenoid = 3;
 
   //current limiting params
   public static final int SupplyTriggerCurremt = 25; // don't activate current limit until current exceeds 30 A...

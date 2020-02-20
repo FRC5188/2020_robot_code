@@ -52,8 +52,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     subsystems.add(dt);
-    dt.init();
-    dt.initShuffle();
     autoManager.init(this);
 
     //shuffle board entrys to update pid values
