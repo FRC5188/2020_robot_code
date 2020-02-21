@@ -8,15 +8,25 @@
 package frc.robot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
+import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomous.AutoManager;
+import frc.robot.autonomous.utils.AutoTaskGroups;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Shooter;
 
@@ -45,6 +55,31 @@ public class Robot extends TimedRobot {
   AutoManager autoManager = new AutoManager();
   Shooter shooter = new Shooter(driveController);
 
+  // TODO: Debugging Shuffleboard, Remove this eventually
+  public Map<String, Object> getMap() {
+    Map<String, Object> map = new HashMap<String, Object>();
+    map.put("size", AutoTaskGroups.values().length);
+    for(int i = 0; i < AutoTaskGroups.values().length; i++) {
+      map.put(((Integer) i).toString(), AutoTaskGroups.values()[i].getName());
+    }
+    return map;
+  }
+  public static String[] getStringArray() {
+    String[] arr = new String[AutoTaskGroups.values().length];
+    for(int i = 0; i < arr.length; i++) {
+      arr[i] = AutoTaskGroups.values()[i].getName();
+    }
+    return arr;
+  }
+  private class PointSendable implements Sendable {
+    @Override
+    public void initSendable(SendableBuilder builder) {
+      builder.setSmartDashboardType("Point2D");
+      // https://www.chiefdelphi.com/t/shuffleboard-custom-data-type/377045
+      builder.addStringArrayProperty("names", () -> getStringArray(), null);
+    }
+  }
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -57,8 +92,13 @@ public class Robot extends TimedRobot {
     //shuffle board entrys to update pid values
 
     // TODO: remove debugging stuff
+    // Debugging Shuffleboard custom plugin stuff.
     this.ntInst = NetworkTableInstance.getDefault();
     this.table = ntInst.getTable("SmartDashboard");
+    Sendable sendable = new PointSendable();
+    SendableRegistry.add(sendable, "PointSendable");
+    Shuffleboard.getTab("SmartDashboard")
+      .add("Point2D",sendable);
 
     for(Subsystem subsystem: subsystems){
       subsystem.init();
@@ -129,7 +169,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    //dt.Operate();
     for(Subsystem subsystem: subsystems){
       subsystem.operate();
     }

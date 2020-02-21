@@ -67,7 +67,7 @@ public class AutoRequestHandler {
      * Is used in order to be able to turn/move at same time, etc.
      **/
     public void endPeriodic() {
-        //robot.getDriveTrain().autonomousDefaultDrive(this.throttle, this.turn);
+        robot.getDriveTrain().autonomousDefaultDrive(this.throttle, this.turn);
     }
 
 }
