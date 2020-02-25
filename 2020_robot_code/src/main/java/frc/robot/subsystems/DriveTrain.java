@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -53,6 +54,13 @@ public class DriveTrain implements Subsystem{
         leftMotor2.setNeutralMode(NeutralMode.Brake);
         rightMotor1.setNeutralMode(NeutralMode.Brake);
         rightMotor2.setNeutralMode(NeutralMode.Brake);
+
+        this.rightMotor1.setInverted(InvertType.InvertMotorOutput);
+        this.rightMotor2.setInverted(InvertType.FollowMaster);
+
+        this.leftMotor1.setInverted(InvertType.InvertMotorOutput);
+        this.leftMotor2.setInverted(InvertType.FollowMaster);
+
 
         this.leftMotor2.follow(leftMotor1);
         this.rightMotor2.follow(rightMotor1);
@@ -120,7 +128,7 @@ public class DriveTrain implements Subsystem{
     private static final double minimumThreshold = 0.001;
     
     private void teleopDefaultDrive() {
-        double shifterVal = 0.5;
+        double shifterVal = 0.3;
         double throttle = driveCtrl.getRawAxis(Axis.LY);
         double turn = driveCtrl.getRawAxis(Axis.RX);
         // Map turn and throttle to be from "deadSpace" to 1.0
@@ -131,21 +139,21 @@ public class DriveTrain implements Subsystem{
         turn = turn > 0 ? Math.pow(Math.abs(turn),cTurn) : -Math.pow(Math.abs(turn),cTurn);
         throttle = throttle * (1-deadSpace) + (Math.abs(throttle) < minimumThreshold ? 0.0 : (throttle > 0 ? deadSpace : -deadSpace));
         turn = turn * (1-deadSpace) + (Math.abs(turn) < minimumThreshold ? 0.0 : (turn > 0 ? deadSpace : -deadSpace));
-        
+
         // allow for manual quick turn enable 
         boolean isQuickTurn = driveCtrl.getRawButton(Constants.Buttons.R);
 
         // if left bumper button pressed, activate shifter
-         if(driveCtrl.getRawButton(Constants.Buttons.L)) {
-             shifterVal = 1;
-         } else if(shifterVal != 0.5) {
-             shifterVal = 0.5;
-         }
-         if(Math.abs(throttle) < .02){
-             isQuickTurn = true;
-         }
-
-        diffDrive.curvatureDrive(throttle * shifterVal, turn * turnShifter, isQuickTurn);
+        if(driveCtrl.getRawButton(Constants.Buttons.L)) {
+            shifterVal = 1;
+        } else if(shifterVal != 0.5) {
+            shifterVal = 0.5;
+        }
+        //if(Math.abs(throttle) < .5){
+            isQuickTurn = true;
+        //}
+        // NOTE: Turning is negative, in order to be correct
+        diffDrive.curvatureDrive(throttle * shifterVal, -turn * turnShifter, isQuickTurn);
 
     }
 

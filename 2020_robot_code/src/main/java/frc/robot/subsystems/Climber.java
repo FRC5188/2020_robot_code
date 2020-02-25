@@ -2,18 +2,11 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants;
 import frc.robot.Subsystem;
-import frc.robot.Constants.Axis;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class Climber implements Subsystem {
@@ -29,7 +22,7 @@ public class Climber implements Subsystem {
         initCANMotors();
     }
     private void initCANMotors(){
-        this.climber = new VictorSPX(Constants.wheelSpinner);
+        this.climber = new VictorSPX(Constants.climberMotor);
          
  
         //enable braking mode
@@ -46,8 +39,10 @@ public class Climber implements Subsystem {
             climberSolenoid.set(!climberSolenoid.get());
         }
 
-        if (climberCtrl.getRawAxis(Constants.Axis.RY) > 0){
-            climber.set(ControlMode.PercentOutput, climberCtrl.getRawAxis(Constants.Axis.RY));
+        // What about if you want to go down? (If its possible?)
+        // Then again, I heard some1 say it can only go 1 direction
+        if (climberCtrl.getRawAxis(Constants.climberCtrlAxis) > 0){
+            climber.set(ControlMode.PercentOutput, climberCtrl.getRawAxis(Constants.climberCtrlAxis));
         } else{
             climber.set(ControlMode.PercentOutput, 0);
         }

@@ -1,19 +1,11 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants;
 import frc.robot.Subsystem;
-import frc.robot.Constants.Axis;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class ColorWheel implements Subsystem {
@@ -40,7 +32,7 @@ public class ColorWheel implements Subsystem {
         wheelSpinner.setSelectedSensorPosition(0);
     }
     private void teleopDefaultColorWheel() {
-        if(colorCtrl.getYButtonPressed())
+        if(colorCtrl.getRawButtonPressed(Constants.colorWheelButton))
         {
             wheelSolenoid.set(!wheelSolenoid.get());
         }
