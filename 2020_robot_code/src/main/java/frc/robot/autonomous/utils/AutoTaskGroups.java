@@ -14,15 +14,25 @@ import frc.robot.autonomous.taskgroups.*;
  */
 public enum AutoTaskGroups {
 
-    DEFAULT(new TaskGroupDefault(), "Default"), 
-    SHOOT_TURN(new TaskGroupShoot(), "Shoot Turn");
+    DEFAULT(new TaskGroupDefault(), "Default", new String[]{ 
+        "Default Auto",
+        "Moves off the line by 1 foot"
+    }), 
+    SHOOT_TURN(new TaskGroupShoot(), "Shoot Turn", new String[] {
+        "Shoot Turn",
+        "Moves off the line by 1 foot",
+        "Turns toward the target",
+        "Shoots the balls"
+    });
 
     private TaskGroup taskGroup;
     private String friendlyName;
+    private String[] description;
 
-    private AutoTaskGroups(TaskGroup taskGroup, String friendlyName) {
+    private AutoTaskGroups(TaskGroup taskGroup, String friendlyName, String[] description) {
         this.taskGroup = taskGroup;
         this.friendlyName = friendlyName;
+        this.description = description;
     }
 
 	public TaskGroup getTaskGroup() {
@@ -32,5 +42,9 @@ public enum AutoTaskGroups {
     public String getName() {
         return this.friendlyName;
     }
+
+	public String[] getDescription() {
+		return this.description;
+	}
 
 }

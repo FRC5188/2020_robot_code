@@ -53,8 +53,7 @@ public class Robot extends TimedRobot {
     subsystems.add(dt);
     subsystems.add(intake);
     subsystems.add(shooter);
-    autoManager.init(this);
-
+    autoManager.initShuffleboard();
     //shuffle board entrys to update pid values
 
     // TODO: remove debugging stuff
@@ -65,6 +64,7 @@ public class Robot extends TimedRobot {
       subsystem.init();
       subsystem.initShuffle();
     }
+    
   }
 
   public DriveTrain getDriveTrain() {
@@ -81,6 +81,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    autoManager.updateShuffleboard();
   }
 
   /**
@@ -96,7 +97,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    
+    autoManager.init(this);
   }
 
   /**

@@ -80,8 +80,9 @@ public class Shooter implements Subsystem {
     }
 
     private void teleopDefaultShooter() {
-        shooterSpeed = inst.getEntry("Shooter_Speed").getNumber(0.0f).doubleValue();
-        beltSpeed = inst.getEntry("Belt_Speed").getNumber(0.0f).doubleValue();
+        // Values need to be set in Network Tables, but will default here
+        shooterSpeed = inst.getEntry("Shooter_Speed").getNumber(Constants.shooterShooterSpeed).doubleValue();
+        beltSpeed = inst.getEntry("Belt_Speed").getNumber(Constants.shooterBeltSpeed).doubleValue();
 
         if(shooterCtrl.getRawButton(Constants.shooterCtrlShoot))
         {

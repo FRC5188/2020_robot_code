@@ -59,6 +59,8 @@ public class Constants{
   public static final int shooterCtrlReverse = Constants.Buttons.L;
   public static final int intakeCtrlButtonToggle = Constants.Buttons.B;
   public static final int shooterCtrlLiftToggle = Constants.Buttons.X;
+  public static final double shooterShooterSpeed = 0.7;
+  public static final double shooterBeltSpeed = 0.5;
 
   public static class Buttons {
 
