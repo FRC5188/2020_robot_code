@@ -73,5 +73,16 @@ public class ParallelTask extends AutoTask {
         }
 		return true;
     }
+
+    @Override
+    public String serialize() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Do the following at the same time:");
+        for(AutoTask t: tasks) {
+            builder.append("\n  ");
+            builder.append(t.serialize());
+        }
+        return builder.toString();
+    }
     
 }

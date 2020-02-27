@@ -22,8 +22,7 @@ public class ColorWheel implements Subsystem {
     }
     private void initCANMotors(){
         this.wheelSpinner = new VictorSPX(Constants.wheelSpinner);
-         
- 
+        
         //enable braking mode
         wheelSpinner.setNeutralMode(NeutralMode.Brake);
     }

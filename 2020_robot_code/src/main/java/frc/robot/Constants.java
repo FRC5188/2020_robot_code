@@ -25,42 +25,54 @@ public class Constants{
   public static final int backLBsensor = 1;
 
   //solenoid channel 
-  public static final int lifterSolenoid = 0;
-  public static final int climbSolenoid = 1;
-  public static final int leftIntakeSolenoid = 2;
-  public static final int rightIntakeSolenoid = 3;
+  public static final int intakeSolenoid = 0;
+  public static final int lifterSolenoid = 1;
+  public static final int colorWheelSolenoid = 2;
+  public static final int climbSolenoid = 3;
 
   //current limiting params
   public static final int SupplyTriggerCurremt = 25; // don't activate current limit until current exceeds 30 A...
   public static final int SupplyCurrentDuration = 50; //... for at least 50 ms
   public static final int SupplyCurrentLimit = 20; // once current-limiting is activated, hold at 20A
 
+  // Shooter Teleop Variables
+  public static final double shooterShooterSpeed = 0.7;
+  public static final double shooterBeltSpeed = 0.5;
+
   public static final double ENCODER_TICKS_PER_INCH  = 941.1;
   public static final double openRampDuration = 0.5; //seconds from zero to full throttle 
 
+  // Autonomous Task Move Variables
   public static final double TASK_MOVE_PID_P = 1.0;
   public static final double TASK_MOVE_PID_I = 0.0;
   public static final double TASK_MOVE_PID_D = 0.0;
   public static final double TASK_MOVE_DEFAULT_TOLERANCE = 1.0;
   public static final int TASK_MOVE_DEFAULT_TIME = 3;
 
+  // Autonomous Task Turn Variables
   public static final double TASK_TURN_PID_P = 1.0;
   public static final double TASK_TURN_PID_I = 0.0;
   public static final double TASK_TURN_PID_D = 0.0;
   public static final double TASK_TURN_DEFAULT_TOLERANCE = 0;
   public static final int TASK_TURN_DEFAULT_TIME = 0;
 
+  // Autonomous Task Shoot Variables
+  public static final int TASK_SHOOT_REVERSE_DEFAULT_TICKTIME_RUN = 30;
+  public static final int TASK_SHOOT_RUN_DEFAULT_TICKTIME_RUN = 30;
+
+  // Subsystem Variables while in Autonomous
   public static final double AUTONOMOUS_MAX_THROTTLE = 0.5;
   public static final double AUTONOMOUS_MAX_TURN = 0.5;
+  public static final double AUTO_SHOOTER_SHOOTER_SPEED = Constants.shooterShooterSpeed; // default to 
+  public static final double AUTO_SHOOTER_BELT_SPEED = Constants.shooterBeltSpeed; // teleop's defaults
 
+  // Teleop button controls
   public static final int colorWheelButton = Constants.Buttons.Y;
   public static final int climberCtrlAxis = Constants.Axis.RY;
   public static final int shooterCtrlShoot = Constants.Buttons.R;
   public static final int shooterCtrlReverse = Constants.Buttons.L;
   public static final int intakeCtrlButtonToggle = Constants.Buttons.B;
   public static final int shooterCtrlLiftToggle = Constants.Buttons.X;
-  public static final double shooterShooterSpeed = 0.7;
-  public static final double shooterBeltSpeed = 0.5;
 
   public static class Buttons {
 

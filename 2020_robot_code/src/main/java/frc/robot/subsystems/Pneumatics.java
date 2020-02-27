@@ -9,6 +9,7 @@ public class Pneumatics implements Subsystem{
     //constructor
     public Pneumatics(){
         compressor = new Compressor();
+        compressor.setClosedLoopControl(true);
         compressor.start();
     }
     public void init() {

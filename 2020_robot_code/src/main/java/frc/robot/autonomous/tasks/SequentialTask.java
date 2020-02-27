@@ -73,5 +73,16 @@ public class SequentialTask extends AutoTask {
 	public boolean isFinished() {
         return tasks.size() == 0; 
     }
+
+    @Override
+    public String serialize() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Do the following one at a time:");
+        for(AutoTask t: tasks) {
+            builder.append("\n  ");
+            builder.append(t.serialize());
+        }
+        return builder.toString();
+    }
     
 }

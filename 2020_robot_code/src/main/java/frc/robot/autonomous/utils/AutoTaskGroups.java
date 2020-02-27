@@ -47,4 +47,12 @@ public enum AutoTaskGroups {
 		return this.description;
 	}
 
+	public String[] getSerializedTaskList() {
+        StringBuilder builder = new StringBuilder();
+        for(AutoTask task: this.taskGroup.retrieveTasks()) {
+            builder.append(task.serialize() + "\n");
+        }
+        return builder.toString().split("\n");
+	}
+
 }

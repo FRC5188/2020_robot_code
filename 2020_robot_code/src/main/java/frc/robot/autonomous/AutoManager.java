@@ -7,14 +7,11 @@
 
 package frc.robot.autonomous;
 
-import java.util.Map;
 import java.util.Queue;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Sendable;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -40,6 +37,7 @@ public class AutoManager {
     SendableChooser<AutoTaskGroups> autoSelectorSendable;
     AutoTaskGroups lastTaskGroup;
     StringArraySendable taskGroupDescriptionSendable;
+    StringArraySendable taskGroupTaskListSendable;
 
     SimpleWidget delayWidget;
     //ShuffleboardComponent taskGroupImage;
@@ -88,8 +86,10 @@ public class AutoManager {
     public void initShuffleboard() {
         Sendable taskGroupsSendable = new StringArraySendable(listAutos());
         this.taskGroupDescriptionSendable = new StringArraySendable(new String[] {"Select an Auto to see its description."});
+        this.taskGroupTaskListSendable = new StringArraySendable(new String[] {"Select an Auto to see its list of tasks."});
         SendableRegistry.add(taskGroupsSendable, "AutoListSendable");
         SendableRegistry.add(this.taskGroupDescriptionSendable, "DescriptionSendable");
+        SendableRegistry.add(this.taskGroupTaskListSendable, "TaskListSendable");
         ShuffleboardTab tab = Shuffleboard.getTab("Autonomous");
         tab.add("Available Autos",taskGroupsSendable)
         .withPosition(0, 1)
@@ -102,12 +102,15 @@ public class AutoManager {
         .withPosition(0, 0)
         .withSize(2, 1);
         tab.add("Auto Description", this.taskGroupDescriptionSendable)
-            .withPosition(2, 0)
-            .withSize(2, 4);
+            .withPosition(2, 1)
+            .withSize(2, 3);
         this.delayWidget = tab
             .add("Delay Until Start",0.0)
-            .withPosition(4, 0)
+            .withPosition(2, 0)
             .withSize(1,1);
+        tab.add("Task List", taskGroupTaskListSendable)
+          .withPosition(4, 0)
+          .withSize(2,4);
             //.withWidget(BuiltInWidgets.kNumberSlider)
             //.withProperties(Map.of("min", 0, "max", 15));
         /*
@@ -124,7 +127,7 @@ public class AutoManager {
         AutoTaskGroups taskGroup = (AutoTaskGroups) this.autoSelectorSendable.getSelected();
         if(this.lastTaskGroup == taskGroup || taskGroup == null) return;
         taskGroupDescriptionSendable.setStringArray(taskGroup.getDescription());
-        
+        taskGroupTaskListSendable.setStringArray(taskGroup.getSerializedTaskList());
         this.lastTaskGroup = taskGroup;
 
     }

@@ -108,4 +108,9 @@ public class TaskMove extends AutoTask {
         return this.isFinished;
     }
 
+    @Override
+    public String serialize() {
+        return "Move forward "  + distance + " inches.";
+    }
+
 }

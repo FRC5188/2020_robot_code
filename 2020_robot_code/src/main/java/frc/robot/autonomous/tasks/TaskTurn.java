@@ -121,4 +121,9 @@ public class TaskTurn extends AutoTask {
         return this.isFinished;
     }
 
+    @Override
+    public String serialize() {
+        return "Turn "  + this.angle + " degrees.";
+    }
+
 }

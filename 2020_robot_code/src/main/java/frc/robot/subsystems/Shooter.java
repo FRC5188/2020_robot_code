@@ -80,10 +80,12 @@ public class Shooter implements Subsystem {
     }
 
     private void teleopDefaultShooter() {
-        // Values need to be set in Network Tables, but will default here
+        // Values need to be set in Network Tables, but defaults are in Constants
         shooterSpeed = inst.getEntry("Shooter_Speed").getNumber(Constants.shooterShooterSpeed).doubleValue();
         beltSpeed = inst.getEntry("Belt_Speed").getNumber(Constants.shooterBeltSpeed).doubleValue();
-
+        /*
+         If you change something in here, see if it should be changed in this.autonomousShoot also.
+        */
         if(shooterCtrl.getRawButton(Constants.shooterCtrlShoot))
         {
             System.out.println("here");
@@ -91,20 +93,37 @@ public class Shooter implements Subsystem {
             //if((shooterSpeed + shooterSpeedError) > shooterBottom.getSelectedSensorVelocity() & (shooterSpeed - shooterSpeedError) < shooterBottom.getSelectedSensorVelocity()){
                 beltBottom.set(ControlMode.PercentOutput, beltSpeed);
             //}
-        }
+        } else 
         if(shooterCtrl.getRawButton(Constants.shooterCtrlReverse))
         {
-
             if(frontLBsensor.get() & !backLBsensor.get()){
                 beltBottom.set(ControlMode.PercentOutput, -beltSpeed);
             }
-
         }
         if(shooterCtrl.getRawButton(Constants.shooterCtrlLiftToggle))
         {
             lifterSolenoid.set(!lifterSolenoid.get());
         }
     }
+    
+	public void autonomousShoot(boolean runShooter, boolean reverserShooter) {
+        shooterSpeed = inst.getEntry("Shooter_Speed").getNumber(Constants.AUTO_SHOOTER_SHOOTER_SPEED).doubleValue();
+        beltSpeed = inst.getEntry("Belt_Speed").getNumber(Constants.AUTO_SHOOTER_BELT_SPEED).doubleValue();
+        if(runShooter)
+        {
+            shooterBottom.set(ControlMode.PercentOutput, shooterSpeed);
+            //if((shooterSpeed + shooterSpeedError) > shooterBottom.getSelectedSensorVelocity() & (shooterSpeed - shooterSpeedError) < shooterBottom.getSelectedSensorVelocity()){
+            beltBottom.set(ControlMode.PercentOutput, beltSpeed);
+            //}
+        } else if(shooterCtrl.getRawButton(Constants.shooterCtrlReverse))
+        {
+            // TODO: Does auto mode need to test sensors?
+            //if(frontLBsensor.get() & !backLBsensor.get()){
+            beltBottom.set(ControlMode.PercentOutput, -beltSpeed);
+            //}
+
+        }
+	}
 
     public void resetEncoders() {
         beltTop.setSelectedSensorPosition(0);

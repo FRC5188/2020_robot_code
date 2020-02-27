@@ -12,5 +12,5 @@ public abstract class AutoTask {
     public abstract void cancel();
     public abstract void updateShuffle();
     public abstract boolean isFinished();
-
+    public abstract String serialize();
 }

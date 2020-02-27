@@ -71,6 +71,10 @@ public class Robot extends TimedRobot {
     return this.dt;
   }
 
+  public Shooter getShooter() {
+    return this.shooter;
+  }
+
   /** 
    * This function is called every robot packet, no matter the mode. Use
    * this for items like diagnostics that you want ran during disabled,
@@ -145,4 +149,5 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
   }
+
 }

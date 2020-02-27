@@ -10,6 +10,8 @@ public class AutoRequestHandler {
     // Output Variables
     private double throttle;
     private double turn;
+    private boolean runShooter;
+    private boolean reverserShooter;
 
     // Input Variables
     private double leftEncoderDistance;
@@ -35,6 +37,8 @@ public class AutoRequestHandler {
         this.throttle = 0.0;
         this.turn = 0.0;
         this.gyroAngle = 0.0;
+        this.runShooter = false;
+        this.reverserShooter = false;
         this.leftEncoderDistance = robot.getDriveTrain().getLeftEncoderInches();
         this.rightEncoderDistance = robot.getDriveTrain().getRightEncoderInches();
         // TODO: Get Gyro Info
@@ -68,6 +72,15 @@ public class AutoRequestHandler {
      **/
     public void endPeriodic() {
         robot.getDriveTrain().autonomousDefaultDrive(this.throttle, this.turn);
+        robot.getShooter().autonomousShoot(this.runShooter, this.reverserShooter);
+    }
+
+	public void runShooter() {
+        this.runShooter = true;
+    }
+    
+    public void reverseShooter() {
+        this.reverserShooter = true;
     }
 
 }

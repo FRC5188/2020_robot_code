@@ -9,7 +9,7 @@ package frc.robot.autonomous.taskgroups;
 
 import java.util.Queue;
 
-import frc.robot.autonomous.tasks.TaskTurn;
+import frc.robot.autonomous.tasks.*;
 import frc.robot.autonomous.utils.AutoTask;
 import frc.robot.autonomous.utils.TaskGroup;
 
@@ -20,7 +20,8 @@ public class TaskGroupDefault  extends TaskGroup {
 
     @Override
     public Queue<AutoTask> retrieveTasks() {
-        tasks.add(new TaskTurn(135.0));
+        if(!tasks.isEmpty()) return tasks;
+        tasks.add(new TaskMove(12.0));
         return tasks;
     }
 

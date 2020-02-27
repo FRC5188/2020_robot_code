@@ -9,8 +9,7 @@ import frc.robot.Subsystem;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class Intake implements Subsystem {
-    Solenoid leftIntakeSolenoid;
-    Solenoid rightIntakeSolenoid;
+    Solenoid intakeSolenoid;
     VictorSPX intakeMotor;
     XboxController intakeCtrl;
 
@@ -20,16 +19,14 @@ public class Intake implements Subsystem {
 
     void defaultTeleop(){
         if(intakeCtrl.getRawButton(Constants.intakeCtrlButtonToggle)){
-            leftIntakeSolenoid.set(!leftIntakeSolenoid.get());
-            rightIntakeSolenoid.set(!rightIntakeSolenoid.get());
+            intakeSolenoid.set(!intakeSolenoid.get());
         }
         intakeMotor.set(ControlMode.PercentOutput, intakeCtrl.getRawAxis(Constants.Axis.LTrigger)-intakeCtrl.getRawAxis(Constants.Axis.RTrigger));
     }
 
     @Override
     public void init() {
-        leftIntakeSolenoid = new Solenoid(Constants.leftIntakeSolenoid);
-        rightIntakeSolenoid = new Solenoid(Constants.rightIntakeSolenoid);
+        intakeSolenoid = new Solenoid(Constants.intakeSolenoid);
         intakeMotor = new VictorSPX(Constants.intakeMotor);
     }
 
