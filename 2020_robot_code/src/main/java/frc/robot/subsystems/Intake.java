@@ -18,10 +18,13 @@ public class Intake implements Subsystem {
     }
 
     void defaultTeleop(){
-        if(intakeCtrl.getRawButton(Constants.intakeCtrlButtonToggle)){
+        //System.out.println(intakeCtrl.getBButtonPressed());
+        //System.out.println(intakeCtrl.getRawButtonPressed(Constants.intakeCtrlButtonToggle));
+        if(intakeCtrl.getRawButtonPressed(Constants.intakeCtrlButtonToggle)){
+            //System.out.println(!intakeSolenoid.get());
             intakeSolenoid.set(!intakeSolenoid.get());
         }
-        intakeMotor.set(ControlMode.PercentOutput, intakeCtrl.getRawAxis(Constants.Axis.LTrigger)-intakeCtrl.getRawAxis(Constants.Axis.RTrigger));
+        intakeMotor.set(ControlMode.PercentOutput, intakeCtrl.getRawAxis(Constants.intakeAxisForward)-intakeCtrl.getRawAxis(Constants.intakeAxisBackward));
     }
 
     @Override

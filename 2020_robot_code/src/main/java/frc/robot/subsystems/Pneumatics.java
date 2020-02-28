@@ -23,7 +23,6 @@ public class Pneumatics implements Subsystem{
 
     @Override
     public void operate() {
-
        
     }
 

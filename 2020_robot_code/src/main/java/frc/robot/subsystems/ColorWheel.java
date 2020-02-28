@@ -11,13 +11,12 @@ import edu.wpi.first.wpilibj.Solenoid;
 public class ColorWheel implements Subsystem {
     VictorSPX wheelSpinner;
     Solenoid wheelSolenoid;
-    private final boolean down = false;
-    private final boolean up = true;
     XboxController colorCtrl;
     
     //constructor
     public ColorWheel(XboxController controller){
         colorCtrl = controller;
+        this.wheelSolenoid = new Solenoid(Constants.colorWheelSolenoid);
         initCANMotors();
     }
     private void initCANMotors(){
@@ -35,6 +34,11 @@ public class ColorWheel implements Subsystem {
         {
             wheelSolenoid.set(!wheelSolenoid.get());
         }
+        /*
+        if(colorCtrl.getRawButton(Constants.colorWheelSpinButton)) {
+
+        }
+        */
     }
     public void init() {
 

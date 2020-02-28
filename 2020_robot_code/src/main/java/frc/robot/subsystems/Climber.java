@@ -12,13 +12,17 @@ import edu.wpi.first.wpilibj.Solenoid;
 public class Climber implements Subsystem {
     VictorSPX climber;
     Solenoid climberSolenoid;
+    /*
+    Available in solenoid.get()?
     private final boolean down = false;
     private final boolean up = true;
+    */
     XboxController climberCtrl;
 
     public Climber(XboxController controller){
         climberCtrl = controller;
         climberSolenoid = new Solenoid(Constants.climbSolenoid);
+        climberSolenoid.set(Constants.SOLENOID_DOWN);
         initCANMotors();
     }
     private void initCANMotors(){
@@ -34,14 +38,12 @@ public class Climber implements Subsystem {
     }
     private void teleopDefaultClimber() {
 
-        if(climberCtrl.getAButtonPressed())
+        if(climberCtrl.getRawButtonPressed(Constants.climberButtonToggle))
         {
             climberSolenoid.set(!climberSolenoid.get());
         }
 
-        // What about if you want to go down? (If its possible?)
-        // Then again, I heard some1 say it can only go 1 direction
-        if (climberCtrl.getRawAxis(Constants.climberCtrlAxis) > 0){
+        if (climberCtrl.getRawAxis(Constants.climberCtrlAxis) < 0){
             climber.set(ControlMode.PercentOutput, climberCtrl.getRawAxis(Constants.climberCtrlAxis));
         } else{
             climber.set(ControlMode.PercentOutput, 0);

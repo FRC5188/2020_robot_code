@@ -14,6 +14,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.autonomous.AutoManager;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.ColorWheel;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -38,11 +40,13 @@ public class Robot extends TimedRobot {
  
   ArrayList <Subsystem> subsystems = new ArrayList<>();
 
-  XboxController driveController = new XboxController(Constants.driverPort);
-  DriveTrain dt = new DriveTrain(driveController);
+  XboxController driveController;
+  DriveTrain dt;
   AutoManager autoManager = new AutoManager();
-  Intake intake = new Intake(driveController);
-  Shooter shooter = new Shooter(driveController);
+  Intake intake;
+  Shooter shooter;
+  Climber climber;
+  ColorWheel colorWheel;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -50,9 +54,17 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    driveController = new XboxController(Constants.driverPort);
+    dt = new DriveTrain(driveController);
+    intake = new Intake(driveController);
+    shooter = new Shooter(driveController);
+    climber = new Climber(driveController);
+    colorWheel = new ColorWheel(driveController);
     subsystems.add(dt);
     subsystems.add(intake);
     subsystems.add(shooter);
+    subsystems.add(climber);
+    subsystems.add(colorWheel);
     autoManager.initShuffleboard();
     //shuffle board entrys to update pid values
 

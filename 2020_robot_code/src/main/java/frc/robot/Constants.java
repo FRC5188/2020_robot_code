@@ -38,6 +38,7 @@ public class Constants{
   // Shooter Teleop Variables
   public static final double shooterShooterSpeed = 0.7;
   public static final double shooterBeltSpeed = 0.5;
+  public static final double intakeShooterSpeed = 0.4;
 
   public static final double ENCODER_TICKS_PER_INCH  = 941.1;
   public static final double openRampDuration = 0.5; //seconds from zero to full throttle 
@@ -73,7 +74,16 @@ public class Constants{
   public static final int shooterCtrlReverse = Constants.Buttons.L;
   public static final int intakeCtrlButtonToggle = Constants.Buttons.B;
   public static final int shooterCtrlLiftToggle = Constants.Buttons.X;
+  public static final int climberButtonToggle = Constants.Buttons.A;
+  //public static final int colorWheelSpinButton = Constants.Buttons;
 
+  // Misc
+  public static final boolean SOLENOID_DOWN = false;
+  public static final boolean SOLENOID_UP = true;
+  
+  public static final int intakeAxisForward = Axis.LTrigger;
+  public static final int intakeAxisBackward = Axis.RTrigger;
+  
   public static class Buttons {
 
     public static int

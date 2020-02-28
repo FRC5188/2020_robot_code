@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -10,6 +11,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
 import frc.robot.Subsystem;
+import frc.robot.Constants.Buttons;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -31,16 +33,13 @@ public class Shooter implements Subsystem {
 
     Solenoid lifterSolenoid;
 
-    private final boolean down = false;
-    private final boolean up = true;
-
     XboxController shooterCtrl;
 
     // constructor
     public Shooter(XboxController controller) {
         this.shooterCtrl = controller;
         lifterSolenoid = new Solenoid(Constants.lifterSolenoid);
-        lifterSolenoid.set(down);
+        lifterSolenoid.set(Constants.SOLENOID_DOWN);
         this.initCANMotors();
         this.initCurrentLimit();
 
@@ -52,10 +51,10 @@ public class Shooter implements Subsystem {
         this.shooterBottom = new WPI_TalonFX(Constants.shooterBottomFalcon);
         this.beltTop = new TalonSRX(Constants.beltTop775Pro);
         this.beltBottom = new TalonSRX(Constants.beltBottom775Pro);
-
+        this.shooterTop.setInverted(InvertType.InvertMotorOutput);
         //enable braking mode
-        shooterTop.setNeutralMode(NeutralMode.Brake);
-        shooterBottom.setNeutralMode(NeutralMode.Brake);
+        shooterTop.setNeutralMode(NeutralMode.Coast);
+        shooterBottom.setNeutralMode(NeutralMode.Coast);
         beltTop.setNeutralMode(NeutralMode.Brake);
         beltBottom.setNeutralMode(NeutralMode.Brake);
 
@@ -79,28 +78,64 @@ public class Shooter implements Subsystem {
 
     }
 
+    /*
+
+        TODO: 
+        Add secondary controller
+        Seperate belt and shooter
+        Remove temp solution for ^
+        Interface with other subsystems better?
+        Make solenoid less destructive?
+
+
+
+
+
+
+    */
+
     private void teleopDefaultShooter() {
         // Values need to be set in Network Tables, but defaults are in Constants
-        shooterSpeed = inst.getEntry("Shooter_Speed").getNumber(Constants.shooterShooterSpeed).doubleValue();
-        beltSpeed = inst.getEntry("Belt_Speed").getNumber(Constants.shooterBeltSpeed).doubleValue();
+        shooterSpeed = Constants.shooterShooterSpeed;//inst.getEntry("Shooter_Speed").getNumber(Constants.shooterShooterSpeed).doubleValue();
+        beltSpeed = Constants.shooterBeltSpeed;//.getEntry("Belt_Speed").getNumber(Constants.shooterBeltSpeed).doubleValue();
         /*
          If you change something in here, see if it should be changed in this.autonomousShoot also.
         */
+        //System.out.println(shooterSpeed + " " + beltSpeed);
         if(shooterCtrl.getRawButton(Constants.shooterCtrlShoot))
         {
-            System.out.println("here");
+            
+            //System.out.println("Moving");
             shooterBottom.set(ControlMode.PercentOutput, shooterSpeed);
             //if((shooterSpeed + shooterSpeedError) > shooterBottom.getSelectedSensorVelocity() & (shooterSpeed - shooterSpeedError) < shooterBottom.getSelectedSensorVelocity()){
-                beltBottom.set(ControlMode.PercentOutput, beltSpeed);
+                
+                if(shooterCtrl.getRawButton(Buttons.START)) {
+                    beltBottom.set(ControlMode.PercentOutput, beltSpeed);
+                } else {
+                    //beltBottom.set(ControlMode.PercentOutput, 0.0);
+                }
+            //beltTop.set(ControlMode.PercentOutput, 0.5);
+                
             //}
         } else 
-        if(shooterCtrl.getRawButton(Constants.shooterCtrlReverse))
+        if(shooterCtrl.getRawButton(Constants.shooterCtrlReverse) || 
+        (shooterCtrl.getRawAxis(Constants.intakeAxisForward)-
+        shooterCtrl.getRawAxis(Constants.intakeAxisBackward) != 0.0))
         {
-            if(frontLBsensor.get() & !backLBsensor.get()){
-                beltBottom.set(ControlMode.PercentOutput, -beltSpeed);
-            }
+            //if(frontLBsensor.get() & !backLBsensor.get()){
+                // TODO: This is temp. Make a perm solution no
+                if(shooterCtrl.getRawButton(Buttons.START)) {
+                    beltBottom.set(ControlMode.PercentOutput, -beltSpeed);
+                } else {
+                    beltBottom.set(ControlMode.PercentOutput, 0.0);
+                }
+                shooterBottom.set(ControlMode.PercentOutput, -Constants.intakeShooterSpeed);
+            //}
+        } else {
+            shooterBottom.set(ControlMode.PercentOutput, 0.0);
+            beltBottom.set(ControlMode.PercentOutput, 0.0);
         }
-        if(shooterCtrl.getRawButton(Constants.shooterCtrlLiftToggle))
+        if(shooterCtrl.getRawButtonPressed(Constants.shooterCtrlLiftToggle))
         {
             lifterSolenoid.set(!lifterSolenoid.get());
         }
@@ -120,8 +155,9 @@ public class Shooter implements Subsystem {
             // TODO: Does auto mode need to test sensors?
             //if(frontLBsensor.get() & !backLBsensor.get()){
             beltBottom.set(ControlMode.PercentOutput, -beltSpeed);
+            shooterBottom.set(ControlMode.PercentOutput, -shooterSpeed);
             //}
-
+            //intakeCtrl.getRawAxis(Constants.intakeAxisForward)-intakeCtrl.getRawAxis(Constants.intakeAxisBackward)
         }
 	}
 
