@@ -29,7 +29,7 @@ public class Shooter implements Subsystem {
 
     double shooterSpeed;
     double beltSpeed;
-    double shooterSpeedError;
+    double shooterSpeedError = 0.05;
 
     Solenoid lifterSolenoid;
 
@@ -106,24 +106,17 @@ public class Shooter implements Subsystem {
         {
             
             //System.out.println("Moving");
-            shooterBottom.set(ControlMode.PercentOutput, shooterSpeed);
-            //if((shooterSpeed + shooterSpeedError) > shooterBottom.getSelectedSensorVelocity() & (shooterSpeed - shooterSpeedError) < shooterBottom.getSelectedSensorVelocity()){
-                
-                if(shooterCtrl.getRawButton(Buttons.START)) {
-                    beltBottom.set(ControlMode.PercentOutput, beltSpeed);
-                } else {
-                    //beltBottom.set(ControlMode.PercentOutput, 0.0);
-                }
-            //beltTop.set(ControlMode.PercentOutput, 0.5);
-                
-            //}
+            shooterBottom.set(ControlMode.Velocity, shooterSpeed);
+            if((shooterSpeed + shooterSpeedError) > shooterBottom.getSelectedSensorVelocity() & (shooterSpeed - shooterSpeedError) < shooterBottom.getSelectedSensorVelocity()){
+                beltBottom.set(ControlMode.PercentOutput, beltSpeed);
+            } else {
+                beltBottom.set(ControlMode.PercentOutput, 0.0);
+            }
         } else 
-        if(shooterCtrl.getRawButton(Constants.shooterCtrlReverse) || 
-        (shooterCtrl.getRawAxis(Constants.intakeAxisForward)-
-        shooterCtrl.getRawAxis(Constants.intakeAxisBackward) != 0.0))
+        if(shooterCtrl.getRawButton(Constants.shooterCtrlReverse) || contrManager.getIntakeBeltSpeed())
         {
             //if(frontLBsensor.get() & !backLBsensor.get()){
-                // TODO: This is temp. Make a perm solution no
+                // TODO: This is temp. Make a perm solution
                 if(shooterCtrl.getRawButton(Buttons.START)) {
                     beltBottom.set(ControlMode.PercentOutput, -beltSpeed);
                 } else {

@@ -9,8 +9,6 @@ package frc.robot;
 
 import java.util.ArrayList;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.autonomous.AutoManager;
@@ -29,14 +27,6 @@ import frc.robot.subsystems.Shooter;
  * project.
  */
 public class Robot extends TimedRobot {
-
-  /*
-    Not the right class for network table stuff? Maybe add a Wrapper
-
-    TODO: Remove debugging stuff
-  */
-  private NetworkTableInstance ntInst;
-  private NetworkTable table;
  
   ArrayList <Subsystem> subsystems = new ArrayList<>();
 
@@ -66,11 +56,6 @@ public class Robot extends TimedRobot {
     subsystems.add(climber);
     subsystems.add(colorWheel);
     autoManager.initShuffleboard();
-    //shuffle board entrys to update pid values
-
-    // TODO: remove debugging stuff
-    this.ntInst = NetworkTableInstance.getDefault();
-    this.table = ntInst.getTable("SmartDashboard");
 
     for(Subsystem subsystem: subsystems){
       subsystem.init();
@@ -161,5 +146,9 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
   }
+
+public static Object getControllerManager() {
+	return null;
+}
 
 }
