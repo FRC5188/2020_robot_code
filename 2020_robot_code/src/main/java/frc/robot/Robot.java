@@ -44,11 +44,11 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     ctrlManager = new ControllerManager();
-    dt = new DriveTrain();
-    intake = new Intake();
-    shooter = new Shooter();
-    climber = new Climber();
-    colorWheel = new ColorWheel();
+    dt = new DriveTrain(this);
+    intake = new Intake(this);
+    shooter = new Shooter(this);
+    climber = new Climber(this);
+    colorWheel = new ColorWheel(this);
     subsystems.add(dt);
     subsystems.add(intake);
     subsystems.add(shooter);
@@ -69,6 +69,17 @@ public class Robot extends TimedRobot {
 
   public Shooter getShooter() {
     return this.shooter;
+  }
+
+  public ColorWheel getColorWheel() {
+    return this.colorWheel;
+  }
+
+  public Intake getIntake() {
+    return this.intake;
+  }
+  public Climber getClimber() {
+    return this.climber;
   }
 
   /** 

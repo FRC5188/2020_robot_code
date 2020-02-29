@@ -45,8 +45,10 @@ public class ControllerManager {
     }
 
     public double getIntakeSpeed() {
-        return this.driverController.getRawAxis(Constants.intakeAxisForward)-
-            this.driverController.getRawAxis(Constants.intakeAxisBackward);
+        if(this.operatorController.getRawButton(Constants.intakeAxisBackward))
+            return -1;
+        //this.operatorController.getRawAxis(Constants.intakeAxisBackward))
+        return this.operatorController.getRawAxis(Constants.intakeAxisForward);
     }
 
     public boolean getIntakeEnabled() {

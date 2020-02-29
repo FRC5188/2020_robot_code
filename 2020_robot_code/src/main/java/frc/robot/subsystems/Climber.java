@@ -8,6 +8,7 @@ import frc.robot.Constants;
 import frc.robot.ControllerManager;
 import frc.robot.Robot;
 import frc.robot.Subsystem;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class Climber implements Subsystem {
@@ -19,8 +20,10 @@ public class Climber implements Subsystem {
     private final boolean up = true;
     */
     ControllerManager ctrlManager;
+    Robot robot;
 
-    public Climber(){
+    public Climber(Robot robot){
+        this.robot = robot;
         this.ctrlManager = Robot.getControllerManager();
         climberSolenoid = new Solenoid(Constants.climbSolenoid);
         climberSolenoid.set(Constants.SOLENOID_DOWN);
@@ -39,13 +42,13 @@ public class Climber implements Subsystem {
     }
     private void teleopDefaultClimber() {
 
-        if(ctrlManager.getButtonPressedDriver(Constants.climberButtonToggle))
+        if(ctrlManager.getButtonPressedOperator(Constants.climberButtonToggle) && !this.robot.getIntake().intakeSolenoid.get())
         {
             climberSolenoid.set(!climberSolenoid.get());
         }
 
-        if (ctrlManager.getAxisDriver(Constants.climberCtrlAxis) < 0){
-            climber.set(ControlMode.PercentOutput, ctrlManager.getAxisDriver(Constants.climberCtrlAxis));
+        if ((!climberSolenoid.get()) && ctrlManager.getAxisOperator(Constants.climberCtrlAxis) < 0){
+            climber.set(ControlMode.PercentOutput, ctrlManager.getAxisOperator(Constants.climberCtrlAxis));
         } else{
             climber.set(ControlMode.PercentOutput, 0);
         }

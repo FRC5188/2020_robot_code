@@ -32,15 +32,19 @@ public class Shooter implements Subsystem {
 
     double shooterSpeed;
     double beltSpeed;
-    double shooterSpeedError = 0.05;
+    double shooterSpeedError = 300.0;
     boolean beltEnabled = false;
+
+    private int frontLineBreakTimer = 0;
 
     Solenoid lifterSolenoid;
 
     ControllerManager ctrlManager;
+    Robot robot;
 
     // constructor
-    public Shooter() {
+    public Shooter(Robot robot) {
+        this.robot = robot;
         this.ctrlManager = Robot.getControllerManager();
         lifterSolenoid = new Solenoid(Constants.lifterSolenoid);
         lifterSolenoid.set(Constants.SOLENOID_DOWN);
@@ -55,15 +59,12 @@ public class Shooter implements Subsystem {
         this.shooterBottom = new WPI_TalonFX(Constants.shooterBottomFalcon);
         this.beltTop = new VictorSPX(Constants.beltTop775Pro);
         this.beltBottom = new TalonSRX(Constants.beltBottom775Pro);
-        this.shooterTop.setInverted(InvertType.InvertMotorOutput);
+        this.shooterBottom.setInverted(InvertType.InvertMotorOutput);
         //enable braking mode
-        shooterTop.setNeutralMode(NeutralMode.Coast);
-        shooterBottom.setNeutralMode(NeutralMode.Coast);
         beltTop.setNeutralMode(NeutralMode.Brake);
         beltBottom.setNeutralMode(NeutralMode.Brake);
-
-        this.shooterTop.follow(shooterBottom);
         this.beltTop.follow(beltBottom);
+        beltTop.setInverted(InvertType.InvertMotorOutput);
 
         int idx = 0;
         int timeout = 30;
@@ -85,6 +86,27 @@ public class Shooter implements Subsystem {
         this.shooterBottom.config_kI(idx, gains.kI, timeout);
         this.shooterBottom.config_kD(idx, gains.kD, timeout);
 
+        this.shooterTop.configFactoryDefault();
+
+        this.shooterTop.configNeutralDeadband(0.001);
+        this.shooterTop.configSelectedFeedbackSensor(
+            TalonFXFeedbackDevice.IntegratedSensor,idx,timeout);
+
+        this.shooterTop.configNominalOutputForward(0.0, timeout);
+        this.shooterTop.configNominalOutputReverse(0.0, timeout);
+        this.shooterTop.configPeakOutputForward(1.0, timeout);
+        this.shooterTop.configPeakOutputReverse(-1.0, timeout);
+
+        this.shooterTop.config_kF(idx, gains.kF, timeout);
+        this.shooterTop.config_kP(idx, gains.kP, timeout);
+        this.shooterTop.config_kI(idx, gains.kI, timeout);
+        this.shooterTop.config_kD(idx, gains.kD, timeout);
+
+        shooterTop.setNeutralMode(NeutralMode.Coast);
+        shooterBottom.setNeutralMode(NeutralMode.Coast);
+        
+        this.shooterTop.follow(shooterBottom);
+
     }
     private void initCurrentLimit(){
         //create current config, new for 2020
@@ -98,6 +120,9 @@ public class Shooter implements Subsystem {
         shooterTop.configSupplyCurrentLimit(supplyCurrentConfig);
         shooterBottom.configSupplyCurrentLimit(supplyCurrentConfig);
         
+        shooterBottom.configOpenloopRamp(Constants.shooterOpenRampDuration);
+        shooterTop.configOpenloopRamp(Constants.shooterOpenRampDuration);
+
         //beltTop.configSupplyCurrentLimit(supplyCurrentConfig);
         //beltBottom.configSupplyCurrentLimit(supplyCurrentConfig);
 
@@ -131,18 +156,26 @@ public class Shooter implements Subsystem {
         shooterBottom.set(ControlMode.Velocity, 0.0);
         beltBottom.set(ControlMode.PercentOutput, 0.0);
         */
-        if(ctrlManager.getButtonPressedDriver(Constants.shooterBeltIntake))
+        /*
+        if(ctrlManager.getButtonPressedOperator(Constants.shooterBeltIntake))
             beltEnabled = !beltEnabled;
-        if(ctrlManager.getButtonDriver(Constants.shooterCtrlShoot))
+        */
+        if(ctrlManager.getAxisOperator(Constants.shooterCtrlShoot) > 0.5)
         {
-            shooterBottom.set(ControlMode.Velocity, shooterSpeed);
-            if((shooterSpeed + shooterSpeedError) > shooterBottom.getSelectedSensorVelocity() & (shooterSpeed - shooterSpeedError) < shooterBottom.getSelectedSensorVelocity()){
+            if(!lifterSolenoid.get())
+                lifterSolenoid.set(true);
+            //shooterBottom.set(ControlMode.Velocity, -shooterSpeed);
+            shooterBottom.set(ControlMode.PercentOutput, -1.0);
+            //System.out.println(shooterSpeed + " " + shooterBottom.getSelectedSensorVelocity());
+            // (shooterSpeed + shooterSpeedError) > shooterBottom.getSelectedSensorVelocity() & 
+            //System.out.println((shooterSpeed-shooterSpeedError) + " " + shooterBottom.getSelectedSensorVelocity());
+            if((shooterSpeed - shooterSpeedError) < -shooterBottom.getSelectedSensorVelocity()){
                 beltBottom.set(ControlMode.PercentOutput, beltSpeed);
             } else {
                 beltBottom.set(ControlMode.PercentOutput, 0.0);
             }
-        } else 
-        if(ctrlManager.getButtonDriver(Constants.shooterCtrlReverse))
+        } else /*
+        if(ctrlManager.getButtonOperator(Constants.shooterCtrlReverse))
         {
             //if(frontLBsensor.get() & !backLBsensor.get()){
                 // TODO: This is temp. Make a perm solution
@@ -153,20 +186,31 @@ public class Shooter implements Subsystem {
                 }
                 //shooterBottom.set(ControlMode.PercentOutput, -Constants.intakeShooterSpeed);
             //}
-        } else if(ctrlManager.getIntakeEnabled()) {
+        } else*/ if(ctrlManager.getIntakeEnabled()) {
             if(ctrlManager.getIntakeSpeed() > 0.0) {
-                shooterBottom.set(ControlMode.Velocity, shooterSpeed);
+                shooterBottom.set(ControlMode.PercentOutput, 0.5);
+                //shooterBottom.set(ControlMode.Velocity, Constants.intakeShooterSpeed);
             }
-            if(beltEnabled) {
-                beltBottom.set(ControlMode.PercentOutput, -beltSpeed);
+            //System.out.println(frontLineBreakTimer + " " + frontLBsensor.get());
+            if(!frontLBsensor.get()) {
+                frontLineBreakTimer += 1; 
+                if(frontLineBreakTimer > 8) { // 25 Ticks, 50 ticks per second
+                    beltBottom.set(ControlMode.PercentOutput, -beltSpeed);
+                }
             } else {
-                beltBottom.set(ControlMode.PercentOutput, 0.0);
+                if(frontLineBreakTimer > 3)
+                    frontLineBreakTimer = 3;
+                else if(frontLineBreakTimer > 0)
+                    frontLineBreakTimer -= 1;
+                else 
+                    beltBottom.set(ControlMode.PercentOutput, 0.0);
             }
         } else {
-            shooterBottom.set(ControlMode.Velocity, 0.0);
+            shooterBottom.set(ControlMode.PercentOutput, 0.0);
+            //shooterBottom.set(ControlMode.Velocity, 0.0);
             beltBottom.set(ControlMode.PercentOutput, 0.0);
         }
-        if(ctrlManager.getButtonPressedDriver(Constants.shooterCtrlLiftToggle))
+        if(ctrlManager.getButtonPressedOperator(Constants.shooterCtrlLiftToggle))
         {
             lifterSolenoid.set(!lifterSolenoid.get());
         }
@@ -177,7 +221,7 @@ public class Shooter implements Subsystem {
         beltSpeed = inst.getEntry("Belt_Speed").getNumber(Constants.AUTO_SHOOTER_BELT_SPEED).doubleValue();
         if(runShooter)
         {
-            shooterBottom.set(ControlMode.Velocity, shooterSpeed);
+            //shooterBottom.set(ControlMode.Velocity, shooterSpeed);
             //if((shooterSpeed + shooterSpeedError) > shooterBottom.getSelectedSensorVelocity() & (shooterSpeed - shooterSpeedError) < shooterBottom.getSelectedSensorVelocity()){
             beltBottom.set(ControlMode.PercentOutput, beltSpeed);
             //}

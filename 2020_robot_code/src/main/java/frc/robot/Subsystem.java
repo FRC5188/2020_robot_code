@@ -1,6 +1,6 @@
 package frc.robot;
 
-public interface Subsystem{
+public interface Subsystem {
 
     public void init();
 

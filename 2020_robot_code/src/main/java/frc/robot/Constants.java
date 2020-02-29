@@ -33,17 +33,18 @@ public class Constants {
   public static final int climbSolenoid = 3;
 
   //current limiting params
-  public static final int SupplyTriggerCurremt = 25; // don't activate current limit until current exceeds 30 A...
+  public static final int SupplyTriggerCurremt = 35; // don't activate current limit until current exceeds 30 A...
   public static final int SupplyCurrentDuration = 50; //... for at least 50 ms
-  public static final int SupplyCurrentLimit = 20; // once current-limiting is activated, hold at 20A
+  public static final int SupplyCurrentLimit = 30; // once current-limiting is activated, hold at 20A
 
-  // Shooter Teleop Variables // 0.6 = 0.6* 500 RPM
-  public static final double shooterShooterSpeed = 0.6*2000.0*2048.0/600.0; // Velocity, not percent output
+  // Shooter Teleop Variables // 750 RPM
+  public static final double shooterShooterSpeed = 1500.0/500.0*2000.0*2048.0/600.0; // Velocity, not percent output
   public static final double shooterBeltSpeed = 0.5; // TODO: Specify Speed vs Percent
-  public static final double intakeShooterSpeed = 0.4;
+  public static final double intakeShooterSpeed = 1000.0/500.0*2000.0*2048.0/600.0;
 
   public static final double ENCODER_TICKS_PER_INCH  = 941.1;
-  public static final double openRampDuration = 0.5; //seconds from zero to full throttle 
+  public static final double openRampDuration = 0.5; //seconds from zero to full throttle
+  public static final double shooterOpenRampDuration = 0.50; //seconds from zero to full throttle
 
   // Autonomous Task Move Variables
   public static final double TASK_MOVE_PID_P = 1.0;
@@ -70,26 +71,30 @@ public class Constants {
   public static final double AUTO_SHOOTER_BELT_SPEED = Constants.shooterBeltSpeed; // teleop's defaults
 
   // Teleop button controls
+  
+  // For the Operator
+  public static final int shooterCtrlShoot = Constants.Axis.RTrigger; // RTrigger
+  public static final int shooterCtrlLiftToggle = Constants.Buttons.R; // Right Button
+
+  //public static final int shooterCtrlReverse = Constants.Buttons.; // Don't need?
+  public static final int intakeAxisForward = Axis.LTrigger; 
+  public static final int intakeAxisBackward = Buttons.L; // L Button "Unjam"
+
+  public static final int colorWheelPneumaticButton = Constants.Buttons.A; 
+  public static final int colorWheelSpinButton = Constants.Buttons.X;
+
+  public static final int climberCtrlAxis = Constants.Axis.LY;
+  public static final int climberButtonToggle = Constants.Buttons.Y;
+  // To driver[\]
+  public static final int[] intakeCtrlButtonToggle = new int[] {Constants.Buttons.A, Constants.Buttons.B,Constants.Buttons.X,Constants.Buttons.Y};
+
+
+  // Drive Train Buttons
+  public static final int throttleShiftButton = Constants.Buttons.R;
+  
+  public static final int shooterBeltIntake = Constants.Buttons.BACK;
+
   /*
-  // For the Driver
-  public static final int colorWheelButton = Constants.Buttons.Y;
-  // For the Driver???
-  public static final int climberCtrlAxis = Constants.Axis.RY;
-  // For the Operator
-  public static final int shooterCtrlShoot = Constants.Buttons.R;
-  // For the Operator
-  public static final int shooterCtrlReverse = Constants.Buttons.L;
-  // For the Operator
-  public static final int intakeCtrlButtonToggle = Constants.Buttons.B;
-  // For the Operator
-  public static final int shooterCtrlLiftToggle = Constants.Buttons.X;
-  // For the Driver
-  public static final int climberButtonToggle = Constants.Buttons.A;
-  // For the Driver
-  public static final int intakeAxisForward = Axis.LTrigger;
-  // For the Driver
-  public static final int intakeAxisBackward = Axis.RTrigger;
-  */
   public static final int colorWheelButton = Constants.Buttons.Y;
   public static final int climberCtrlAxis = Constants.Axis.LX;
   public static final int shooterCtrlShoot = Constants.Buttons.R;
@@ -99,8 +104,7 @@ public class Constants {
   public static final int climberButtonToggle = Constants.Buttons.Y;
   public static final int intakeAxisForward = Axis.LTrigger;
   public static final int intakeAxisBackward = Axis.RTrigger;
-
-  public static final int shooterBeltIntake = Constants.Buttons.A;
+  */
   
   //public static final int colorWheelSpinButton = Constants.Buttons;
 
@@ -108,8 +112,29 @@ public class Constants {
   public static final boolean SOLENOID_DOWN = false;
   public static final boolean SOLENOID_UP = true;
   
-  public static final Gains SHOOTER_CONFIG = new Gains(1023.0/20660.0,0.1,0.0,0.0,300,1.00);//0.001,5.0,1023.0/20660.0,300, 1.00);
+  public static final Gains SHOOTER_CONFIG = new Gains(1023.0/20660.0,0.5,0.0,0.0,300,1.00);//0.001,5.0,1023.0/20660.0,300, 1.00);
   
+  public static class ControllerInput {
+    public static int 
+    A = 1,
+    B = 2,
+    X = 3,
+    Y = 4,
+    L = 5,
+    R = 6,
+    BACK = 7,
+    START = 8,
+    L_STICK = 9,
+    R_STICK = 10,
+    LX = 11,
+    LY = 12,
+    LTrigger = 13,
+    RTrigger = 14,
+    RX = 15,
+    RY = 16;
+
+  }
+
   public static class Buttons {
 
     public static int

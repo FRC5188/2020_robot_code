@@ -32,9 +32,11 @@ public class DriveTrain implements Subsystem {
     AHRS ahrsGyro;
 
     ControllerManager ctrlManager;
+    Robot robot;
 
     // constructor
-    public DriveTrain() {
+    public DriveTrain(Robot robot) {
+        this.robot = robot;
         this.ctrlManager = Robot.getControllerManager();
 
         this.initCANMotors();
@@ -49,7 +51,8 @@ public class DriveTrain implements Subsystem {
         cThrottleEnt = tab.add("Throttle Distribution Curve", cThrottle).getEntry();
         cTurnEnt = tab.add("Turn Distribution Curve", cTurn).getEntry();
         minimumThresholdEnt = tab.add("Minimum Joystick Threshold", minimumThreshold).getEntry();
-        deadSpaceEnt = tab.add("Minimum Power", deadSpace).getEntry();
+        deadSpaceThrottleEnt = tab.add("Minimum Power Throttle", deadSpaceThrottle).getEntry();
+        deadSpaceTurnEnt = tab.add("Minimum Power Turn", deadSpaceTurn).getEntry();
         turnShifterEnt = tab.add("Turn Coefficient", turnShifter).getEntry();
         throttleShifterEnt = tab.add("Throttle Coefficient", throttleShifter).getEntry();
     }
@@ -137,14 +140,16 @@ public class DriveTrain implements Subsystem {
     NetworkTableEntry turnShifterEnt;
     NetworkTableEntry cThrottleEnt;
     NetworkTableEntry cTurnEnt;
-    NetworkTableEntry deadSpaceEnt;
+    NetworkTableEntry deadSpaceThrottleEnt;
+    NetworkTableEntry deadSpaceTurnEnt;
     NetworkTableEntry minimumThresholdEnt;
     NetworkTableEntry throttleShifterEnt;
 
     private static double turnShifter = 0.65;
     private static double cThrottle = 3;
     private static double cTurn = 5;
-    private static double deadSpace = 0.2;
+    private static double deadSpaceThrottle = 0.2;
+    private static double deadSpaceTurn = 0.2;
     private static double minimumThreshold = 0.001;
     private static double throttleShifter = 0.3;
     
@@ -152,7 +157,8 @@ public class DriveTrain implements Subsystem {
         turnShifter = turnShifterEnt.getDouble(0.65);
         cThrottle = cThrottleEnt.getDouble(3);
         cTurn = cTurnEnt.getDouble(5);
-        deadSpace = deadSpaceEnt.getDouble(0.2);
+        deadSpaceThrottle = deadSpaceThrottleEnt.getDouble(0.2);
+        deadSpaceTurn = deadSpaceTurnEnt.getDouble(0.2);
         minimumThreshold = minimumThresholdEnt.getDouble(0.001);
         throttleShifter = throttleShifterEnt.getDouble(0.3);
         double throttle = ctrlManager.getAxisDriver(Axis.LY);
@@ -161,26 +167,26 @@ public class DriveTrain implements Subsystem {
         // So that a small bump actually moves the robot ( < deadSpace doesn't move)
         // minimumThreshold is the minimum the controller has to move to map it. (Otherwise it'd move without user input)
         
+        if(ctrlManager.getButtonDriver(Constants.throttleShiftButton)) {
+            throttleShifter = 0.6;
+        } else {
+            throttleShifter = 1.0;
+        }
         throttle = throttle > 0 ? Math.pow(Math.abs(throttle),cThrottle) : -Math.pow(Math.abs(throttle),cThrottle);
         turn = turn > 0 ? Math.pow(Math.abs(turn),cTurn) : -Math.pow(Math.abs(turn),cTurn);
-        throttle = throttle * (1-deadSpace) + (Math.abs(throttle) < minimumThreshold ? 0.0 : (throttle > 0 ? deadSpace : -deadSpace));
-        turn = turn * (1-deadSpace) + (Math.abs(turn) < minimumThreshold ? 0.0 : (turn > 0 ? deadSpace : -deadSpace));
+        throttle = throttle * throttleShifter * (1-deadSpaceThrottle) + (Math.abs(throttle) < minimumThreshold ? 0.0 : (throttle > 0 ? deadSpaceThrottle : -deadSpaceThrottle));
+        turn = turn * turnShifter * (1-deadSpaceTurn) + (Math.abs(turn) < minimumThreshold ? 0.0 : (turn > 0 ? deadSpaceTurn : -deadSpaceTurn));
 
         // allow for manual quick turn enable 
         //boolean isQuickTurn = ctrlManager.getButtonDriver(Constants.Buttons.R);
 
         // if left bumper button pressed, activate shifter
-        /*
-        if(ctrlManager.getButtonDriver(Constants.Buttons.L)) {
-            shifterVal = 1;
-        } else if(shifterVal != 0.5) {
-            shifterVal = 0.5;
-        }*/
+        
         //if(Math.abs(throttle) < .5){
         //isQuickTurn = true;
         //}
         // NOTE: Turning is negative, in order to be correct
-        diffDrive.arcadeDrive(throttle * throttleShifter, -turn * turnShifter);
+        diffDrive.arcadeDrive(throttle, -turn);
 
     }
 
