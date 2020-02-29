@@ -3,28 +3,29 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
+import frc.robot.ControllerManager;
+import frc.robot.Robot;
 import frc.robot.Subsystem;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class Intake implements Subsystem {
     Solenoid intakeSolenoid;
     VictorSPX intakeMotor;
-    XboxController intakeCtrl;
+    ControllerManager ctrlManager;
 
-    public Intake(XboxController controller){
-        this.intakeCtrl = controller;
+    public Intake(){
+        this.ctrlManager = Robot.getControllerManager();
     }
 
     void defaultTeleop(){
         //System.out.println(intakeCtrl.getBButtonPressed());
         //System.out.println(intakeCtrl.getRawButtonPressed(Constants.intakeCtrlButtonToggle));
-        if(intakeCtrl.getRawButtonPressed(Constants.intakeCtrlButtonToggle)){
+        if(ctrlManager.getButtonPressedDriver(Constants.intakeCtrlButtonToggle)){
             //System.out.println(!intakeSolenoid.get());
             intakeSolenoid.set(!intakeSolenoid.get());
         }
-        intakeMotor.set(ControlMode.PercentOutput, intakeCtrl.getRawAxis(Constants.intakeAxisForward)-intakeCtrl.getRawAxis(Constants.intakeAxisBackward));
+        intakeMotor.set(ControlMode.PercentOutput, ctrlManager.getIntakeSpeed());
     }
 
     @Override

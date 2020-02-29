@@ -6,20 +6,23 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants;
+import frc.robot.ControllerManager;
+import frc.robot.Robot;
 import frc.robot.Subsystem;
 import frc.robot.Constants.Axis;
 
+public class DriveTrain implements Subsystem {
 
-public class DriveTrain implements Subsystem{
-
-    //motor controllers
+    // motor controllers
     WPI_TalonFX leftMotor1;
     WPI_TalonFX leftMotor2;
     WPI_TalonFX rightMotor1;
@@ -28,10 +31,11 @@ public class DriveTrain implements Subsystem{
     DifferentialDriveOdometry odometry;
     AHRS ahrsGyro;
 
-    XboxController driveCtrl;
-    //constructor
-    public DriveTrain(XboxController controller){
-        this.driveCtrl = controller;
+    ControllerManager ctrlManager;
+
+    // constructor
+    public DriveTrain() {
+        this.ctrlManager = Robot.getControllerManager();
 
         this.initCANMotors();
         this.initCurrentLimit();
@@ -40,6 +44,14 @@ public class DriveTrain implements Subsystem{
         this.initGyro();
         this.initOdometry();
 
+        // TODO: Remove Testing Code
+        ShuffleboardTab tab = Shuffleboard.getTab("Drive Variables");
+        cThrottleEnt = tab.add("Throttle Distribution Curve", cThrottle).getEntry();
+        cTurnEnt = tab.add("Turn Distribution Curve", cTurn).getEntry();
+        minimumThresholdEnt = tab.add("Minimum Joystick Threshold", minimumThreshold).getEntry();
+        deadSpaceEnt = tab.add("Minimum Power", deadSpace).getEntry();
+        turnShifterEnt = tab.add("Turn Coefficient", turnShifter).getEntry();
+        throttleShifterEnt = tab.add("Throttle Coefficient", throttleShifter).getEntry();
     }
 
     private void initCANMotors() {
@@ -49,7 +61,7 @@ public class DriveTrain implements Subsystem{
         this.rightMotor1 = new WPI_TalonFX(Constants.rightFalcon1);
         this.rightMotor2 = new WPI_TalonFX(Constants.rightFalcon2);
 
-        //enable braking mode
+        // enable braking mode
         leftMotor1.setNeutralMode(NeutralMode.Brake);
         leftMotor2.setNeutralMode(NeutralMode.Brake);
         rightMotor1.setNeutralMode(NeutralMode.Brake);
@@ -61,40 +73,39 @@ public class DriveTrain implements Subsystem{
         this.leftMotor1.setInverted(InvertType.InvertMotorOutput);
         this.leftMotor2.setInverted(InvertType.FollowMaster);
 
-
         this.leftMotor2.follow(leftMotor1);
         this.rightMotor2.follow(rightMotor1);
     }
-    private void initCurrentLimit(){
-        //create current config, new for 2020
-        //it is a little long........ :(
-        SupplyCurrentLimitConfiguration supplyCurrentConfig;
-        supplyCurrentConfig = new SupplyCurrentLimitConfiguration(
-            true, Constants.SupplyCurrentLimit, Constants.SupplyTriggerCurremt, Constants.SupplyCurrentDuration
-        );
 
-        //apply current limits
+    private void initCurrentLimit() {
+        // create current config, new for 2020
+        // it is a little long........ :(
+        SupplyCurrentLimitConfiguration supplyCurrentConfig;
+        supplyCurrentConfig = new SupplyCurrentLimitConfiguration(true, Constants.SupplyCurrentLimit,
+                Constants.SupplyTriggerCurremt, Constants.SupplyCurrentDuration);
+
+        // apply current limits
         leftMotor1.configSupplyCurrentLimit(supplyCurrentConfig);
         rightMotor1.configSupplyCurrentLimit(supplyCurrentConfig);
-        
+
         leftMotor2.configSupplyCurrentLimit(supplyCurrentConfig);
         rightMotor2.configSupplyCurrentLimit(supplyCurrentConfig);
 
     }
 
-    private void initRamping(){
-    
+    private void initRamping() {
+
         leftMotor1.configOpenloopRamp(Constants.openRampDuration);
-        rightMotor1.configOpenloopRamp(Constants.openRampDuration); 
+        rightMotor1.configOpenloopRamp(Constants.openRampDuration);
         leftMotor2.configOpenloopRamp(Constants.openRampDuration);
         rightMotor2.configOpenloopRamp(Constants.openRampDuration);
-    
+
     }
 
     private void initDiffDrive() {
-    
+
         diffDrive = new DifferentialDrive(leftMotor1, rightMotor1);
-    
+
     }
 
     private void initGyro() {
@@ -115,22 +126,37 @@ public class DriveTrain implements Subsystem{
         leftMotor2.setSelectedSensorPosition(0);
         rightMotor1.setSelectedSensorPosition(0);
         rightMotor2.setSelectedSensorPosition(0);
-    
+
     }
 
     // default shifter to low for now
-    // Throttle and Turn are put to the power of cThrottle and cTurn to have a better distribution curve
+    // Throttle and Turn are put to the power of cThrottle and cTurn to have a
+    // better distribution curve
     // explore turnShifter farther..
-    private static final double turnShifter = 0.65;
-    private static final double cThrottle = 3;
-    private static final double cTurn = 5;
-    private static final double deadSpace = 0.2;
-    private static final double minimumThreshold = 0.001;
+
+    NetworkTableEntry turnShifterEnt;
+    NetworkTableEntry cThrottleEnt;
+    NetworkTableEntry cTurnEnt;
+    NetworkTableEntry deadSpaceEnt;
+    NetworkTableEntry minimumThresholdEnt;
+    NetworkTableEntry throttleShifterEnt;
+
+    private static double turnShifter = 0.65;
+    private static double cThrottle = 3;
+    private static double cTurn = 5;
+    private static double deadSpace = 0.2;
+    private static double minimumThreshold = 0.001;
+    private static double throttleShifter = 0.3;
     
     private void teleopDefaultDrive() {
-        double shifterVal = 0.3;
-        double throttle = driveCtrl.getRawAxis(Axis.LY);
-        double turn = driveCtrl.getRawAxis(Axis.RX);
+        turnShifter = turnShifterEnt.getDouble(0.65);
+        cThrottle = cThrottleEnt.getDouble(3);
+        cTurn = cTurnEnt.getDouble(5);
+        deadSpace = deadSpaceEnt.getDouble(0.2);
+        minimumThreshold = minimumThresholdEnt.getDouble(0.001);
+        throttleShifter = throttleShifterEnt.getDouble(0.3);
+        double throttle = ctrlManager.getAxisDriver(Axis.LY);
+        double turn = ctrlManager.getAxisDriver(Axis.RX);
         // Map turn and throttle to be from "deadSpace" to 1.0
         // So that a small bump actually moves the robot ( < deadSpace doesn't move)
         // minimumThreshold is the minimum the controller has to move to map it. (Otherwise it'd move without user input)
@@ -141,19 +167,20 @@ public class DriveTrain implements Subsystem{
         turn = turn * (1-deadSpace) + (Math.abs(turn) < minimumThreshold ? 0.0 : (turn > 0 ? deadSpace : -deadSpace));
 
         // allow for manual quick turn enable 
-        boolean isQuickTurn = driveCtrl.getRawButton(Constants.Buttons.R);
+        //boolean isQuickTurn = ctrlManager.getButtonDriver(Constants.Buttons.R);
 
         // if left bumper button pressed, activate shifter
-        if(driveCtrl.getRawButton(Constants.Buttons.L)) {
+        /*
+        if(ctrlManager.getButtonDriver(Constants.Buttons.L)) {
             shifterVal = 1;
         } else if(shifterVal != 0.5) {
             shifterVal = 0.5;
-        }
+        }*/
         //if(Math.abs(throttle) < .5){
-            isQuickTurn = true;
+        //isQuickTurn = true;
         //}
         // NOTE: Turning is negative, in order to be correct
-        diffDrive.curvatureDrive(throttle * shifterVal, -turn * turnShifter, isQuickTurn);
+        diffDrive.arcadeDrive(throttle * throttleShifter, -turn * turnShifter);
 
     }
 

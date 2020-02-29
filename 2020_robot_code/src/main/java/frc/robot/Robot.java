@@ -10,7 +10,6 @@ package frc.robot;
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.autonomous.AutoManager;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.ColorWheel;
@@ -30,7 +29,7 @@ public class Robot extends TimedRobot {
  
   ArrayList <Subsystem> subsystems = new ArrayList<>();
 
-  XboxController driveController;
+  static ControllerManager ctrlManager;
   DriveTrain dt;
   AutoManager autoManager = new AutoManager();
   Intake intake;
@@ -44,12 +43,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    driveController = new XboxController(Constants.driverPort);
-    dt = new DriveTrain(driveController);
-    intake = new Intake(driveController);
-    shooter = new Shooter(driveController);
-    climber = new Climber(driveController);
-    colorWheel = new ColorWheel(driveController);
+    ctrlManager = new ControllerManager();
+    dt = new DriveTrain();
+    intake = new Intake();
+    shooter = new Shooter();
+    climber = new Climber();
+    colorWheel = new ColorWheel();
     subsystems.add(dt);
     subsystems.add(intake);
     subsystems.add(shooter);
@@ -147,8 +146,8 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {
   }
 
-public static Object getControllerManager() {
-	return null;
+public static ControllerManager getControllerManager() {
+	return ctrlManager;
 }
 
 }

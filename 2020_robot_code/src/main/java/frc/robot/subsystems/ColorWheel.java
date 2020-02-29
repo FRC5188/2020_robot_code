@@ -3,19 +3,20 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
+import frc.robot.ControllerManager;
+import frc.robot.Robot;
 import frc.robot.Subsystem;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class ColorWheel implements Subsystem {
     VictorSPX wheelSpinner;
     Solenoid wheelSolenoid;
-    XboxController colorCtrl;
+    ControllerManager ctrlManager;
     
     //constructor
-    public ColorWheel(XboxController controller){
-        colorCtrl = controller;
+    public ColorWheel(){
+        this.ctrlManager = Robot.getControllerManager();
         this.wheelSolenoid = new Solenoid(Constants.colorWheelSolenoid);
         initCANMotors();
     }
@@ -30,7 +31,7 @@ public class ColorWheel implements Subsystem {
         wheelSpinner.setSelectedSensorPosition(0);
     }
     private void teleopDefaultColorWheel() {
-        if(colorCtrl.getRawButtonPressed(Constants.colorWheelButton))
+        if(ctrlManager.getButtonPressedDriver(Constants.colorWheelButton))
         {
             wheelSolenoid.set(!wheelSolenoid.get());
         }

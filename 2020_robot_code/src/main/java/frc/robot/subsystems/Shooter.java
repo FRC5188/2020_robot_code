@@ -4,14 +4,17 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
+import frc.robot.ControllerManager;
+import frc.robot.Robot;
 import frc.robot.Subsystem;
-import frc.robot.Constants.Buttons;
+import frc.robot.utils.Gains;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -21,7 +24,7 @@ public class Shooter implements Subsystem {
 
     WPI_TalonFX shooterTop;
     WPI_TalonFX shooterBottom;
-    TalonSRX beltTop;
+    VictorSPX beltTop;
     TalonSRX beltBottom;
 
     DigitalInput frontLBsensor;
@@ -30,14 +33,15 @@ public class Shooter implements Subsystem {
     double shooterSpeed;
     double beltSpeed;
     double shooterSpeedError = 0.05;
+    boolean beltEnabled = false;
 
     Solenoid lifterSolenoid;
 
-    XboxController shooterCtrl;
+    ControllerManager ctrlManager;
 
     // constructor
-    public Shooter(XboxController controller) {
-        this.shooterCtrl = controller;
+    public Shooter() {
+        this.ctrlManager = Robot.getControllerManager();
         lifterSolenoid = new Solenoid(Constants.lifterSolenoid);
         lifterSolenoid.set(Constants.SOLENOID_DOWN);
         this.initCANMotors();
@@ -49,7 +53,7 @@ public class Shooter implements Subsystem {
         // TODO: Test if will fail with motor not connected?
         this.shooterTop = new WPI_TalonFX(Constants.shooterTopFalcon);
         this.shooterBottom = new WPI_TalonFX(Constants.shooterBottomFalcon);
-        this.beltTop = new TalonSRX(Constants.beltTop775Pro);
+        this.beltTop = new VictorSPX(Constants.beltTop775Pro);
         this.beltBottom = new TalonSRX(Constants.beltBottom775Pro);
         this.shooterTop.setInverted(InvertType.InvertMotorOutput);
         //enable braking mode
@@ -60,6 +64,27 @@ public class Shooter implements Subsystem {
 
         this.shooterTop.follow(shooterBottom);
         this.beltTop.follow(beltBottom);
+
+        int idx = 0;
+        int timeout = 30;
+        
+        this.shooterBottom.configFactoryDefault();
+
+        this.shooterBottom.configNeutralDeadband(0.001);
+        this.shooterBottom.configSelectedFeedbackSensor(
+            TalonFXFeedbackDevice.IntegratedSensor,idx,timeout);
+
+        this.shooterBottom.configNominalOutputForward(0.0, timeout);
+        this.shooterBottom.configNominalOutputReverse(0.0, timeout);
+        this.shooterBottom.configPeakOutputForward(1.0, timeout);
+        this.shooterBottom.configPeakOutputReverse(-1.0, timeout);
+
+        Gains gains = Constants.SHOOTER_CONFIG;
+        this.shooterBottom.config_kF(idx, gains.kF, timeout);
+        this.shooterBottom.config_kP(idx, gains.kP, timeout);
+        this.shooterBottom.config_kI(idx, gains.kI, timeout);
+        this.shooterBottom.config_kD(idx, gains.kD, timeout);
+
     }
     private void initCurrentLimit(){
         //create current config, new for 2020
@@ -102,10 +127,14 @@ public class Shooter implements Subsystem {
          If you change something in here, see if it should be changed in this.autonomousShoot also.
         */
         //System.out.println(shooterSpeed + " " + beltSpeed);
-        if(shooterCtrl.getRawButton(Constants.shooterCtrlShoot))
+        /*
+        shooterBottom.set(ControlMode.Velocity, 0.0);
+        beltBottom.set(ControlMode.PercentOutput, 0.0);
+        */
+        if(ctrlManager.getButtonPressedDriver(Constants.shooterBeltIntake))
+            beltEnabled = !beltEnabled;
+        if(ctrlManager.getButtonDriver(Constants.shooterCtrlShoot))
         {
-            
-            //System.out.println("Moving");
             shooterBottom.set(ControlMode.Velocity, shooterSpeed);
             if((shooterSpeed + shooterSpeedError) > shooterBottom.getSelectedSensorVelocity() & (shooterSpeed - shooterSpeedError) < shooterBottom.getSelectedSensorVelocity()){
                 beltBottom.set(ControlMode.PercentOutput, beltSpeed);
@@ -113,22 +142,31 @@ public class Shooter implements Subsystem {
                 beltBottom.set(ControlMode.PercentOutput, 0.0);
             }
         } else 
-        if(shooterCtrl.getRawButton(Constants.shooterCtrlReverse) || contrManager.getIntakeBeltSpeed())
+        if(ctrlManager.getButtonDriver(Constants.shooterCtrlReverse))
         {
             //if(frontLBsensor.get() & !backLBsensor.get()){
                 // TODO: This is temp. Make a perm solution
-                if(shooterCtrl.getRawButton(Buttons.START)) {
-                    beltBottom.set(ControlMode.PercentOutput, -beltSpeed);
+                if(beltEnabled) {
+                    beltBottom.set(ControlMode.PercentOutput, -ctrlManager.getIntakeSpeed());
                 } else {
                     beltBottom.set(ControlMode.PercentOutput, 0.0);
                 }
-                shooterBottom.set(ControlMode.PercentOutput, -Constants.intakeShooterSpeed);
+                //shooterBottom.set(ControlMode.PercentOutput, -Constants.intakeShooterSpeed);
             //}
+        } else if(ctrlManager.getIntakeEnabled()) {
+            if(ctrlManager.getIntakeSpeed() > 0.0) {
+                shooterBottom.set(ControlMode.Velocity, shooterSpeed);
+            }
+            if(beltEnabled) {
+                beltBottom.set(ControlMode.PercentOutput, -beltSpeed);
+            } else {
+                beltBottom.set(ControlMode.PercentOutput, 0.0);
+            }
         } else {
-            shooterBottom.set(ControlMode.PercentOutput, 0.0);
+            shooterBottom.set(ControlMode.Velocity, 0.0);
             beltBottom.set(ControlMode.PercentOutput, 0.0);
         }
-        if(shooterCtrl.getRawButtonPressed(Constants.shooterCtrlLiftToggle))
+        if(ctrlManager.getButtonPressedDriver(Constants.shooterCtrlLiftToggle))
         {
             lifterSolenoid.set(!lifterSolenoid.get());
         }
@@ -139,19 +177,12 @@ public class Shooter implements Subsystem {
         beltSpeed = inst.getEntry("Belt_Speed").getNumber(Constants.AUTO_SHOOTER_BELT_SPEED).doubleValue();
         if(runShooter)
         {
-            shooterBottom.set(ControlMode.PercentOutput, shooterSpeed);
+            shooterBottom.set(ControlMode.Velocity, shooterSpeed);
             //if((shooterSpeed + shooterSpeedError) > shooterBottom.getSelectedSensorVelocity() & (shooterSpeed - shooterSpeedError) < shooterBottom.getSelectedSensorVelocity()){
             beltBottom.set(ControlMode.PercentOutput, beltSpeed);
             //}
-        } else if(shooterCtrl.getRawButton(Constants.shooterCtrlReverse))
-        {
-            // TODO: Does auto mode need to test sensors?
-            //if(frontLBsensor.get() & !backLBsensor.get()){
-            beltBottom.set(ControlMode.PercentOutput, -beltSpeed);
-            shooterBottom.set(ControlMode.PercentOutput, -shooterSpeed);
-            //}
-            //intakeCtrl.getRawAxis(Constants.intakeAxisForward)-intakeCtrl.getRawAxis(Constants.intakeAxisBackward)
         }
+        // TODO: Autonomous reverse shooter
 	}
 
     public void resetEncoders() {

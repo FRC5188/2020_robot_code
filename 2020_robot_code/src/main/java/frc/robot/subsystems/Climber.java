@@ -4,8 +4,9 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
+import frc.robot.ControllerManager;
+import frc.robot.Robot;
 import frc.robot.Subsystem;
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -17,10 +18,10 @@ public class Climber implements Subsystem {
     private final boolean down = false;
     private final boolean up = true;
     */
-    XboxController climberCtrl;
+    ControllerManager ctrlManager;
 
-    public Climber(XboxController controller){
-        climberCtrl = controller;
+    public Climber(){
+        this.ctrlManager = Robot.getControllerManager();
         climberSolenoid = new Solenoid(Constants.climbSolenoid);
         climberSolenoid.set(Constants.SOLENOID_DOWN);
         initCANMotors();
@@ -38,13 +39,13 @@ public class Climber implements Subsystem {
     }
     private void teleopDefaultClimber() {
 
-        if(climberCtrl.getRawButtonPressed(Constants.climberButtonToggle))
+        if(ctrlManager.getButtonPressedDriver(Constants.climberButtonToggle))
         {
             climberSolenoid.set(!climberSolenoid.get());
         }
 
-        if (climberCtrl.getRawAxis(Constants.climberCtrlAxis) < 0){
-            climber.set(ControlMode.PercentOutput, climberCtrl.getRawAxis(Constants.climberCtrlAxis));
+        if (ctrlManager.getAxisDriver(Constants.climberCtrlAxis) < 0){
+            climber.set(ControlMode.PercentOutput, ctrlManager.getAxisDriver(Constants.climberCtrlAxis));
         } else{
             climber.set(ControlMode.PercentOutput, 0);
         }

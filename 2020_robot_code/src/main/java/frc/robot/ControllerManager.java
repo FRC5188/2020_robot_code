@@ -36,12 +36,21 @@ public class ControllerManager {
         return this.operatorController.getRawButtonReleased(button);
     }
 
-    public double getIntakeBeltSpeed() {
+    public double getAxisDriver(int axis) {
+        return this.driverController.getRawAxis(axis);
+    }
+
+    public double getAxisOperator(int axis) {
+        return this.operatorController.getRawAxis(axis);
+    }
+
+    public double getIntakeSpeed() {
         return this.driverController.getRawAxis(Constants.intakeAxisForward)-
             this.driverController.getRawAxis(Constants.intakeAxisBackward);
     }
-    public boolean getIntakeBeltEnabled() {
-        return getIntakeBeltSpeed() == 0.0;
+
+    public boolean getIntakeEnabled() {
+        return this.getIntakeSpeed() != 0.0;
     }
 
 }

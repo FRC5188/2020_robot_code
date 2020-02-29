@@ -1,6 +1,8 @@
 package frc.robot;
 
-public class Constants{
+import frc.robot.utils.Gains;
+
+public class Constants {
     
   //can ids
   public static final int leftFalcon1 = 0;
@@ -35,9 +37,9 @@ public class Constants{
   public static final int SupplyCurrentDuration = 50; //... for at least 50 ms
   public static final int SupplyCurrentLimit = 20; // once current-limiting is activated, hold at 20A
 
-  // Shooter Teleop Variables
-  public static final double shooterShooterSpeed = 0.7;
-  public static final double shooterBeltSpeed = 0.5;
+  // Shooter Teleop Variables // 0.6 = 0.6* 500 RPM
+  public static final double shooterShooterSpeed = 0.6*2000.0*2048.0/600.0; // Velocity, not percent output
+  public static final double shooterBeltSpeed = 0.5; // TODO: Specify Speed vs Percent
   public static final double intakeShooterSpeed = 0.4;
 
   public static final double ENCODER_TICKS_PER_INCH  = 941.1;
@@ -68,21 +70,45 @@ public class Constants{
   public static final double AUTO_SHOOTER_BELT_SPEED = Constants.shooterBeltSpeed; // teleop's defaults
 
   // Teleop button controls
+  /*
+  // For the Driver
   public static final int colorWheelButton = Constants.Buttons.Y;
+  // For the Driver???
   public static final int climberCtrlAxis = Constants.Axis.RY;
+  // For the Operator
+  public static final int shooterCtrlShoot = Constants.Buttons.R;
+  // For the Operator
+  public static final int shooterCtrlReverse = Constants.Buttons.L;
+  // For the Operator
+  public static final int intakeCtrlButtonToggle = Constants.Buttons.B;
+  // For the Operator
+  public static final int shooterCtrlLiftToggle = Constants.Buttons.X;
+  // For the Driver
+  public static final int climberButtonToggle = Constants.Buttons.A;
+  // For the Driver
+  public static final int intakeAxisForward = Axis.LTrigger;
+  // For the Driver
+  public static final int intakeAxisBackward = Axis.RTrigger;
+  */
+  public static final int colorWheelButton = Constants.Buttons.Y;
+  public static final int climberCtrlAxis = Constants.Axis.LX;
   public static final int shooterCtrlShoot = Constants.Buttons.R;
   public static final int shooterCtrlReverse = Constants.Buttons.L;
   public static final int intakeCtrlButtonToggle = Constants.Buttons.B;
   public static final int shooterCtrlLiftToggle = Constants.Buttons.X;
-  public static final int climberButtonToggle = Constants.Buttons.A;
+  public static final int climberButtonToggle = Constants.Buttons.Y;
+  public static final int intakeAxisForward = Axis.LTrigger;
+  public static final int intakeAxisBackward = Axis.RTrigger;
+
+  public static final int shooterBeltIntake = Constants.Buttons.A;
+  
   //public static final int colorWheelSpinButton = Constants.Buttons;
 
   // Misc
   public static final boolean SOLENOID_DOWN = false;
   public static final boolean SOLENOID_UP = true;
   
-  public static final int intakeAxisForward = Axis.LTrigger;
-  public static final int intakeAxisBackward = Axis.RTrigger;
+  public static final Gains SHOOTER_CONFIG = new Gains(1023.0/20660.0,0.1,0.0,0.0,300,1.00);//0.001,5.0,1023.0/20660.0,300, 1.00);
   
   public static class Buttons {
 
