@@ -19,6 +19,7 @@ import frc.robot.ControllerManager;
 import frc.robot.Robot;
 import frc.robot.Subsystem;
 import frc.robot.Constants.Axis;
+import frc.robot.utils.InputButton;
 
 public class DriveTrain implements Subsystem {
 
@@ -84,8 +85,8 @@ public class DriveTrain implements Subsystem {
         // create current config, new for 2020
         // it is a little long........ :(
         SupplyCurrentLimitConfiguration supplyCurrentConfig;
-        supplyCurrentConfig = new SupplyCurrentLimitConfiguration(true, Constants.SupplyCurrentLimit,
-                Constants.SupplyTriggerCurremt, Constants.SupplyCurrentDuration);
+        supplyCurrentConfig = new SupplyCurrentLimitConfiguration(true, Constants.DriveTrainSupplyCurrentLimit,
+                Constants.DriveTrainSupplyTriggerCurremt, Constants.DriveTrainSupplyCurrentDuration);
 
         // apply current limits
         leftMotor1.configSupplyCurrentLimit(supplyCurrentConfig);
@@ -161,13 +162,13 @@ public class DriveTrain implements Subsystem {
         deadSpaceTurn = deadSpaceTurnEnt.getDouble(0.2);
         minimumThreshold = minimumThresholdEnt.getDouble(0.001);
         throttleShifter = throttleShifterEnt.getDouble(0.3);
-        double throttle = ctrlManager.getAxisDriver(Axis.LY);
-        double turn = ctrlManager.getAxisDriver(Axis.RX);
+        double throttle = ctrlManager.getAxis(InputButton.DRIVER_LY);
+        double turn = ctrlManager.getAxis(InputButton.DRIVER_RX);
         // Map turn and throttle to be from "deadSpace" to 1.0
         // So that a small bump actually moves the robot ( < deadSpace doesn't move)
         // minimumThreshold is the minimum the controller has to move to map it. (Otherwise it'd move without user input)
         
-        if(ctrlManager.getButtonDriver(Constants.throttleShiftButton)) {
+        if(ctrlManager.getButton(Constants.throttleShiftButton)) {
             throttleShifter = 0.6;
         } else {
             throttleShifter = 1.0;

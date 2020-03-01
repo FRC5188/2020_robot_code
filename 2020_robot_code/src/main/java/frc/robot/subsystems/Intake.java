@@ -20,16 +20,13 @@ public class Intake implements Subsystem {
         this.ctrlManager = Robot.getControllerManager();
     }
 
-    void defaultTeleop(){
-        //System.out.println(intakeCtrl.getBButtonPressed());
-        //System.out.println(intakeCtrl.getRawButtonPressed(Constants.intakeCtrlButtonToggle));
-        for(int but: Constants.intakeCtrlButtonToggle) {
-            if(ctrlManager.getButtonPressedDriver(but) && !this.robot.getShooter().lifterSolenoid.get()){
-                intakeSolenoid.set(!intakeSolenoid.get());
-                break;
-            }
+    void defaultTeleop() {
+        if(this.robot.getShooter().lifterSolenoid.get()) return;
+        if(ctrlManager.getButtonPressed(Constants.intakeCtrlButtonToggle)){
+            intakeSolenoid.set(!intakeSolenoid.get());
         }
-        intakeMotor.set(ControlMode.PercentOutput, ctrlManager.getIntakeSpeed());
+        if(!intakeSolenoid.get())
+            intakeMotor.set(ControlMode.PercentOutput, ctrlManager.getIntakeSpeed());
     }
 
     @Override

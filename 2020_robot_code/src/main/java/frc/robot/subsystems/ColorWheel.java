@@ -16,9 +16,8 @@ public class ColorWheel implements Subsystem {
     ControllerManager ctrlManager;
     Robot robot;
     
-    //constructor
     public ColorWheel(Robot robot){
-        this.robot = robot;
+        this.robot = robot; // Unused, but would be used for interfacing with other subsystems
         this.ctrlManager = Robot.getControllerManager();
         this.wheelSolenoid = new Solenoid(Constants.colorWheelSolenoid);
         initCANMotors();
@@ -26,19 +25,18 @@ public class ColorWheel implements Subsystem {
     private void initCANMotors(){
         this.wheelSpinner = new TalonSRX(Constants.wheelSpinner);
         
-        //enable braking mode
         wheelSpinner.setNeutralMode(NeutralMode.Brake);
     }
     public void resetEncoders() {
         wheelSpinner.setSelectedSensorPosition(0);
     }
     private void teleopDefaultColorWheel() {
-        if(ctrlManager.getButtonPressedOperator(Constants.colorWheelPneumaticButton))
+        if(ctrlManager.getButtonPressed(Constants.colorWheelPneumaticButton))
         {
             wheelSolenoid.set(!wheelSolenoid.get());
         }
         
-        if(ctrlManager.getButtonOperator(Constants.colorWheelSpinButton)) {
+        if(ctrlManager.getButton(Constants.colorWheelSpinButton)) {
             this.wheelSpinner.set(ControlMode.PercentOutput, 0.5);
         } else {
             this.wheelSpinner.set(ControlMode.PercentOutput, 0.0);

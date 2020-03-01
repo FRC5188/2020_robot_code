@@ -113,7 +113,7 @@ public class Shooter implements Subsystem {
         //it is a little long........ :(
         SupplyCurrentLimitConfiguration supplyCurrentConfig;
         supplyCurrentConfig = new SupplyCurrentLimitConfiguration(
-            true, Constants.SupplyCurrentLimit, Constants.SupplyTriggerCurremt, Constants.SupplyCurrentDuration
+            true, Constants.ShooterSupplyCurrentLimit, Constants.ShooterSupplyTriggerCurremt, Constants.ShooterSupplyCurrentDuration
         );
 
         //apply current limits
@@ -160,7 +160,7 @@ public class Shooter implements Subsystem {
         if(ctrlManager.getButtonPressedOperator(Constants.shooterBeltIntake))
             beltEnabled = !beltEnabled;
         */
-        if(ctrlManager.getAxisOperator(Constants.shooterCtrlShoot) > 0.5)
+        if(ctrlManager.getAxis(Constants.shooterCtrlShoot) > 0.5)
         {
             if(!lifterSolenoid.get())
                 lifterSolenoid.set(true);
@@ -210,7 +210,7 @@ public class Shooter implements Subsystem {
             //shooterBottom.set(ControlMode.Velocity, 0.0);
             beltBottom.set(ControlMode.PercentOutput, 0.0);
         }
-        if(ctrlManager.getButtonPressedOperator(Constants.shooterCtrlLiftToggle))
+        if(ctrlManager.getButtonPressed(Constants.shooterCtrlLiftToggle))
         {
             lifterSolenoid.set(!lifterSolenoid.get());
         }

@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.utils.Gains;
+import frc.robot.utils.InputButton;
 
 public class Constants {
     
@@ -14,14 +15,9 @@ public class Constants {
   public static final int shooterBottomFalcon = 5;
   public static final int beltTop775Pro = 6;
   public static final int beltBottom775Pro = 7;
-  public static final int intakeMotor = 9;
-
   public static final int wheelSpinner = 8;
-  // Motor in climber class was set to wheelSpinner, (which was same as color wheel)
-  // Don't know for sure what you want, but I knew it was wrong.
+  public static final int intakeMotor = 9;
   public static final int climberMotor = 10;
-
-  public static final int driverPort = 0;
 
   public static final int frontLBsensor = 0;
   public static final int backLBsensor = 1;
@@ -33,9 +29,13 @@ public class Constants {
   public static final int climbSolenoid = 3;
 
   //current limiting params
-  public static final int SupplyTriggerCurremt = 35; // don't activate current limit until current exceeds 30 A...
-  public static final int SupplyCurrentDuration = 50; //... for at least 50 ms
-  public static final int SupplyCurrentLimit = 30; // once current-limiting is activated, hold at 20A
+  public static final int DriveTrainSupplyTriggerCurremt = 35; // don't activate current limit until current exceeds __A...
+  public static final int DriveTrainSupplyCurrentDuration = 50; //... for at least __ ms
+  public static final int DriveTrainSupplyCurrentLimit = 30; // once current-limiting is activated, hold at __A
+  
+  public static final int ShooterSupplyTriggerCurremt = 35; // don't activate current limit until current exceeds __A...
+  public static final int ShooterSupplyCurrentDuration = 50; //... for at least __ ms
+  public static final int ShooterSupplyCurrentLimit = 30; // once current-limiting is activated, hold at __A
 
   // Shooter Teleop Variables // 750 RPM
   public static final double shooterShooterSpeed = 1500.0/500.0*2000.0*2048.0/600.0; // Velocity, not percent output
@@ -72,6 +72,7 @@ public class Constants {
 
   // Teleop button controls
   
+  /*
   // For the Operator
   public static final int shooterCtrlShoot = Constants.Axis.RTrigger; // RTrigger
   public static final int shooterCtrlLiftToggle = Constants.Buttons.R; // Right Button
@@ -85,14 +86,31 @@ public class Constants {
 
   public static final int climberCtrlAxis = Constants.Axis.LY;
   public static final int climberButtonToggle = Constants.Buttons.Y;
-  // To driver[\]
+  // To driver
   public static final int[] intakeCtrlButtonToggle = new int[] {Constants.Buttons.A, Constants.Buttons.B,Constants.Buttons.X,Constants.Buttons.Y};
+  */
 
+  public static final InputButton shooterCtrlShoot = InputButton.OPERATOR_RTrigger; // RTrigger
+  public static final InputButton shooterCtrlLiftToggle = InputButton.OPERATOR_R; // Right Button
+
+  //public static final int shooterCtrlReverse = Constants.Buttons.; // Don't need?
+  public static final InputButton intakeAxisForward = InputButton.OPERATOR_LTrigger; 
+  public static final InputButton intakeAxisBackward = InputButton.OPERATOR_L; // L Button "Unjam"
+
+  public static final InputButton colorWheelPneumaticButton = InputButton.OPERATOR_A; 
+  public static final InputButton colorWheelSpinButton = InputButton.OPERATOR_X;
+
+  public static final InputButton climberCtrlAxis = InputButton.OPERATOR_LY;
+  public static final InputButton climberButtonToggle = InputButton.OPERATOR_Y;
+  // To driver
+  public static final InputButton intakeCtrlButtonToggle = new InputButton(
+      InputButton.DRIVER_A, InputButton.DRIVER_B,InputButton.DRIVER_X,InputButton.DRIVER_Y);
+  
 
   // Drive Train Buttons
-  public static final int throttleShiftButton = Constants.Buttons.R;
+  public static final InputButton throttleShiftButton = InputButton.DRIVER_R;
   
-  public static final int shooterBeltIntake = Constants.Buttons.BACK;
+  //public static final InputButton shooterBeltIntake = InputButton.DRIVER_BACK;
 
   /*
   public static final int colorWheelButton = Constants.Buttons.Y;
@@ -113,27 +131,6 @@ public class Constants {
   public static final boolean SOLENOID_UP = true;
   
   public static final Gains SHOOTER_CONFIG = new Gains(1023.0/20660.0,0.5,0.0,0.0,300,1.00);//0.001,5.0,1023.0/20660.0,300, 1.00);
-  
-  public static class ControllerInput {
-    public static int 
-    A = 1,
-    B = 2,
-    X = 3,
-    Y = 4,
-    L = 5,
-    R = 6,
-    BACK = 7,
-    START = 8,
-    L_STICK = 9,
-    R_STICK = 10,
-    LX = 11,
-    LY = 12,
-    LTrigger = 13,
-    RTrigger = 14,
-    RX = 15,
-    RY = 16;
-
-  }
 
   public static class Buttons {
 

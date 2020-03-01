@@ -8,17 +8,12 @@ import frc.robot.Constants;
 import frc.robot.ControllerManager;
 import frc.robot.Robot;
 import frc.robot.Subsystem;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class Climber implements Subsystem {
     VictorSPX climber;
     Solenoid climberSolenoid;
-    /*
-    Available in solenoid.get()?
-    private final boolean down = false;
-    private final boolean up = true;
-    */
+    
     ControllerManager ctrlManager;
     Robot robot;
 
@@ -32,8 +27,6 @@ public class Climber implements Subsystem {
     private void initCANMotors(){
         this.climber = new VictorSPX(Constants.climberMotor);
          
- 
-        //enable braking mode
         climber.setNeutralMode(NeutralMode.Brake);
     }
     public void resetEncoders() {
@@ -41,14 +34,13 @@ public class Climber implements Subsystem {
         climber.setSelectedSensorPosition(0);
     }
     private void teleopDefaultClimber() {
-
-        if(ctrlManager.getButtonPressedOperator(Constants.climberButtonToggle) && !this.robot.getIntake().intakeSolenoid.get())
+        if(ctrlManager.getButtonPressed(Constants.climberButtonToggle) && !this.robot.getIntake().intakeSolenoid.get())
         {
             climberSolenoid.set(!climberSolenoid.get());
         }
 
-        if ((!climberSolenoid.get()) && ctrlManager.getAxisOperator(Constants.climberCtrlAxis) < 0){
-            climber.set(ControlMode.PercentOutput, ctrlManager.getAxisOperator(Constants.climberCtrlAxis));
+        if ((!climberSolenoid.get()) && ctrlManager.getAxis(Constants.climberCtrlAxis) < 0){
+            climber.set(ControlMode.PercentOutput, ctrlManager.getAxis(Constants.climberCtrlAxis));
         } else{
             climber.set(ControlMode.PercentOutput, 0);
         }
