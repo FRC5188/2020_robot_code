@@ -117,7 +117,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     // Was removed (for a reason?)
-    //autoManager.periodic();
+    autoManager.periodic();
   }
 
   @Override

@@ -24,6 +24,10 @@ public class TaskMove extends AutoTask {
     int time;
     int timer = 0;
     double startDist;
+    boolean useQuickHack = false;
+    int timeToMove;
+    boolean forwardOrBackward;
+    double speed;
     /**
      * Distance is in Inches 
      * TODO: Determine best unit
@@ -35,6 +39,18 @@ public class TaskMove extends AutoTask {
         this.time = Constants.TASK_MOVE_DEFAULT_TIME;
         this.state = TaskState.NOT_STARTED;
     }
+    /*
+    * Quick task to make sure we have atleast one working auto before comp
+    * Move for a certain number of ticks
+    */
+    public TaskMove(int time, boolean forwardOrBackward, double speed) {
+        // "useQuickHack" is just to make sure the constructor overloads, and the task knows to move using time
+        this.useQuickHack = true;
+        this.timeToMove = time;
+        this.forwardOrBackward = forwardOrBackward;
+        this.speed = speed;
+        this.state = TaskState.NOT_STARTED;
+    }
     /**
      * Distance is in Inches
      * Tolerance is in inches away,
@@ -42,6 +58,7 @@ public class TaskMove extends AutoTask {
      * TODO: Determine best unit
      * @param distance
      * @param tolerance
+     * @param time
      **/
     public TaskMove(double distance, double tolerance, int time) {
         this.distance = distance;
@@ -68,15 +85,24 @@ public class TaskMove extends AutoTask {
         if(this.state == TaskState.CANCELLED || this.state == TaskState.FINISHED) return this.state;
         double avgDist = getAverageEncoderDist();
         AutoRequestHandler reqHandler = AutoRequestHandler.getInst();
-        reqHandler.addThrottle(this.pidController.calculate(avgDist));
-        if(Math.abs(avgDist-startDist) < this.tolerance) {
+        if(this.useQuickHack) {
+            reqHandler.addThrottle(forwardOrBackward ? this.speed : -this.speed);
             timer += 1;
-            if(timer > time) {
+            if(timer > timeToMove) {
                 this.isFinished = true;
                 this.state = TaskState.FINISHED;
             }
-        } else if(timer > 0)
-            timer = 0;
+        } else {
+            reqHandler.addThrottle(this.pidController.calculate(avgDist));
+            if(Math.abs(avgDist-startDist) < this.tolerance) {
+                timer += 1;
+                if(timer > time) {
+                    this.isFinished = true;
+                    this.state = TaskState.FINISHED;
+                }
+            } else if(timer > 0)
+                timer = 0;
+        }
         return this.state;
     }
 
@@ -110,6 +136,7 @@ public class TaskMove extends AutoTask {
 
     @Override
     public String serialize() {
+
         return "Move forward "  + distance + " inches.";
     }
 

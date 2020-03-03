@@ -14,16 +14,37 @@ import frc.robot.autonomous.taskgroups.*;
  */
 public enum AutoTaskGroups {
 
-    DEFAULT(new TaskGroupDefault(), "Default", new String[]{ 
+    DEFAULT_MOVE(new TaskGroupDefaultMove(), "Default Move (Timed Move)", new String[]{ 
         "Default Auto",
-        "Moves off the line by 1 foot"
+        "Moves forward at 0.3 throttle for 1 second."
     }), 
+    TIMED_MOVE_SEMIFAST(new TaskGroupDefaultMove(50,0.6), "Timed Move Semi-Fast", new String[]{ 
+        "Timed Move Fast",
+        "Moves forward at 0.6 throttle for 1 second."
+    }), 
+    TIMED_MOVE_SEMIFAST_QUICK(new TaskGroupDefaultMove(25, 0.6), "Timed Move Semi-Fast Quick", new String[]{ 
+        "Timed Move Semi-Fast Quick",
+        "Moves forward at 0.6 throttle for 0.5 seconds."
+    }), 
+    TIMED_MOVE_SLOW_QUICK(new TaskGroupDefaultMove(25, 0.3), "Timed Move Slow Quick", new String[]{ 
+        "Timed Move Slow Quick",
+        "Moves forward at 0.3 throttle for 0.5 seconds."
+    }), 
+    TIMED_MOVE_SEMIFAST_LONG(new TaskGroupDefaultMove(150, 0.6), "Timed Move Semi-Fast Long", new String[]{ 
+        "Timed Move Semi-Fast Long",
+        "Moves forward at 0.6 throttle for 3 seconds."
+    }), 
+    TIMED_MOVE_SLOW_LONG(new TaskGroupDefaultMove(150, 0.3), "Timed Move Slow Long", new String[]{ 
+        "Timed Move Slow Long",
+        "Moves forward at 0.3 throttle for 3 seconds."
+    });
+    /*
     SHOOT_TURN(new TaskGroupShoot(), "Shoot Turn", new String[] {
         "Shoot Turn",
         "Moves off the line by 1 foot",
         "Turns toward the target",
         "Shoots the balls"
-    });
+    });*/
 
     private TaskGroup taskGroup;
     private String friendlyName;

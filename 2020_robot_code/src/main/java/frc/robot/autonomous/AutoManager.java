@@ -51,6 +51,8 @@ public class AutoManager {
 
     public void periodic() {
         if(!this.started) {
+            reqHandler.startPeriodic();
+            reqHandler.endPeriodic();
             timeCount += 1;
             if(timeCount < delayWidget.getEntry().getNumber(0).doubleValue()/60.0)
                 return;

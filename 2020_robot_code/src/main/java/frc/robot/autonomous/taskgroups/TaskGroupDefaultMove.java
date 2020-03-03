@@ -16,12 +16,25 @@ import frc.robot.autonomous.utils.TaskGroup;
 /**
  * Add your docs here.
  */
-public class TaskGroupDefault  extends TaskGroup {
+public class TaskGroupDefaultMove  extends TaskGroup {
+
+    int time;
+    double speed;
+
+    public TaskGroupDefaultMove() {
+        this.time = 50;
+        this.speed = 0.3;
+    }
+
+    public TaskGroupDefaultMove(int time, double speed) {
+        this.time = time;
+        this.speed = speed;
+    }
 
     @Override
     public Queue<AutoTask> retrieveTasks() {
         if(!tasks.isEmpty()) return tasks;
-        tasks.add(new TaskMove(12.0));
+        tasks.add(new TaskMove(time, true, speed));
         return tasks;
     }
 

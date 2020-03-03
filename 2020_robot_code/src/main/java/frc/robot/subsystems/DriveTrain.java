@@ -7,7 +7,10 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -18,7 +21,6 @@ import frc.robot.Constants;
 import frc.robot.ControllerManager;
 import frc.robot.Robot;
 import frc.robot.Subsystem;
-import frc.robot.Constants.Axis;
 import frc.robot.utils.InputButton;
 
 public class DriveTrain implements Subsystem {
@@ -31,6 +33,12 @@ public class DriveTrain implements Subsystem {
     DifferentialDrive diffDrive;
     DifferentialDriveOdometry odometry;
     AHRS ahrsGyro;
+
+    PIDController visionPid;
+    NetworkTableEntry targetX;
+    NetworkTableEntry pidP;
+    NetworkTableEntry pidI;
+    NetworkTableEntry pidD;
 
     ControllerManager ctrlManager;
     Robot robot;
@@ -46,6 +54,7 @@ public class DriveTrain implements Subsystem {
         this.initDiffDrive();
         this.initGyro();
         this.initOdometry();
+        this.initVision();
 
         // TODO: Remove Testing Code
         ShuffleboardTab tab = Shuffleboard.getTab("Drive Variables");
@@ -56,6 +65,16 @@ public class DriveTrain implements Subsystem {
         deadSpaceTurnEnt = tab.add("Minimum Power Turn", deadSpaceTurn).getEntry();
         turnShifterEnt = tab.add("Turn Coefficient", turnShifter).getEntry();
         throttleShifterEnt = tab.add("Throttle Coefficient", throttleShifter).getEntry();
+    }
+
+    private void initVision() {
+        this.visionPid = new PIDController(Constants.VISION_PID_P, Constants.VISION_PID_I, Constants.VISION_PID_D);
+        this.targetX = NetworkTableInstance.getDefault().getTable("SmartDashboard").getEntry("tape-x");
+        this.visionPid.setSetpoint(160.0);
+        ShuffleboardTab tab = Shuffleboard.getTab("Vision PID Test");
+        pidP = tab.add("P",0.0).getEntry();
+        pidI = tab.add("I",0.0).getEntry();
+        pidD = tab.add("D",0.0).getEntry();
     }
 
     private void initCANMotors() {
@@ -109,7 +128,7 @@ public class DriveTrain implements Subsystem {
     private void initDiffDrive() {
 
         diffDrive = new DifferentialDrive(leftMotor1, rightMotor1);
-
+        diffDrive.setSafetyEnabled(false);
     }
 
     private void initGyro() {
@@ -178,6 +197,11 @@ public class DriveTrain implements Subsystem {
         throttle = throttle * throttleShifter * (1-deadSpaceThrottle) + (Math.abs(throttle) < minimumThreshold ? 0.0 : (throttle > 0 ? deadSpaceThrottle : -deadSpaceThrottle));
         turn = turn * turnShifter * (1-deadSpaceTurn) + (Math.abs(turn) < minimumThreshold ? 0.0 : (turn > 0 ? deadSpaceTurn : -deadSpaceTurn));
 
+        if(ctrlManager.getButton(Constants.shooterAlignVisionButton)) {
+            visionPid.setPID(pidP.getDouble(0.0),pidI.getDouble(0.0),pidD.getDouble(0.0));
+            turn = visionPid.calculate(targetX.getDouble(160.0));
+        }
+
         // allow for manual quick turn enable 
         //boolean isQuickTurn = ctrlManager.getButtonDriver(Constants.Buttons.R);
 
@@ -193,7 +217,7 @@ public class DriveTrain implements Subsystem {
 
     public void autonomousDefaultDrive(double throttle, double turn) {
         // TODO: If subsys is killed, don't run.
-        diffDrive.curvatureDrive(Constants.AUTONOMOUS_MAX_THROTTLE*throttle, Constants.AUTONOMOUS_MAX_TURN*turn, false);
+        diffDrive.curvatureDrive(-Constants.AUTONOMOUS_MAX_THROTTLE*throttle, Constants.AUTONOMOUS_MAX_TURN*turn, false);
     }
 
     public void updateOdometry() {

@@ -151,42 +151,18 @@ public class Shooter implements Subsystem {
         /*
          If you change something in here, see if it should be changed in this.autonomousShoot also.
         */
-        //System.out.println(shooterSpeed + " " + beltSpeed);
-        /*
-        shooterBottom.set(ControlMode.Velocity, 0.0);
-        beltBottom.set(ControlMode.PercentOutput, 0.0);
-        */
-        /*
-        if(ctrlManager.getButtonPressedOperator(Constants.shooterBeltIntake))
-            beltEnabled = !beltEnabled;
-        */
         if(ctrlManager.getAxis(Constants.shooterCtrlShoot) > 0.5)
         {
             if(!lifterSolenoid.get())
                 lifterSolenoid.set(true);
             //shooterBottom.set(ControlMode.Velocity, -shooterSpeed);
             shooterBottom.set(ControlMode.PercentOutput, -1.0);
-            //System.out.println(shooterSpeed + " " + shooterBottom.getSelectedSensorVelocity());
-            // (shooterSpeed + shooterSpeedError) > shooterBottom.getSelectedSensorVelocity() & 
-            //System.out.println((shooterSpeed-shooterSpeedError) + " " + shooterBottom.getSelectedSensorVelocity());
             if((shooterSpeed - shooterSpeedError) < -shooterBottom.getSelectedSensorVelocity()){
                 beltBottom.set(ControlMode.PercentOutput, beltSpeed);
             } else {
                 beltBottom.set(ControlMode.PercentOutput, 0.0);
             }
-        } else /*
-        if(ctrlManager.getButtonOperator(Constants.shooterCtrlReverse))
-        {
-            //if(frontLBsensor.get() & !backLBsensor.get()){
-                // TODO: This is temp. Make a perm solution
-                if(beltEnabled) {
-                    beltBottom.set(ControlMode.PercentOutput, -ctrlManager.getIntakeSpeed());
-                } else {
-                    beltBottom.set(ControlMode.PercentOutput, 0.0);
-                }
-                //shooterBottom.set(ControlMode.PercentOutput, -Constants.intakeShooterSpeed);
-            //}
-        } else*/ if(ctrlManager.getIntakeEnabled()) {
+        } else if(ctrlManager.getIntakeEnabled()) {
             if(ctrlManager.getIntakeSpeed() > 0.0) {
                 shooterBottom.set(ControlMode.PercentOutput, 0.5);
                 //shooterBottom.set(ControlMode.Velocity, Constants.intakeShooterSpeed);
@@ -194,16 +170,18 @@ public class Shooter implements Subsystem {
             //System.out.println(frontLineBreakTimer + " " + frontLBsensor.get());
             if(!frontLBsensor.get()) {
                 frontLineBreakTimer += 1; 
-                if(frontLineBreakTimer > 8) { // 25 Ticks, 50 ticks per second
-                    beltBottom.set(ControlMode.PercentOutput, -beltSpeed);
+                if(frontLineBreakTimer > 8) { // 50 ticks per second
+                    beltBottom.set(ControlMode.PercentOutput, -Constants.intakeBeltSpeed);
                 }
             } else {
+                /*
                 if(frontLineBreakTimer > 3)
                     frontLineBreakTimer = 3;
                 else if(frontLineBreakTimer > 0)
                     frontLineBreakTimer -= 1;
-                else 
-                    beltBottom.set(ControlMode.PercentOutput, 0.0);
+                else*/ 
+                frontLineBreakTimer = 0;
+                beltBottom.set(ControlMode.PercentOutput, 0.0);
             }
         } else {
             shooterBottom.set(ControlMode.PercentOutput, 0.0);
@@ -214,6 +192,7 @@ public class Shooter implements Subsystem {
         {
             lifterSolenoid.set(!lifterSolenoid.get());
         }
+        
     }
     
 	public void autonomousShoot(boolean runShooter, boolean reverserShooter) {

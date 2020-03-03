@@ -41,6 +41,8 @@ public class Constants {
   public static final double shooterShooterSpeed = 1500.0/500.0*2000.0*2048.0/600.0; // Velocity, not percent output
   public static final double shooterBeltSpeed = 0.5; // TODO: Specify Speed vs Percent
   public static final double intakeShooterSpeed = 1000.0/500.0*2000.0*2048.0/600.0;
+  public static final double intakeBeltSpeed = 0.3;
+
 
   public static final double ENCODER_TICKS_PER_INCH  = 941.1;
   public static final double openRampDuration = 0.5; //seconds from zero to full throttle
@@ -69,6 +71,11 @@ public class Constants {
   public static final double AUTONOMOUS_MAX_TURN = 0.5;
   public static final double AUTO_SHOOTER_SHOOTER_SPEED = Constants.shooterShooterSpeed; // default to 
   public static final double AUTO_SHOOTER_BELT_SPEED = Constants.shooterBeltSpeed; // teleop's defaults
+
+  // Vision PID
+  public static final double VISION_PID_P = 0.01;
+  public static final double VISION_PID_I = 0;
+  public static final double VISION_PID_D = 0;
 
   // Teleop button controls
   
@@ -109,6 +116,7 @@ public class Constants {
 
   // Drive Train Buttons
   public static final InputButton throttleShiftButton = InputButton.DRIVER_R;
+  public static final InputButton shooterAlignVisionButton = InputButton.DRIVER_L;
   
   //public static final InputButton shooterBeltIntake = InputButton.DRIVER_BACK;
 
@@ -131,6 +139,7 @@ public class Constants {
   public static final boolean SOLENOID_UP = true;
   
   public static final Gains SHOOTER_CONFIG = new Gains(1023.0/20660.0,0.5,0.0,0.0,300,1.00);//0.001,5.0,1023.0/20660.0,300, 1.00);
+
 
   public static class Buttons {
 
