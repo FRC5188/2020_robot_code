@@ -32,7 +32,7 @@ public class Shooter implements Subsystem {
 
     double shooterSpeed;
     double beltSpeed;
-    double shooterSpeedError = 300.0;
+    double shooterSpeedError = 1000.0;
     boolean beltEnabled = false;
 
     private int frontLineBreakTimer = 0;
@@ -115,10 +115,15 @@ public class Shooter implements Subsystem {
         supplyCurrentConfig = new SupplyCurrentLimitConfiguration(
             true, Constants.ShooterSupplyCurrentLimit, Constants.ShooterSupplyTriggerCurremt, Constants.ShooterSupplyCurrentDuration
         );
-
+        SupplyCurrentLimitConfiguration supplyCurrentConfigBelt;
+        supplyCurrentConfigBelt = new SupplyCurrentLimitConfiguration(
+            true, Constants.BeltSupplyCurrentLimit, Constants.BeltSupplyTriggerCurremt, Constants.BeltSupplyCurrentDuration
+        );
         //apply current limits
         shooterTop.configSupplyCurrentLimit(supplyCurrentConfig);
         shooterBottom.configSupplyCurrentLimit(supplyCurrentConfig);
+
+        beltBottom.configSupplyCurrentLimit(supplyCurrentConfigBelt);
         
         shooterBottom.configOpenloopRamp(Constants.shooterOpenRampDuration);
         shooterTop.configOpenloopRamp(Constants.shooterOpenRampDuration);
@@ -153,10 +158,15 @@ public class Shooter implements Subsystem {
         */
         if(ctrlManager.getAxis(Constants.shooterCtrlShoot) > 0.5)
         {
-            if(!lifterSolenoid.get())
+            if(!lifterSolenoid.get()) {
                 lifterSolenoid.set(true);
+                // TODO: Make timer to make sure doesnt get stuck
+                return;
+            }
             //shooterBottom.set(ControlMode.Velocity, -shooterSpeed);
             shooterBottom.set(ControlMode.PercentOutput, -1.0);
+            System.out.println(shooterSpeed + " " + shooterSpeedError + " " + shooterBottom.getSelectedSensorVelocity());
+            // TODO Timeout for low voltage
             if((shooterSpeed - shooterSpeedError) < -shooterBottom.getSelectedSensorVelocity()){
                 beltBottom.set(ControlMode.PercentOutput, beltSpeed);
             } else {
@@ -164,7 +174,7 @@ public class Shooter implements Subsystem {
             }
         } else if(ctrlManager.getIntakeEnabled()) {
             if(ctrlManager.getIntakeSpeed() > 0.0) {
-                shooterBottom.set(ControlMode.PercentOutput, 0.5);
+                shooterBottom.set(ControlMode.PercentOutput, 0.35);
                 //shooterBottom.set(ControlMode.Velocity, Constants.intakeShooterSpeed);
             }
             //System.out.println(frontLineBreakTimer + " " + frontLBsensor.get());

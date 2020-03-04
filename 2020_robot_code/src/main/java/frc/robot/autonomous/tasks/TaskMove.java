@@ -21,8 +21,7 @@ public class TaskMove extends AutoTask {
     PIDController pidController;
     double distance;
     double tolerance;
-    int time;
-    int timer = 0;
+    long endTime;
     double startDist;
     boolean useQuickHack = false;
     int timeToMove;
@@ -36,7 +35,7 @@ public class TaskMove extends AutoTask {
     public TaskMove(double distance) {
         this.distance = distance;
         this.tolerance = Constants.TASK_MOVE_DEFAULT_TOLERANCE;
-        this.time = Constants.TASK_MOVE_DEFAULT_TIME;
+        this.timeToMove = Constants.TASK_MOVE_DEFAULT_TIME;
         this.state = TaskState.NOT_STARTED;
     }
     /*
@@ -46,7 +45,7 @@ public class TaskMove extends AutoTask {
     public TaskMove(int time, boolean forwardOrBackward, double speed) {
         // "useQuickHack" is just to make sure the constructor overloads, and the task knows to move using time
         this.useQuickHack = true;
-        this.timeToMove = time;
+        this.timeToMove = 1000;//(int) Math.round(time/50.0*1000);
         this.forwardOrBackward = forwardOrBackward;
         this.speed = speed;
         this.state = TaskState.NOT_STARTED;
@@ -63,7 +62,7 @@ public class TaskMove extends AutoTask {
     public TaskMove(double distance, double tolerance, int time) {
         this.distance = distance;
         this.tolerance = tolerance;
-        this.time = time;
+        this.timeToMove = time;
         this.state = TaskState.NOT_STARTED;
     }
 
@@ -73,6 +72,8 @@ public class TaskMove extends AutoTask {
         this.state = TaskState.RUNNING;
         this.startDist = getAverageEncoderDist();
         this.pidController.setSetpoint(this.startDist + this.distance);
+        if(this.useQuickHack)
+            this.endTime = System.currentTimeMillis()+timeToMove;
         //this.pidController.setTolerance(this.tolerance*0.75);
     }
 
@@ -87,21 +88,20 @@ public class TaskMove extends AutoTask {
         AutoRequestHandler reqHandler = AutoRequestHandler.getInst();
         if(this.useQuickHack) {
             reqHandler.addThrottle(forwardOrBackward ? this.speed : -this.speed);
-            timer += 1;
-            if(timer > timeToMove) {
+            System.out.println(this.endTime-System.currentTimeMillis());
+            if(System.currentTimeMillis() > this.endTime) {
                 this.isFinished = true;
                 this.state = TaskState.FINISHED;
             }
         } else {
             reqHandler.addThrottle(this.pidController.calculate(avgDist));
             if(Math.abs(avgDist-startDist) < this.tolerance) {
-                timer += 1;
-                if(timer > time) {
+                if(System.currentTimeMillis() > this.endTime) {
                     this.isFinished = true;
                     this.state = TaskState.FINISHED;
                 }
-            } else if(timer > 0)
-                timer = 0;
+            } else if(this.endTime != 0)
+                this.endTime = 0;
         }
         return this.state;
     }
@@ -136,7 +136,8 @@ public class TaskMove extends AutoTask {
 
     @Override
     public String serialize() {
-
+        if(this.useQuickHack) 
+            return "Move forward for " + (timeToMove/1000.0) + " seconds\n at " + this.speed + " throttle.";
         return "Move forward "  + distance + " inches.";
     }
 

@@ -31,6 +31,7 @@ public class AutoManager {
     AutoRequestHandler reqHandler;
     int timeCount = 0;
     boolean started = false;
+    long startTime;
 
     // Shuffleboard Fields
     ShuffleboardTab tab;
@@ -45,31 +46,35 @@ public class AutoManager {
     public void init(Robot robot) {
         tasks = autoSelectorSendable.getSelected().getTaskGroup().retrieveTasks(); // Currently arbitrary, but can be changed
         reqHandler = new AutoRequestHandler(robot);
-        AutoTask currentTask = tasks.peek();
-        currentTask.init();
+        this.startTime = System.currentTimeMillis();
     }
 
     public void periodic() {
         if(!this.started) {
-            reqHandler.startPeriodic();
-            reqHandler.endPeriodic();
-            timeCount += 1;
-            if(timeCount < delayWidget.getEntry().getNumber(0).doubleValue()/60.0)
+            if(System.currentTimeMillis()-this.startTime < delayWidget.getEntry().getNumber(0).doubleValue()*1000.0)
                 return;
             this.started = true;
+            AutoTask currentTask = tasks.peek();
+            currentTask.init();
         }
         if(!DriverStation.getInstance().isAutonomous()) {
             if(tasks.isEmpty()) return;
             if(tasks.peek().isFinished()) return;
             tasks.peek().cancel();
+            reqHandler.startPeriodic();
+            reqHandler.endPeriodic();
             return;
         }
         reqHandler.startPeriodic();
         AutoTask currentTask = tasks.peek(); // Get task, but don't remove it
-        if(currentTask == null) return; // Error, no tasks left to do
+        if(currentTask == null) {
+          reqHandler.endPeriodic();
+          return; // Error, no tasks left to do
+        }
         TaskState state = currentTask.periodic();
         if(state.equals(TaskState.FINISHED) || state.equals(TaskState.CANCELLED)) {
-            tasks.poll().end(); // poll = get task and remove it. end is just an AutoTask method
+            
+          tasks.poll().end(); // poll = get task and remove it. end is just an AutoTask method
             AutoTask nextTask = tasks.peek();
             if(nextTask != null)
                 nextTask.init();

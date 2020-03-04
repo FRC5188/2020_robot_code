@@ -25,7 +25,7 @@ public class Intake implements Subsystem {
         if(ctrlManager.getButtonPressed(Constants.intakeCtrlButtonToggle)){
             intakeSolenoid.set(!intakeSolenoid.get());
         }
-        if(!intakeSolenoid.get())
+        if(intakeSolenoid.get())
             intakeMotor.set(ControlMode.PercentOutput, ctrlManager.getIntakeSpeed());
     }
 

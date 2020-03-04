@@ -188,9 +188,9 @@ public class DriveTrain implements Subsystem {
         // minimumThreshold is the minimum the controller has to move to map it. (Otherwise it'd move without user input)
         
         if(ctrlManager.getButton(Constants.throttleShiftButton)) {
-            throttleShifter = 0.6;
-        } else {
             throttleShifter = 1.0;
+        } else {
+            throttleShifter = 0.7;
         }
         throttle = throttle > 0 ? Math.pow(Math.abs(throttle),cThrottle) : -Math.pow(Math.abs(throttle),cThrottle);
         turn = turn > 0 ? Math.pow(Math.abs(turn),cTurn) : -Math.pow(Math.abs(turn),cTurn);
@@ -199,7 +199,9 @@ public class DriveTrain implements Subsystem {
 
         if(ctrlManager.getButton(Constants.shooterAlignVisionButton)) {
             visionPid.setPID(pidP.getDouble(0.0),pidI.getDouble(0.0),pidD.getDouble(0.0));
-            turn = visionPid.calculate(targetX.getDouble(160.0));
+            if(targetX.getDouble(-1.0) >= 0)
+                turn = visionPid.calculate(targetX.getDouble(160.0));
+            System.out.println(targetX.getDouble(160.0) + " " + turn);
         }
 
         // allow for manual quick turn enable 

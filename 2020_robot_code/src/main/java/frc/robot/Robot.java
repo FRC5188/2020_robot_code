@@ -157,8 +157,8 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {
   }
 
-public static ControllerManager getControllerManager() {
-	return ctrlManager;
-}
+  public static ControllerManager getControllerManager() {
+    return ctrlManager;
+  }
 
 }

@@ -34,14 +34,18 @@ public class Constants {
   public static final int DriveTrainSupplyCurrentLimit = 30; // once current-limiting is activated, hold at __A
   
   public static final int ShooterSupplyTriggerCurremt = 35; // don't activate current limit until current exceeds __A...
-  public static final int ShooterSupplyCurrentDuration = 50; //... for at least __ ms
+  public static final int ShooterSupplyCurrentDuration = 0; //... for at least __ ms
   public static final int ShooterSupplyCurrentLimit = 30; // once current-limiting is activated, hold at __A
+
+  public static final int BeltSupplyTriggerCurremt = 35; // don't activate current limit until current exceeds __A...
+  public static final int BeltSupplyCurrentDuration = 0; //... for at least __ ms
+  public static final int BeltSupplyCurrentLimit = 30; // once current-limiting is activated, hold at __A
 
   // Shooter Teleop Variables // 750 RPM
   public static final double shooterShooterSpeed = 1500.0/500.0*2000.0*2048.0/600.0; // Velocity, not percent output
-  public static final double shooterBeltSpeed = 0.5; // TODO: Specify Speed vs Percent
+  public static final double shooterBeltSpeed = 1.0; // TODO: Specify Speed vs Percent
   public static final double intakeShooterSpeed = 1000.0/500.0*2000.0*2048.0/600.0;
-  public static final double intakeBeltSpeed = 0.3;
+  public static final double intakeBeltSpeed = 0.2;
 
 
   public static final double ENCODER_TICKS_PER_INCH  = 941.1;
@@ -53,7 +57,7 @@ public class Constants {
   public static final double TASK_MOVE_PID_I = 0.0;
   public static final double TASK_MOVE_PID_D = 0.0;
   public static final double TASK_MOVE_DEFAULT_TOLERANCE = 1.0;
-  public static final int TASK_MOVE_DEFAULT_TIME = 3;
+  public static final int TASK_MOVE_DEFAULT_TIME = 60; // MS
 
   // Autonomous Task Turn Variables
   public static final double TASK_TURN_PID_P = 1.0;
