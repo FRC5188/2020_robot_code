@@ -165,33 +165,31 @@ public class DriveTrain implements Subsystem {
     NetworkTableEntry minimumThresholdEnt;
     NetworkTableEntry throttleShifterEnt;
 
-    private static double turnShifter = 0.65;
-    private static double cThrottle = 3;
-    private static double cTurn = 5;
-    private static double deadSpaceThrottle = 0.2;
-    private static double deadSpaceTurn = 0.2;
-    private static double minimumThreshold = 0.001;
-    private static double throttleShifter = 0.3;
+    private static double turnShifter = Constants.driveTrainTurnShifter;
+    private static double cThrottle = Constants.driveTrainCThrottle;
+    private static double cTurn = Constants.driveTrainCTurn;//5;
+    private static double deadSpaceThrottle = Constants.driveTrainDeadSpaceThrottle;//0.2;
+    private static double deadSpaceTurn = Constants.driveTrainDeadSpaceTurn;//0.2;
+    private static double minimumThreshold = Constants.driveTrainMinimumThreshold;//0.001;
+    private static double throttleShifter = Constants.driveTrainThrottleShifter;//0.3;
     
     private void teleopDefaultDrive() {
-        turnShifter = turnShifterEnt.getDouble(0.65);
-        cThrottle = cThrottleEnt.getDouble(3);
-        cTurn = cTurnEnt.getDouble(5);
-        deadSpaceThrottle = deadSpaceThrottleEnt.getDouble(0.2);
-        deadSpaceTurn = deadSpaceTurnEnt.getDouble(0.2);
-        minimumThreshold = minimumThresholdEnt.getDouble(0.001);
-        throttleShifter = throttleShifterEnt.getDouble(0.3);
+        turnShifter = turnShifterEnt.getDouble(Constants.driveTrainTurnShifter);
+        cThrottle = cThrottleEnt.getDouble(Constants.driveTrainCThrottle);
+        cTurn = cTurnEnt.getDouble(Constants.driveTrainCTurn);
+        deadSpaceThrottle = deadSpaceThrottleEnt.getDouble(Constants.driveTrainDeadSpaceThrottle);
+        deadSpaceTurn = deadSpaceTurnEnt.getDouble(Constants.driveTrainDeadSpaceTurn);
+        minimumThreshold = minimumThresholdEnt.getDouble(Constants.driveTrainMinimumThreshold);
+        throttleShifter = throttleShifterEnt.getDouble(Constants.driveTrainThrottleShifter);
         double throttle = ctrlManager.getAxis(InputButton.DRIVER_LY);
         double turn = ctrlManager.getAxis(InputButton.DRIVER_RX);
         // Map turn and throttle to be from "deadSpace" to 1.0
         // So that a small bump actually moves the robot ( < deadSpace doesn't move)
         // minimumThreshold is the minimum the controller has to move to map it. (Otherwise it'd move without user input)
         
-        if(ctrlManager.getButton(Constants.throttleShiftButton)) {
+        if(ctrlManager.getButton(Constants.throttleShiftButton))
             throttleShifter = 1.0;
-        } else {
-            throttleShifter = 0.7;
-        }
+        
         throttle = throttle > 0 ? Math.pow(Math.abs(throttle),cThrottle) : -Math.pow(Math.abs(throttle),cThrottle);
         turn = turn > 0 ? Math.pow(Math.abs(turn),cTurn) : -Math.pow(Math.abs(turn),cTurn);
         throttle = throttle * throttleShifter * (1-deadSpaceThrottle) + (Math.abs(throttle) < minimumThreshold ? 0.0 : (throttle > 0 ? deadSpaceThrottle : -deadSpaceThrottle));
