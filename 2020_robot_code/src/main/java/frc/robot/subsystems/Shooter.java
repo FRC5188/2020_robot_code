@@ -36,6 +36,7 @@ public class Shooter implements Subsystem {
     boolean beltEnabled = false;
 
     private int frontLineBreakTimer = 0;
+    private boolean runningBelt = false;
 
     Solenoid lifterSolenoid;
 
@@ -156,7 +157,7 @@ public class Shooter implements Subsystem {
         /*
          If you change something in here, see if it should be changed in this.autonomousShoot also.
         */
-        if(ctrlManager.getAxis(Constants.shooterCtrlShoot) > 0.5)
+        if(ctrlManager.getButton(Constants.shooterCtrlShoot))
         {
             if(!lifterSolenoid.get()) {
                 lifterSolenoid.set(true);
@@ -167,28 +168,32 @@ public class Shooter implements Subsystem {
             shooterBottom.set(ControlMode.PercentOutput, -1.0);
             System.out.println(shooterSpeed + " " + shooterSpeedError + " " + shooterBottom.getSelectedSensorVelocity());
             // TODO Timeout for low voltage
-            if((shooterSpeed - shooterSpeedError) < -shooterBottom.getSelectedSensorVelocity()){
+            if(this.runningBelt || (shooterSpeed - shooterSpeedError) < -shooterBottom.getSelectedSensorVelocity()){
+                this.runningBelt = true;
                 beltBottom.set(ControlMode.PercentOutput, beltSpeed);
             } else {
                 beltBottom.set(ControlMode.PercentOutput, 0.0);
             }
-        } else if(ctrlManager.getIntakeEnabled()) {
-            if(ctrlManager.getIntakeSpeed() > 0.0) {
-                shooterBottom.set(ControlMode.PercentOutput, 0.35);
-            }
-            if(!frontLBsensor.get()) {
-                frontLineBreakTimer += 1; 
-                if(frontLineBreakTimer > 8) { // 50 ticks per second
-                    beltBottom.set(ControlMode.PercentOutput, -Constants.intakeBeltSpeed);
+        } else {
+            this.runningBelt = false;
+            if(ctrlManager.getIntakeEnabled()) {
+                if(ctrlManager.getIntakeSpeed() > 0.0) {
+                    shooterBottom.set(ControlMode.PercentOutput, 0.35);
+                }
+                if(!frontLBsensor.get()) {
+                    frontLineBreakTimer += 1; 
+                    if(frontLineBreakTimer > 8) { // 50 ticks per second
+                        beltBottom.set(ControlMode.PercentOutput, -Constants.intakeBeltSpeed);
+                    }
+                } else {
+                    frontLineBreakTimer = 0;
+                    beltBottom.set(ControlMode.PercentOutput, 0.0);
                 }
             } else {
-                frontLineBreakTimer = 0;
+                shooterBottom.set(ControlMode.PercentOutput, 0.0);
+                //shooterBottom.set(ControlMode.Velocity, 0.0);
                 beltBottom.set(ControlMode.PercentOutput, 0.0);
             }
-        } else {
-            shooterBottom.set(ControlMode.PercentOutput, 0.0);
-            //shooterBottom.set(ControlMode.Velocity, 0.0);
-            beltBottom.set(ControlMode.PercentOutput, 0.0);
         }
         if(ctrlManager.getButtonPressed(Constants.shooterCtrlLiftToggle))
         {
@@ -210,6 +215,14 @@ public class Shooter implements Subsystem {
         beltSpeed = inst.getEntry("Belt_Speed").getNumber(Constants.AUTO_SHOOTER_BELT_SPEED).doubleValue();
         if(runShooter)
         {
+            shooterBottom.set(ControlMode.PercentOutput, -1.0);
+            System.out.println(shooterSpeed + " " + shooterSpeedError + " " + shooterBottom.getSelectedSensorVelocity());
+            // TODO Timeout for low voltage
+            if((shooterSpeed - shooterSpeedError) < -shooterBottom.getSelectedSensorVelocity()){
+                beltBottom.set(ControlMode.PercentOutput, beltSpeed);
+            } else {
+                beltBottom.set(ControlMode.PercentOutput, 0.0);
+            }
             //shooterBottom.set(ControlMode.Velocity, shooterSpeed);
             //if((shooterSpeed + shooterSpeedError) > shooterBottom.getSelectedSensorVelocity() & (shooterSpeed - shooterSpeedError) < shooterBottom.getSelectedSensorVelocity()){
             beltBottom.set(ControlMode.PercentOutput, beltSpeed);
