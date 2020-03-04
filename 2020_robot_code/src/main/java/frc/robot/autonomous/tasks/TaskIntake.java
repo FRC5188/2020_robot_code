@@ -8,17 +8,15 @@
 package frc.robot.autonomous.tasks;
 
 import frc.robot.Constants;
-import frc.robot.autonomous.AutoManager;
 import frc.robot.autonomous.AutoRequestHandler;
 import frc.robot.autonomous.utils.AutoTask;
 import frc.robot.autonomous.utils.TaskState;
 
 /**
- * Run after done shooting. Reverses belt to push balls to back
+ * Use to intake balls
  */
 public class TaskIntake extends AutoTask {
 
-    int currentTime;
     int tickTime;
     long solenoidTime;
     long endTime;
@@ -34,11 +32,9 @@ public class TaskIntake extends AutoTask {
 	@Override
     public void init() {
         this.state = TaskState.RUNNING;
-        this.currentTime = 0;
         this.solenoidTime = 0;
         this.solenoidToggled = false;
         this.endTime = 0;
-        //this.pidController.setTolerance(this.tolerance*0.75);
     }
 
     @Override
@@ -94,7 +90,7 @@ public class TaskIntake extends AutoTask {
 
     @Override
     public String serialize() {
-        return "Reverse shooter for " + (Math.round(this.tickTime/60.0*1000)/1000.0) + " seconds.";
+        return "Run intake for " + (this.tickTime/1000.0) + " seconds.";
     }
 
 }
