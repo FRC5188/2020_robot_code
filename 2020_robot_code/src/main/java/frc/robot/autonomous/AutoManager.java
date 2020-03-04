@@ -41,10 +41,9 @@ public class AutoManager {
     StringArraySendable taskGroupTaskListSendable;
 
     SimpleWidget delayWidget;
-    //ShuffleboardComponent taskGroupImage;
 
     public void init(Robot robot) {
-        tasks = autoSelectorSendable.getSelected().getTaskGroup().retrieveTasks(); // Currently arbitrary, but can be changed
+        tasks = autoSelectorSendable.getSelected().getTaskGroup().retrieveTasks();
         reqHandler = new AutoRequestHandler(robot);
         this.startTime = System.currentTimeMillis();
     }
@@ -68,6 +67,7 @@ public class AutoManager {
         reqHandler.startPeriodic();
         AutoTask currentTask = tasks.peek(); // Get task, but don't remove it
         if(currentTask == null) {
+          System.out.println("Stopping after " + (System.currentTimeMillis()-this.startTime));
           reqHandler.endPeriodic();
           return; // Error, no tasks left to do
         }

@@ -20,21 +20,18 @@ public class TaskGroupDefaultMove  extends TaskGroup {
 
     int time;
     double speed;
+    boolean forwardOrBack;
 
-    public TaskGroupDefaultMove() {
-        this.time = 50;
-        this.speed = 0.3;
-    }
-
-    public TaskGroupDefaultMove(int time, double speed) {
+    public TaskGroupDefaultMove(int time, double speed, boolean forwardOrBack) {
         this.time = time;
         this.speed = speed;
+        this.forwardOrBack = forwardOrBack;
     }
 
     @Override
     public Queue<AutoTask> retrieveTasks() {
         if(!tasks.isEmpty()) return tasks;
-        tasks.add(new TaskMove(time, true, speed));
+        tasks.add(new TaskMove(time, this.forwardOrBack, speed));
         return tasks;
     }
 

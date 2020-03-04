@@ -175,21 +175,13 @@ public class Shooter implements Subsystem {
         } else if(ctrlManager.getIntakeEnabled()) {
             if(ctrlManager.getIntakeSpeed() > 0.0) {
                 shooterBottom.set(ControlMode.PercentOutput, 0.35);
-                //shooterBottom.set(ControlMode.Velocity, Constants.intakeShooterSpeed);
             }
-            //System.out.println(frontLineBreakTimer + " " + frontLBsensor.get());
             if(!frontLBsensor.get()) {
                 frontLineBreakTimer += 1; 
                 if(frontLineBreakTimer > 8) { // 50 ticks per second
                     beltBottom.set(ControlMode.PercentOutput, -Constants.intakeBeltSpeed);
                 }
             } else {
-                /*
-                if(frontLineBreakTimer > 3)
-                    frontLineBreakTimer = 3;
-                else if(frontLineBreakTimer > 0)
-                    frontLineBreakTimer -= 1;
-                else*/ 
                 frontLineBreakTimer = 0;
                 beltBottom.set(ControlMode.PercentOutput, 0.0);
             }
@@ -204,8 +196,16 @@ public class Shooter implements Subsystem {
         }
         
     }
+
+    public boolean getShooterSolenoidUp() {
+        return this.lifterSolenoid.get();
+    }
+
+    public void toggleSolenoid() {
+        this.lifterSolenoid.set(!this.lifterSolenoid.get());
+    }
     
-	public void autonomousShoot(boolean runShooter, boolean reverserShooter) {
+	public void autonomousShoot(boolean runShooter, boolean runIntake) {
         shooterSpeed = inst.getEntry("Shooter_Speed").getNumber(Constants.AUTO_SHOOTER_SHOOTER_SPEED).doubleValue();
         beltSpeed = inst.getEntry("Belt_Speed").getNumber(Constants.AUTO_SHOOTER_BELT_SPEED).doubleValue();
         if(runShooter)
@@ -214,6 +214,22 @@ public class Shooter implements Subsystem {
             //if((shooterSpeed + shooterSpeedError) > shooterBottom.getSelectedSensorVelocity() & (shooterSpeed - shooterSpeedError) < shooterBottom.getSelectedSensorVelocity()){
             beltBottom.set(ControlMode.PercentOutput, beltSpeed);
             //}
+        } else if(runIntake) {
+            if(ctrlManager.getIntakeSpeed() > 0.0) {
+                shooterBottom.set(ControlMode.PercentOutput, 0.35);
+            }
+            if(!frontLBsensor.get()) {
+                frontLineBreakTimer += 1; 
+                if(frontLineBreakTimer > 8) { // 50 ticks per second
+                    beltBottom.set(ControlMode.PercentOutput, -Constants.intakeBeltSpeed);
+                }
+            } else {
+                frontLineBreakTimer = 0;
+                beltBottom.set(ControlMode.PercentOutput, 0.0);
+            }
+        } else {
+            shooterBottom.set(ControlMode.PercentOutput, 0.0);
+            beltBottom.set(ControlMode.PercentOutput, 0.0);
         }
         // TODO: Autonomous reverse shooter
 	}

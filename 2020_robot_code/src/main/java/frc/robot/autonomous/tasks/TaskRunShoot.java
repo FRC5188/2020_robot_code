@@ -17,12 +17,18 @@ import frc.robot.autonomous.utils.TaskState;
  */
 public class TaskRunShoot extends AutoTask {
 
-    int currentTime;
+    boolean solenoidToggled;
+    long solenoidTime;
+    long endTime;
     int tickTime;
     public TaskRunShoot() {
         this.tickTime = Constants.TASK_SHOOT_RUN_DEFAULT_TICKTIME_RUN;
     }
 
+    /**
+     * Time to run shooter in milliseconds
+     * @param tickTime - In Milliseconds
+     */
     public TaskRunShoot(int tickTime) {
         this.tickTime = tickTime;
     }
@@ -30,18 +36,30 @@ public class TaskRunShoot extends AutoTask {
 	@Override
     public void init() {
         this.state = TaskState.RUNNING;
-        this.currentTime = 0;
+        this.endTime = 0;
+        this.solenoidToggled = false;
+        this.solenoidTime = 0;
         //this.pidController.setTolerance(this.tolerance*0.75);
     }
 
     @Override
     public TaskState periodic() {
         if(this.state == TaskState.CANCELLED || this.state == TaskState.FINISHED) return this.state;
-        if(this.currentTime >= this.tickTime) {
+        if(this.endTime != 0 && System.currentTimeMillis() > this.endTime) {
             this.state = TaskState.FINISHED;
             return this.state;
         }
-        this.currentTime += 1;
+        if(!AutoRequestHandler.getInst().getShooterSolenoidUp() && !this.solenoidToggled) {
+            AutoRequestHandler.getInst().toggleShooterSolenoid();
+            this.solenoidToggled = true;
+            this.solenoidTime = System.currentTimeMillis() + 1000;
+        }
+        if(this.solenoidToggled) {
+            if(System.currentTimeMillis() < this.solenoidTime)
+                return this.state;
+        }
+        if(this.endTime == 0)
+            this.endTime = System.currentTimeMillis() + this.tickTime;
         AutoRequestHandler.getInst().runShooter();
         return this.state;
     }
@@ -76,7 +94,7 @@ public class TaskRunShoot extends AutoTask {
 
     @Override
     public String serialize() {
-        return "Run shooter for " + (Math.round(this.tickTime/60.0*1000)/1000.0) + " seconds.";
+        return "Run shooter for " + Math.round(this.tickTime/1000.0) + " seconds.";
     }
 
 }

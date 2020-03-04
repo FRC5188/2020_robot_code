@@ -43,9 +43,8 @@ public class TaskMove extends AutoTask {
     * Move for a certain number of ticks
     */
     public TaskMove(int time, boolean forwardOrBackward, double speed) {
-        // "useQuickHack" is just to make sure the constructor overloads, and the task knows to move using time
         this.useQuickHack = true;
-        this.timeToMove = 1000;//(int) Math.round(time/50.0*1000);
+        this.timeToMove = time;
         this.forwardOrBackward = forwardOrBackward;
         this.speed = speed;
         this.state = TaskState.NOT_STARTED;
@@ -100,8 +99,8 @@ public class TaskMove extends AutoTask {
                     this.isFinished = true;
                     this.state = TaskState.FINISHED;
                 }
-            } else if(this.endTime != 0)
-                this.endTime = 0;
+            } else 
+                this.endTime = System.currentTimeMillis()+timeToMove;
         }
         return this.state;
     }

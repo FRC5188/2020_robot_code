@@ -8,6 +8,7 @@
 package frc.robot.autonomous.tasks;
 
 import frc.robot.Constants;
+import frc.robot.autonomous.AutoManager;
 import frc.robot.autonomous.AutoRequestHandler;
 import frc.robot.autonomous.utils.AutoTask;
 import frc.robot.autonomous.utils.TaskState;
@@ -15,15 +16,18 @@ import frc.robot.autonomous.utils.TaskState;
 /**
  * Run after done shooting. Reverses belt to push balls to back
  */
-public class TaskReverseShoot extends AutoTask {
+public class TaskIntake extends AutoTask {
 
     int currentTime;
     int tickTime;
-    public TaskReverseShoot() {
-        this.tickTime = Constants.TASK_SHOOT_REVERSE_DEFAULT_TICKTIME_RUN;
+    long solenoidTime;
+    long endTime;
+    boolean solenoidToggled;
+    public TaskIntake() {
+        this.tickTime = Constants.TASK_INTAKE_TIME;
     }
 
-    public TaskReverseShoot(int tickTime) {
+    public TaskIntake(int tickTime) {
         this.tickTime = tickTime;
     }
 
@@ -31,18 +35,31 @@ public class TaskReverseShoot extends AutoTask {
     public void init() {
         this.state = TaskState.RUNNING;
         this.currentTime = 0;
+        this.solenoidTime = 0;
+        this.solenoidToggled = false;
+        this.endTime = 0;
         //this.pidController.setTolerance(this.tolerance*0.75);
     }
 
     @Override
     public TaskState periodic() {
         if(this.state == TaskState.CANCELLED || this.state == TaskState.FINISHED) return this.state;
-        if(this.currentTime >= this.tickTime) {
+        if(this.endTime != 0 && System.currentTimeMillis() > this.endTime) {
             this.state = TaskState.FINISHED;
             return this.state;
         }
-        this.currentTime += 1;
-        AutoRequestHandler.getInst().reverseShooter();
+        if(!AutoRequestHandler.getInst().getIntakeSolenoidUp() && !this.solenoidToggled) {
+            AutoRequestHandler.getInst().toggleIntakeSolenoid();
+            this.solenoidToggled = true;
+            this.solenoidTime = System.currentTimeMillis() + 1000;
+        }
+        if(this.solenoidToggled) {
+            if(System.currentTimeMillis() < this.solenoidTime)
+                return this.state;
+        }
+        if(this.endTime == 0) 
+            this.endTime = System.currentTimeMillis() + tickTime;
+        AutoRequestHandler.getInst().runIntake();
         return this.state;
     }
 

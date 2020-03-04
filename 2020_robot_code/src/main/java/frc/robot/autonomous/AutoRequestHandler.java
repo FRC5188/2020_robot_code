@@ -11,12 +11,16 @@ public class AutoRequestHandler {
     private double throttle;
     private double turn;
     private boolean runShooter;
-    private boolean reverserShooter;
+    private boolean toggleIntakeSolenoid;
+    private boolean toggleShooterSolenoid;
+    private boolean runIntake;
 
     // Input Variables
     private double leftEncoderDistance;
     private double rightEncoderDistance;
     private double gyroAngle;
+    private boolean intakeSolenoidUp;
+    private boolean shooterSolenoidUp;
 
     public AutoRequestHandler(Robot robot) {
         inst = this;
@@ -38,7 +42,11 @@ public class AutoRequestHandler {
         this.turn = 0.0;
         this.gyroAngle = 0.0;
         this.runShooter = false;
-        this.reverserShooter = false;
+        this.runIntake = false;
+        this.toggleIntakeSolenoid = false;
+        this.toggleShooterSolenoid = false;
+        this.intakeSolenoidUp = robot.getIntake().getIntakeSolenoidUp();
+        this.shooterSolenoidUp = robot.getShooter().getShooterSolenoidUp();
         this.leftEncoderDistance = robot.getDriveTrain().getLeftEncoderInches();
         this.rightEncoderDistance = robot.getDriveTrain().getRightEncoderInches();
         // TODO: Get Gyro Info
@@ -63,7 +71,14 @@ public class AutoRequestHandler {
 
 	public double getGyroAngle() {
 		return this.gyroAngle;
-	}
+    }
+    
+    public void toggleShooterSolenoid() {
+        this.toggleShooterSolenoid = true;
+    }
+    public void toggleIntakeSolenoid() {
+        this.toggleIntakeSolenoid = true;
+    }
 
     /** 
      * Ran at the end of when the AutoManager periodic function gets called.
@@ -72,15 +87,28 @@ public class AutoRequestHandler {
      **/
     public void endPeriodic() {
         robot.getDriveTrain().autonomousDefaultDrive(this.throttle, this.turn);
-        robot.getShooter().autonomousShoot(this.runShooter, this.reverserShooter);
+        robot.getShooter().autonomousShoot(this.runShooter, this.runIntake);
+        robot.getIntake().autonomousIntake(this.runIntake);
+        if(this.toggleIntakeSolenoid)
+            robot.getIntake().toggleSolenoid();
+        if(this.toggleShooterSolenoid)
+            robot.getShooter().toggleSolenoid();
     }
 
 	public void runShooter() {
         this.runShooter = true;
     }
     
-    public void reverseShooter() {
-        this.reverserShooter = true;
+    public void runIntake() {
+        this.runIntake = true;
     }
+
+	public boolean getIntakeSolenoidUp() {
+		return this.intakeSolenoidUp;
+	}
+
+	public boolean getShooterSolenoidUp() {
+		return this.shooterSolenoidUp;
+	}
 
 }

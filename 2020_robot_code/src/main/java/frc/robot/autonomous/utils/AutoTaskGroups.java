@@ -14,30 +14,73 @@ import frc.robot.autonomous.taskgroups.*;
  */
 public enum AutoTaskGroups {
 
-    DEFAULT_MOVE(new TaskGroupDefaultMove(), "Default Move (Timed Move)", new String[]{ 
+    DEFAULT_MOVE(new TaskGroupDefaultMove(2000, 0.15, true), "Default Move (Timed Move)", new String[]{ 
         "Default Auto",
-        "Moves forward at 0.3 throttle for 1 second."
+        "Moves forward at 0.15 throttle",
+        "for 2 seconds."
     }), 
-    TIMED_MOVE_SEMIFAST(new TaskGroupDefaultMove(50,0.6), "Timed Move Semi-Fast", new String[]{ 
-        "Timed Move Fast",
-        "Moves forward at 0.6 throttle for 1 second."
+    TIMED_MOVE_SEMIFAST_QUICK(new TaskGroupDefaultMove(1000,0.3, true), "Move Semi-Fast Quick", new String[]{ 
+        "Timed Move Fast Quick",
+        "Moves forward at 0.3 throttle",
+        "for 1 second."
     }), 
-    TIMED_MOVE_SEMIFAST_QUICK(new TaskGroupDefaultMove(25, 0.6), "Timed Move Semi-Fast Quick", new String[]{ 
-        "Timed Move Semi-Fast Quick",
-        "Moves forward at 0.6 throttle for 0.5 seconds."
-    }), 
-    TIMED_MOVE_SLOW_QUICK(new TaskGroupDefaultMove(25, 0.3), "Timed Move Slow Quick", new String[]{ 
+    TIMED_MOVE_SLOW_QUICK(new TaskGroupDefaultMove(1000, 0.15, true), "Move Slow Quick", new String[]{ 
         "Timed Move Slow Quick",
-        "Moves forward at 0.3 throttle for 0.5 seconds."
+        "Moves forward at 0.15 throttle",
+        "for 1 second."
     }), 
-    TIMED_MOVE_SEMIFAST_LONG(new TaskGroupDefaultMove(150, 0.6), "Timed Move Semi-Fast Long", new String[]{ 
+    TIMED_MOVE_SEMIFAST(new TaskGroupDefaultMove(2000, 0.3, true), "Move Semi-Fast", new String[]{ 
+        "Timed Move Semi-Fast",
+        "Moves forward at 0.3 throttle",
+        "for 2 seconds."
+    }), 
+    TIMED_MOVE_SEMIFAST_LONG(new TaskGroupDefaultMove(3000, 0.3, true), "Move Semi-Fast Long", new String[]{ 
         "Timed Move Semi-Fast Long",
-        "Moves forward at 0.6 throttle for 3 seconds."
+        "Moves forward at 0.3 throttle",
+        "for 3 seconds."
     }), 
-    TIMED_MOVE_SLOW_LONG(new TaskGroupDefaultMove(150, 0.3), "Timed Move Slow Long", new String[]{ 
+    TIMED_MOVE_SLOW_LONG(new TaskGroupDefaultMove(3000, 0.15, true), "Move Slow Long", new String[]{ 
         "Timed Move Slow Long",
-        "Moves forward at 0.3 throttle for 3 seconds."
+        "Moves forward at 0.15 throttle",
+        "for 3 seconds."
+    }),
+    TIMED_MOVE_SEMIFAST_QUICK_BACKWARDS(new TaskGroupDefaultMove(1000,0.3, false), "Move Semi-Fast Quick Backwards", new String[]{ 
+        "Timed Move Fast Quick Backwards",
+        "Moves backwards at 0.3 throttle",
+        "for 1 second."
+    }), 
+    TIMED_MOVE_SLOW_QUICK_BACKWARDS(new TaskGroupDefaultMove(1000, 0.15, false), "Move Slow Quick Backwards", new String[]{ 
+        "Timed Move Slow Quick Backwards",
+        "Moves backwards at 0.15 throttle",
+        "for 1 second."
+    }), 
+    TIMED_MOVE_SEMIFAST_BACKWARDS(new TaskGroupDefaultMove(2000, 0.3, false), "Move Semi-Fast Backwards", new String[]{ 
+        "Timed Move Semi-Fast Backwards",
+        "Moves backwards at 0.3 throttle",
+        "for 2 second."
+    }), 
+    TIMED_MOVE_SEMIFAST_LONG_BACKWARDS(new TaskGroupDefaultMove(3000, 0.3, false), "Move Semi-Fast Long Backwards", new String[]{ 
+        "Timed Move Semi-Fast Long",
+        "Moves backwards at 0.3 throttle",
+        "for 3 second."
+    }), 
+    TIMED_MOVE_SLOW_LONG_BACKWARDS(new TaskGroupDefaultMove(3000, 0.15, false), "Move Slow Long Backwards", new String[]{ 
+        "Timed Move Slow Long Backwards",
+        "Moves backwards at 0.15 throttle",
+        "for 3 second."
+    }), 
+    TIMED_MOVE_SLOW_BACKWARDS(new TaskGroupDefaultMove(2000, 0.15, false), "Move Slow Backwards", new String[]{ 
+        "Timed Move Slow Long Backwards",
+        "Moves backwards at 0.15 throttle",
+        "for 2 second."
+    }),
+    RUN_SHOOTER(new TaskGroupShoot(5000), "Run Shooter", new String[] {
+        "Run Shooter",
+        "Run the shooter for 5 seconds",
+        "If shooter isn't up,",
+        "it will auto lift up."
     });
+    ;
     /*
     SHOOT_TURN(new TaskGroupShoot(), "Shoot Turn", new String[] {
         "Shoot Turn",

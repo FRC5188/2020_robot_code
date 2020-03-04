@@ -53,22 +53,25 @@ public class Constants {
   public static final double shooterOpenRampDuration = 0.50; //seconds from zero to full throttle
 
   // Autonomous Task Move Variables
-  public static final double TASK_MOVE_PID_P = 1.0;
+  public static final double TASK_MOVE_PID_P = 0.1;
   public static final double TASK_MOVE_PID_I = 0.0;
   public static final double TASK_MOVE_PID_D = 0.0;
   public static final double TASK_MOVE_DEFAULT_TOLERANCE = 1.0;
   public static final int TASK_MOVE_DEFAULT_TIME = 60; // MS
 
   // Autonomous Task Turn Variables
-  public static final double TASK_TURN_PID_P = 1.0;
+  public static final double TASK_TURN_PID_P = 0.1;
   public static final double TASK_TURN_PID_I = 0.0;
   public static final double TASK_TURN_PID_D = 0.0;
-  public static final double TASK_TURN_DEFAULT_TOLERANCE = 0;
+  public static final double TASK_TURN_DEFAULT_TOLERANCE = 1.0;
   public static final int TASK_TURN_DEFAULT_TIME = 0;
 
   // Autonomous Task Shoot Variables
-  public static final int TASK_SHOOT_REVERSE_DEFAULT_TICKTIME_RUN = 30;
-  public static final int TASK_SHOOT_RUN_DEFAULT_TICKTIME_RUN = 30;
+  public static final int TASK_SHOOT_RUN_DEFAULT_TICKTIME_RUN = 1000; // MS
+  
+  // Autonomous Intake Variables
+  public static final int TASK_INTAKE_TIME = 1000; // MS
+  public static final double TASK_INTAKE_SPEED = 1.0;
 
   // Subsystem Variables while in Autonomous
   public static final double AUTONOMOUS_MAX_THROTTLE = 0.5;

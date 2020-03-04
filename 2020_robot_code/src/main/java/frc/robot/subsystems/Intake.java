@@ -29,6 +29,20 @@ public class Intake implements Subsystem {
             intakeMotor.set(ControlMode.PercentOutput, ctrlManager.getIntakeSpeed());
     }
 
+	public void autonomousIntake(boolean runIntake) {
+        if(runIntake && intakeSolenoid.get())
+            intakeMotor.set(ControlMode.PercentOutput, Constants.TASK_INTAKE_SPEED);
+        else
+            intakeMotor.set(ControlMode.PercentOutput, 0.0);
+	}
+
+    public boolean getIntakeSolenoidUp() {
+        return !this.intakeSolenoid.get();
+    }
+    public void toggleSolenoid() {
+        this.intakeSolenoid.set(!this.intakeSolenoid.get());
+    }
+
     @Override
     public void init() {
         intakeSolenoid = new Solenoid(Constants.intakeSolenoid);

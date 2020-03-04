@@ -8,7 +8,6 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -217,7 +216,7 @@ public class DriveTrain implements Subsystem {
 
     public void autonomousDefaultDrive(double throttle, double turn) {
         // TODO: If subsys is killed, don't run.
-        diffDrive.curvatureDrive(-Constants.AUTONOMOUS_MAX_THROTTLE*throttle, Constants.AUTONOMOUS_MAX_TURN*turn, false);
+        diffDrive.curvatureDrive(-Math.max(Math.min(Constants.AUTONOMOUS_MAX_THROTTLE, throttle), -Constants.AUTONOMOUS_MAX_THROTTLE), Math.max(Math.min(Constants.AUTONOMOUS_MAX_TURN, turn), -Constants.AUTONOMOUS_MAX_TURN), false);
     }
 
     public void updateOdometry() {

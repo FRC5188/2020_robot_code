@@ -18,13 +18,15 @@ import frc.robot.autonomous.utils.TaskGroup;
  */
 public class TaskGroupShoot extends TaskGroup {
 
+    int time;
+    public TaskGroupShoot(int time) {
+        this.time = time;
+    }
+
     @Override
     public Queue<AutoTask> retrieveTasks() {
         if(!tasks.isEmpty()) return tasks;
-        tasks.add(new TaskTurn(45.0));
-        tasks.add(new TaskMove(12));
-        tasks.add(new TaskRunShoot(60));
-        tasks.add(new TaskReverseShoot(60));
+        tasks.add(new TaskRunShoot(this.time));
         
         return tasks;
     }
