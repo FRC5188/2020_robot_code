@@ -50,13 +50,14 @@ public class TaskRunShoot extends AutoTask {
             return this.state;
         }
         if(!AutoRequestHandler.getInst().getShooterSolenoidUp() && !this.solenoidToggled) {
+            // Put solenoid up if isn't up, and wait
             AutoRequestHandler.getInst().toggleShooterSolenoid();
-            this.solenoidToggled = true;
+            this.solenoidToggled = true; 
             this.solenoidTime = System.currentTimeMillis() + 1000;
         }
         if(this.solenoidToggled) {
             if(System.currentTimeMillis() < this.solenoidTime)
-                return this.state;
+                return this.state; // If solenoid isn't up yet, return
         }
         if(this.endTime == 0)
             this.endTime = System.currentTimeMillis() + this.tickTime;
