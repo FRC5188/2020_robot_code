@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.Solenoid;
 public class Climber implements Subsystem {
     VictorSPX climber;
     Solenoid climberSolenoid;
+    private final boolean SOLENOID_DOWN = false;
+    private final boolean SOLENOID_UP = true;
     
     ControllerManager ctrlManager;
     Robot robot;
@@ -22,7 +24,7 @@ public class Climber implements Subsystem {
         this.robot = robot;
         this.ctrlManager = Robot.getControllerManager();
         climberSolenoid = new Solenoid(Constants.climbSolenoid);
-        climberSolenoid.set(Constants.SOLENOID_DOWN);
+        climberSolenoid.set(SOLENOID_DOWN);
         initCANMotors();
     }
     private void initCANMotors(){
@@ -35,7 +37,7 @@ public class Climber implements Subsystem {
         climber.setSelectedSensorPosition(0);
     }
     private void teleopDefaultClimber() {
-        if(ctrlManager.getButtonPressed(Constants.climberButtonToggle) && this.robot.getIntake().intakeSolenoid.get())
+        if(ctrlManager.getButtonPressed(Constants.climberButtonToggle) && this.robot.getIntake().getIntakeSolenoidUp())
         {
             climberSolenoid.set(!climberSolenoid.get());
         }

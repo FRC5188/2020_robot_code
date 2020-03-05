@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.robot.utils.Gains;
 import frc.robot.utils.InputButton;
 
@@ -24,7 +25,9 @@ public class Constants {
 
   //solenoid channel 
   public static final int intakeSolenoid = 0;
+  public static final int intakeSolenoid2 = 4;
   public static final int lifterSolenoid = 1;
+  public static final int lifterSolenoid2 = 5;
   public static final int colorWheelSolenoid = 2;
   public static final int climbSolenoid = 3;
 
@@ -142,8 +145,9 @@ public class Constants {
   //public static final int colorWheelSpinButton = Constants.Buttons;
 
   // Misc
-  public static final boolean SOLENOID_DOWN = false;
-  public static final boolean SOLENOID_UP = true;
+  public static final DoubleSolenoid.Value SOLENOID_DOWN = DoubleSolenoid.Value.kReverse;
+  public static final DoubleSolenoid.Value SOLENOID_UP = DoubleSolenoid.Value.kForward
+  ;
   
   public static final Gains SHOOTER_CONFIG = new Gains(1023.0/20660.0,0.5,0.0,0.0,300,1.00);//0.001,5.0,1023.0/20660.0,300, 1.00);
   

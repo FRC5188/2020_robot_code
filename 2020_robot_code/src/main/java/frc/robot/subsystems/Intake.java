@@ -7,10 +7,12 @@ import frc.robot.Constants;
 import frc.robot.ControllerManager;
 import frc.robot.Robot;
 import frc.robot.Subsystem;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Intake implements Subsystem {
-    Solenoid intakeSolenoid;
+    DoubleSolenoid intakeSolenoid;
     VictorSPX intakeMotor;
     ControllerManager ctrlManager;
     Robot robot;
@@ -21,31 +23,36 @@ public class Intake implements Subsystem {
     }
 
     void defaultTeleop() {
-        if(this.robot.getShooter().lifterSolenoid.get()) return;
+        //if shooter is up, dont
+        if(this.robot.getShooter().isSolenoidUp()) return;
         if(ctrlManager.getButtonPressed(Constants.intakeCtrlButtonToggle)){
-            intakeSolenoid.set(!intakeSolenoid.get());
+            this.toggleSolenoid();
         }
-        if(intakeSolenoid.get())
+        if(this.getIntakeSolenoidUp())
             intakeMotor.set(ControlMode.PercentOutput, ctrlManager.getIntakeSpeed());
     }
 
 	public void autonomousIntake(boolean runIntake) {
-        if(runIntake && intakeSolenoid.get())
+        if(runIntake && this.getIntakeSolenoidUp())
             intakeMotor.set(ControlMode.PercentOutput, Constants.TASK_INTAKE_SPEED);
         else
             intakeMotor.set(ControlMode.PercentOutput, 0.0);
 	}
 
     public boolean getIntakeSolenoidUp() {
-        return !this.intakeSolenoid.get();
+        return this.intakeSolenoid.get() == Value.kForward;
     }
     public void toggleSolenoid() {
-        this.intakeSolenoid.set(!this.intakeSolenoid.get());
+        if(this.intakeSolenoid.get() == Value.kForward){
+        this.intakeSolenoid.set(Value.kReverse);
+        }else{
+        this.intakeSolenoid.set(Value.kForward);
+        }
     }
 
     @Override
     public void init() {
-        intakeSolenoid = new Solenoid(Constants.intakeSolenoid);
+        intakeSolenoid = new DoubleSolenoid(Constants.intakeSolenoid, Constants.intakeSolenoid2);
         intakeMotor = new VictorSPX(Constants.intakeMotor);
     }
 

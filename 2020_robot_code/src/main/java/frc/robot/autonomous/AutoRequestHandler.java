@@ -46,7 +46,7 @@ public class AutoRequestHandler {
         this.toggleIntakeSolenoid = false;
         this.toggleShooterSolenoid = false;
         this.intakeSolenoidUp = robot.getIntake().getIntakeSolenoidUp();
-        this.shooterSolenoidUp = robot.getShooter().getShooterSolenoidUp();
+        this.shooterSolenoidUp = robot.getShooter().isSolenoidUp();//changed
         this.leftEncoderDistance = robot.getDriveTrain().getLeftEncoderInches();
         this.rightEncoderDistance = robot.getDriveTrain().getRightEncoderInches();
         // TODO: Get Gyro Info
@@ -114,7 +114,7 @@ public class AutoRequestHandler {
 	public void init() {
         if(robot.getIntake().getIntakeSolenoidUp())
             robot.getIntake().toggleSolenoid();
-        if(!robot.getShooter().getShooterSolenoidUp())
+        if(!robot.getShooter().isSolenoidUp())//changed this, might need 
             robot.getShooter().toggleSolenoid();
 	}
 

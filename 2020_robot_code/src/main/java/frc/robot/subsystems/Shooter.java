@@ -17,7 +17,9 @@ import frc.robot.Subsystem;
 import frc.robot.utils.Gains;
 import frc.robot.utils.InputButton;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Shooter implements Subsystem {
 
@@ -40,7 +42,7 @@ public class Shooter implements Subsystem {
     public boolean runningBelt = false;
     private int timeout = 0;
 
-    Solenoid lifterSolenoid;
+    DoubleSolenoid lifterSolenoid;
 
     ControllerManager ctrlManager;
     Robot robot;
@@ -49,7 +51,7 @@ public class Shooter implements Subsystem {
     public Shooter(Robot robot) {
         this.robot = robot;
         this.ctrlManager = Robot.getControllerManager();
-        lifterSolenoid = new Solenoid(Constants.lifterSolenoid);
+        lifterSolenoid = new DoubleSolenoid(Constants.lifterSolenoid, Constants.lifterSolenoid2);
         lifterSolenoid.set(Constants.SOLENOID_DOWN);
         this.initCANMotors();
         this.initCurrentLimit();
@@ -161,8 +163,8 @@ public class Shooter implements Subsystem {
         */
         if(ctrlManager.getButton(Constants.shooterCtrlShoot))
         {
-            if(!lifterSolenoid.get()) {
-                lifterSolenoid.set(true);
+            if(!this.isSolenoidUp()) {//if piston is not up, make it before shooting
+                lifterSolenoid.set(Value.kForward);
                 // TODO: Make timer to make sure doesnt get stuck
                 return;
             }
@@ -206,17 +208,32 @@ public class Shooter implements Subsystem {
         }
         if(ctrlManager.getButtonPressed(Constants.shooterCtrlLiftToggle))
         {
-            lifterSolenoid.set(!lifterSolenoid.get());
+            // lifterSolenoid.set(!lifterSolenoid.get());
+            this.toggleSolenoid();//changes for double solenoid
         }
         
     }
 
-    public boolean getShooterSolenoidUp() {
+    public DoubleSolenoid.Value getShooterSolenoidUp() {
         return this.lifterSolenoid.get();
     }
 
+    public boolean isSolenoidUp(){
+        if(this.lifterSolenoid.get() == Value.kForward){
+            return true;//may need flipped
+        }
+        return false;
+    }
+
     public void toggleSolenoid() {
-        this.lifterSolenoid.set(!this.lifterSolenoid.get());
+        System.out.println(this.lifterSolenoid.get());
+        if(this.lifterSolenoid.get() == Value.kForward){
+            this.lifterSolenoid.set(Value.kReverse);
+        }
+        else{
+            this.lifterSolenoid.set(Value.kForward);
+        }
+        // this.lifterSolenoid.set(!this.lifterSolenoid.get());
     }
     
 	public void autonomousShoot(boolean runShooter, boolean runIntake) {
