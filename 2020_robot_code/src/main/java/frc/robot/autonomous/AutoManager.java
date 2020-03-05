@@ -46,6 +46,7 @@ public class AutoManager {
         tasks = autoSelectorSendable.getSelected().getTaskGroup().retrieveTasks();
         reqHandler = new AutoRequestHandler(robot);
         this.startTime = System.currentTimeMillis();
+        reqHandler.init();
     }
 
     public void periodic() {

@@ -8,6 +8,7 @@ import frc.robot.Constants;
 import frc.robot.ControllerManager;
 import frc.robot.Robot;
 import frc.robot.Subsystem;
+import frc.robot.utils.InputButton;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class Climber implements Subsystem {
@@ -39,7 +40,7 @@ public class Climber implements Subsystem {
             climberSolenoid.set(!climberSolenoid.get());
         }
 
-        if ((climberSolenoid.get()) && ctrlManager.getAxis(Constants.climberCtrlAxis) < 0){
+        if (((climberSolenoid.get()) && ctrlManager.getAxis(Constants.climberCtrlAxis) < 0) || (ctrlManager.getButton(InputButton.OPERATOR_START))){
             climber.set(ControlMode.PercentOutput, ctrlManager.getAxis(Constants.climberCtrlAxis));
         } else{
             climber.set(ControlMode.PercentOutput, 0);

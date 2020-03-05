@@ -15,6 +15,7 @@ import frc.robot.ControllerManager;
 import frc.robot.Robot;
 import frc.robot.Subsystem;
 import frc.robot.utils.Gains;
+import frc.robot.utils.InputButton;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -36,7 +37,8 @@ public class Shooter implements Subsystem {
     boolean beltEnabled = false;
 
     private int frontLineBreakTimer = 0;
-    private boolean runningBelt = false;
+    public boolean runningBelt = false;
+    private int timeout = 0;
 
     Solenoid lifterSolenoid;
 
@@ -168,6 +170,12 @@ public class Shooter implements Subsystem {
             shooterBottom.set(ControlMode.PercentOutput, -1.0);
             System.out.println(shooterSpeed + " " + shooterSpeedError + " " + shooterBottom.getSelectedSensorVelocity());
             // TODO Timeout for low voltage
+            if(!this.runningBelt)
+                timeout += 1;
+            if(timeout > 50) {
+                this.runningBelt = true;
+                timeout = 0;
+            }
             if(this.runningBelt || (shooterSpeed - shooterSpeedError) < -shooterBottom.getSelectedSensorVelocity()){
                 this.runningBelt = true;
                 beltBottom.set(ControlMode.PercentOutput, beltSpeed);
@@ -175,10 +183,11 @@ public class Shooter implements Subsystem {
                 beltBottom.set(ControlMode.PercentOutput, 0.0);
             }
         } else {
+            this.timeout = 0;
             this.runningBelt = false;
             if(ctrlManager.getIntakeEnabled()) {
                 if(ctrlManager.getIntakeSpeed() > 0.0) {
-                    shooterBottom.set(ControlMode.PercentOutput, 0.35);
+                    shooterBottom.set(ControlMode.PercentOutput, Constants.intakeShooterSpeed);
                 }
                 if(!frontLBsensor.get()) {
                     frontLineBreakTimer += 1; 
@@ -192,7 +201,7 @@ public class Shooter implements Subsystem {
             } else {
                 shooterBottom.set(ControlMode.PercentOutput, 0.0);
                 //shooterBottom.set(ControlMode.Velocity, 0.0);
-                beltBottom.set(ControlMode.PercentOutput, 0.0);
+                beltBottom.set(ControlMode.PercentOutput, ctrlManager.getAxis(InputButton.OPERATOR_RY));
             }
         }
         if(ctrlManager.getButtonPressed(Constants.shooterCtrlLiftToggle))
@@ -211,21 +220,29 @@ public class Shooter implements Subsystem {
     }
     
 	public void autonomousShoot(boolean runShooter, boolean runIntake) {
-        shooterSpeed = inst.getEntry("Shooter_Speed").getNumber(Constants.AUTO_SHOOTER_SHOOTER_SPEED).doubleValue();
-        beltSpeed = inst.getEntry("Belt_Speed").getNumber(Constants.AUTO_SHOOTER_BELT_SPEED).doubleValue();
+        shooterSpeed = Constants.AUTO_SHOOTER_SHOOTER_SPEED;
+        beltSpeed = Constants.AUTO_SHOOTER_BELT_SPEED;
+        System.out.println(runShooter);
         if(runShooter)
         {
             shooterBottom.set(ControlMode.PercentOutput, -1.0);
-            System.out.println(shooterSpeed + " " + shooterSpeedError + " " + shooterBottom.getSelectedSensorVelocity());
+            //System.out.println(shooterSpeed + " " + shooterSpeedError + " " + shooterBottom.getSelectedSensorVelocity());
             // TODO Timeout for low voltage
-            if((shooterSpeed - shooterSpeedError) < -shooterBottom.getSelectedSensorVelocity()){
+            if(!this.runningBelt)
+                timeout += 1;
+            if(timeout > 50) {
+                this.runningBelt = true;
+                timeout = 0;
+            }
+            if(this.runningBelt || (shooterSpeed - shooterSpeedError) < -shooterBottom.getSelectedSensorVelocity()){
+                this.runningBelt = true;
                 beltBottom.set(ControlMode.PercentOutput, beltSpeed);
             } else {
                 beltBottom.set(ControlMode.PercentOutput, 0.0);
             }
             //shooterBottom.set(ControlMode.Velocity, shooterSpeed);
             //if((shooterSpeed + shooterSpeedError) > shooterBottom.getSelectedSensorVelocity() & (shooterSpeed - shooterSpeedError) < shooterBottom.getSelectedSensorVelocity()){
-            beltBottom.set(ControlMode.PercentOutput, beltSpeed);
+            //beltBottom.set(ControlMode.PercentOutput, beltSpeed);
             //}
         } else if(runIntake) {
             if(ctrlManager.getIntakeSpeed() > 0.0) {

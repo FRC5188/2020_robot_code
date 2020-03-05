@@ -74,7 +74,7 @@ public class TaskRunShoot extends AutoTask {
     @Override
     public void end() {
         // TODO Auto-generated method stub
-
+        AutoRequestHandler.getInst().setBeltOff();
     }
 
     @Override

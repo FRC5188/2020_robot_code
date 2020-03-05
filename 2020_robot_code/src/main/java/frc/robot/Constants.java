@@ -44,8 +44,8 @@ public class Constants {
   // Shooter Teleop Variables // 750 RPM
   public static final double shooterShooterSpeed = 1500.0/500.0*2000.0*2048.0/600.0; // Velocity, not percent output
   public static final double shooterBeltSpeed = 1.0; // TODO: Specify Speed vs Percent
-  public static final double intakeShooterSpeed = 1000.0/500.0*2000.0*2048.0/600.0;
-  public static final double intakeBeltSpeed = 0.2;
+  public static final double intakeShooterSpeed = 0.5;//1500.0/500.0*2000.0*2048.0/600.0;
+  public static final double intakeBeltSpeed = 0.25;
 
 
   public static final double ENCODER_TICKS_PER_INCH  = 941.1;
@@ -77,7 +77,7 @@ public class Constants {
   public static final double AUTONOMOUS_MAX_THROTTLE = 0.5;
   public static final double AUTONOMOUS_MAX_TURN = 0.5;
   public static final double AUTO_SHOOTER_SHOOTER_SPEED = Constants.shooterShooterSpeed; // default to 
-  public static final double AUTO_SHOOTER_BELT_SPEED = Constants.shooterBeltSpeed; // teleop's defaults
+  public static final double AUTO_SHOOTER_BELT_SPEED = 1.0;//Constants.shooterBeltSpeed; // teleop's defaults
 
   // Vision PID
   public static final double VISION_PID_P = 0.01;

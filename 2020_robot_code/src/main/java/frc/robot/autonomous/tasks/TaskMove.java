@@ -87,7 +87,6 @@ public class TaskMove extends AutoTask {
         AutoRequestHandler reqHandler = AutoRequestHandler.getInst();
         if(this.useQuickHack) {
             reqHandler.addThrottle(forwardOrBackward ? this.speed : -this.speed);
-            System.out.println(this.endTime-System.currentTimeMillis());
             if(System.currentTimeMillis() > this.endTime) {
                 this.isFinished = true;
                 this.state = TaskState.FINISHED;

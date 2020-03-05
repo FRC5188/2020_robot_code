@@ -37,7 +37,7 @@ public class AutoRequestHandler {
      * NOTE: If you add extra fields to this class, you must reset them here.
      * Maybe request data from sensors here? (for processing by tasks?)
      **/
-    public void startPeriodic() {
+    public void startPeriodic() {//should this be protected???
         this.throttle = 0.0;
         this.turn = 0.0;
         this.gyroAngle = 0.0;
@@ -109,6 +109,17 @@ public class AutoRequestHandler {
 
 	public boolean getShooterSolenoidUp() {
 		return this.shooterSolenoidUp;
+	}
+
+	public void init() {
+        if(robot.getIntake().getIntakeSolenoidUp())
+            robot.getIntake().toggleSolenoid();
+        if(!robot.getShooter().getShooterSolenoidUp())
+            robot.getShooter().toggleSolenoid();
+	}
+
+	public void setBeltOff() {
+        this.robot.getShooter().runningBelt = false;
 	}
 
 }

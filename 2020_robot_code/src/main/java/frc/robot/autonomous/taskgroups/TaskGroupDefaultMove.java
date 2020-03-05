@@ -32,6 +32,7 @@ public class TaskGroupDefaultMove  extends TaskGroup {
     public Queue<AutoTask> retrieveTasks() {
         if(!tasks.isEmpty()) return tasks;
         tasks.add(new TaskMove(time, this.forwardOrBack, speed));
+        tasks.add(new TaskRunShoot(5000));
         return tasks;
     }
 
