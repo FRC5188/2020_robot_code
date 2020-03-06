@@ -61,6 +61,26 @@ public enum AutoTaskGroups {
         "Note: 3s forward, no back",
         "3s forward, 6s shoot",
         "max delay: 6s"
+    }),
+    TEST_MOVE_DIST_36(new TaskGroupMoveDist(36, 0.15), "Test Move Dist 36in", new String[] {
+        "Test Move Dist 36in",
+        "Move forward 36 inches",
+        "at 0.15 throttle"
+    }),
+    TEST_MOVE_DIST_48(new TaskGroupMoveDist(48, 0.15), "Test Move Dist 48in", new String[] {
+        "Test Move Dist 48in",
+        "Move forward 48 inches",
+        "at 0.15 throttle"
+    }),
+    TEST_MOVE_DIST_SLOW(new TaskGroupMoveDist(36, 0.1), "Test Move Dist Slow", new String[] {
+        "Test Move Dist Slow",
+        "Move forward 36 inches",
+        "at 0.1 throttle"
+    }),
+    TEST_MOVE_DIST_FAST(new TaskGroupMoveDist(36, 0.2), "Test Move Dist Fast", new String[] {
+        "Test Move Dist Fast",
+        "Move forward 36 inches",
+        "at 0.2 throttle"
     });
     
     /*

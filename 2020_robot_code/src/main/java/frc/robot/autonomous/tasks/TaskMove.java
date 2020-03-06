@@ -38,6 +38,10 @@ public class TaskMove extends AutoTask {
         this.timeToMove = Constants.TASK_MOVE_DEFAULT_TIME;
         this.state = TaskState.NOT_STARTED;
     }
+    public TaskMove(double distance, double speed) {
+        this.distance = distance;
+        this.speed = speed;
+    }
     /*
     * Quick task to make sure we have atleast one working auto before comp
     * Move for a certain number of ticks
@@ -92,7 +96,12 @@ public class TaskMove extends AutoTask {
                 this.state = TaskState.FINISHED;
             }
         } else {
-            reqHandler.addThrottle(this.pidController.calculate(avgDist));
+            if(Math.abs(this.speed) > 0 && Math.abs(avgDist-startDist) >= this.distance) {
+                this.isFinished = true;
+                this.state = TaskState.FINISHED;
+                return this.state;
+            }
+            reqHandler.addThrottle(Math.abs(this.speed) > 0 ? this.speed : this.pidController.calculate(avgDist));
             if(Math.abs(avgDist-startDist) < this.tolerance) {
                 if(System.currentTimeMillis() > this.endTime) {
                     this.isFinished = true;

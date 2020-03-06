@@ -34,7 +34,7 @@ public class Intake implements Subsystem {
     }
 
 	public void autonomousIntake(boolean runIntake) {
-        if(runIntake && !this.getIntakeSolenoidUp()) && !this.robot.getShooter().isSolenoidUp())
+        if(runIntake && !this.getIntakeSolenoidUp() && !this.robot.getShooter().isSolenoidUp())
             intakeMotor.set(ControlMode.PercentOutput, Constants.TASK_INTAKE_SPEED);
         else
             intakeMotor.set(ControlMode.PercentOutput, 0.0);
