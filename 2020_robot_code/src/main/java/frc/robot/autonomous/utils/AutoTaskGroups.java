@@ -19,21 +19,6 @@ public enum AutoTaskGroups {
         "Moves forward at 0.15 throttle",
         "for 2 seconds.",
         "Max delay: 13s"
-    }),
-    DEFAULT_SHOOT(new TaskGroupMoveShoot(2000, 5000, 2000), "Default Move & Shoot", new String[]{ 
-        "Default Shoot",
-        "Moves forward, shoot,",
-        "move backward.",
-        "2s forward, 6s shoot, 2s back",
-        "Max delay: 5s"
-    }),
-    SHOOT_LONG(new TaskGroupMoveShoot(3000, 5000, 3000), "Move Long & Shoot", new String[]{ 
-        "Move Long & Shoot",
-        "Moves forward, shoot,",
-        "move backward.",
-        "Note: 3s forward/back",
-        "3s forward, 6s shoot, 3s back",
-        "Max delay: 3s"
     }), 
     MOVE_EXTRLONG(new TaskGroupDefaultMove(4000, 0.15, true), "Move ExtrLong", new String[]{ 
         "Move Long",
@@ -50,10 +35,25 @@ public enum AutoTaskGroups {
         "Moves backwards for 4 seconds",
         "Max delay: 11s"
     }),
-    SHOOT(new TaskGroupShoot(5000), "Shoot", new String[] {
-        "Shoot",
-        "Just shoot for 6 seconds",
-        "Max delay: 9s"
+    DEFAULT_SHOOT(new TaskGroupMoveShoot(2000, 5000, 2000), "Default Move & Shoot", new String[]{ 
+        "Default Shoot",
+        "Moves forward, shoot,",
+        "move backward.",
+        "2s forward, 6s shoot, 2s back",
+        "Max delay: 5s"
+    }),
+    SHOOT_MOVE_BACK(new TaskGroupMoveShoot(0, 5000, 3000), "Shoot Move Back", new String[] {
+        "Shoot Move Back",
+        "Shoot for 6 seconds, move back 3s",
+        "Max delay: 6s"
+    }),
+    SHOOT_LONG(new TaskGroupMoveShoot(3000, 5000, 3000), "Move Long & Shoot", new String[]{ 
+        "Move Long & Shoot",
+        "Moves forward, shoot,",
+        "move backward.",
+        "Note: 3s forward/back",
+        "3s forward, 6s shoot, 3s back",
+        "Max delay: 3s"
     }),
     SHOOT_LONG_NO_BACK(new TaskGroupMoveShoot(3000, 5000, 0), "Move Long & Shoot (No Back)", new String[]{ 
         "Move Long & Shoot",
