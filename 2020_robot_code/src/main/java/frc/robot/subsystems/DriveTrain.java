@@ -172,6 +172,7 @@ public class DriveTrain implements Subsystem {
     private static double throttleShifter = Constants.driveTrainThrottleShifter;//0.3;
     
     private void teleopDefaultDrive() {
+        /*
         turnShifter = turnShifterEnt.getDouble(Constants.driveTrainTurnShifter);
         cThrottle = cThrottleEnt.getDouble(Constants.driveTrainCThrottle);
         cTurn = cTurnEnt.getDouble(Constants.driveTrainCTurn);
@@ -179,6 +180,7 @@ public class DriveTrain implements Subsystem {
         deadSpaceTurn = deadSpaceTurnEnt.getDouble(Constants.driveTrainDeadSpaceTurn);
         minimumThreshold = minimumThresholdEnt.getDouble(Constants.driveTrainMinimumThreshold);
         throttleShifter = throttleShifterEnt.getDouble(Constants.driveTrainThrottleShifter);
+        */
         double throttle = ctrlManager.getAxis(InputButton.DRIVER_LY);
         double turn = ctrlManager.getAxis(InputButton.DRIVER_RX);
         // Map turn and throttle to be from "deadSpace" to 1.0
@@ -192,13 +194,13 @@ public class DriveTrain implements Subsystem {
         turn = turn > 0 ? Math.pow(Math.abs(turn),cTurn) : -Math.pow(Math.abs(turn),cTurn);
         throttle = throttle * throttleShifter * (1-deadSpaceThrottle) + (Math.abs(throttle) < minimumThreshold ? 0.0 : (throttle > 0 ? deadSpaceThrottle : -deadSpaceThrottle));
         turn = turn * turnShifter * (1-deadSpaceTurn) + (Math.abs(turn) < minimumThreshold ? 0.0 : (turn > 0 ? deadSpaceTurn : -deadSpaceTurn));
-
+        /*
         if(ctrlManager.getButton(Constants.shooterAlignVisionButton)) {
             visionPid.setPID(pidP.getDouble(0.0),pidI.getDouble(0.0),pidD.getDouble(0.0));
             if(targetX.getDouble(-1.0) >= 0)
                 turn = visionPid.calculate(targetX.getDouble(160.0));
             System.out.println(targetX.getDouble(160.0) + " " + turn);
-        }
+        }*/
 
         // allow for manual quick turn enable 
         //boolean isQuickTurn = ctrlManager.getButtonDriver(Constants.Buttons.R);
