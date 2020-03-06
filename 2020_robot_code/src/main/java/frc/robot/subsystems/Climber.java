@@ -15,7 +15,7 @@ public class Climber implements Subsystem {
     VictorSPX climber;
     Solenoid climberSolenoid;
     private final boolean SOLENOID_DOWN = false;
-    private final boolean SOLENOID_UP = true;
+    //private final boolean SOLENOID_UP = true;
     
     ControllerManager ctrlManager;
     Robot robot;

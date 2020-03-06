@@ -14,73 +14,55 @@ import frc.robot.autonomous.taskgroups.*;
  */
 public enum AutoTaskGroups {
 
-    DEFAULT_MOVE(new TaskGroupDefaultMove(2000, 0.15, true), "Default Move (Timed Move)", new String[]{ 
+    DEFAULT_MOVE(new TaskGroupDefaultMove(2000, 0.15, true), "Default Move", new String[]{ 
         "Default Auto",
         "Moves forward at 0.15 throttle",
-        "for 2 seconds."
-    }), 
-    TIMED_MOVE_SEMIFAST_QUICK(new TaskGroupDefaultMove(1000,0.3, true), "Move Semi-Fast Quick", new String[]{ 
-        "Timed Move Fast Quick",
-        "Moves forward at 0.3 throttle",
-        "for 1 second."
-    }), 
-    TIMED_MOVE_SLOW_QUICK(new TaskGroupDefaultMove(1000, 0.15, true), "Move Slow Quick", new String[]{ 
-        "Timed Move Slow Quick",
-        "Moves forward at 0.15 throttle",
-        "for 1 second."
-    }), 
-    TIMED_MOVE_SEMIFAST(new TaskGroupDefaultMove(2000, 0.3, true), "Move Semi-Fast", new String[]{ 
-        "Timed Move Semi-Fast",
-        "Moves forward at 0.3 throttle",
-        "for 2 seconds."
-    }), 
-    TIMED_MOVE_SEMIFAST_LONG(new TaskGroupDefaultMove(3000, 0.3, true), "Move Semi-Fast Long", new String[]{ 
-        "Timed Move Semi-Fast Long",
-        "Moves forward at 0.3 throttle",
-        "for 3 seconds."
-    }), 
-    TIMED_MOVE_SLOW_LONG(new TaskGroupDefaultMove(3000, 0.15, true), "Move Slow Long", new String[]{ 
-        "Timed Move Slow Long",
-        "Moves forward at 0.15 throttle",
-        "for 3 seconds."
+        "for 2 seconds.",
+        "Max delay: 13s"
     }),
-    TIMED_MOVE_SEMIFAST_QUICK_BACKWARDS(new TaskGroupDefaultMove(1000,0.3, false), "Move Semi-Fast Quick Backwards", new String[]{ 
-        "Timed Move Fast Quick Backwards",
-        "Moves backwards at 0.3 throttle",
-        "for 1 second."
-    }), 
-    TIMED_MOVE_SLOW_QUICK_BACKWARDS(new TaskGroupDefaultMove(1000, 0.15, false), "Move Slow Quick Backwards", new String[]{ 
-        "Timed Move Slow Quick Backwards",
-        "Moves backwards at 0.15 throttle",
-        "for 1 second."
-    }), 
-    TIMED_MOVE_SEMIFAST_BACKWARDS(new TaskGroupDefaultMove(2000, 0.3, false), "Move Semi-Fast Backwards", new String[]{ 
-        "Timed Move Semi-Fast Backwards",
-        "Moves backwards at 0.3 throttle",
-        "for 2 second."
-    }), 
-    TIMED_MOVE_SEMIFAST_LONG_BACKWARDS(new TaskGroupDefaultMove(3000, 0.3, false), "Move Semi-Fast Long Backwards", new String[]{ 
-        "Timed Move Semi-Fast Long",
-        "Moves backwards at 0.3 throttle",
-        "for 3 second."
-    }), 
-    TIMED_MOVE_SLOW_LONG_BACKWARDS(new TaskGroupDefaultMove(3000, 0.15, false), "Move Slow Long Backwards", new String[]{ 
-        "Timed Move Slow Long Backwards",
-        "Moves backwards at 0.15 throttle",
-        "for 3 second."
-    }), 
-    TIMED_MOVE_SLOW_BACKWARDS(new TaskGroupDefaultMove(2000, 0.15, false), "Move Slow Backwards", new String[]{ 
-        "Timed Move Slow Long Backwards",
-        "Moves backwards at 0.15 throttle",
-        "for 2 second."
+    DEFAULT_SHOOT(new TaskGroupMoveShoot(2000, 5000, 2000), "Default Move & Shoot", new String[]{ 
+        "Default Shoot",
+        "Moves forward, shoot,",
+        "move backward.",
+        "2s forward, 6s shoot, 2s back",
+        "Max delay: 5s"
     }),
-    RUN_SHOOTER(new TaskGroupShoot(5000), "Run Shooter", new String[] {
-        "Run Shooter",
-        "Run the shooter for 5 seconds",
-        "If shooter isn't up,",
-        "it will auto lift up."
+    SHOOT_LONG(new TaskGroupMoveShoot(3000, 5000, 3000), "Move Long & Shoot", new String[]{ 
+        "Move Long & Shoot",
+        "Moves forward, shoot,",
+        "move backward.",
+        "Note: 3s forward/back",
+        "3s forward, 6s shoot, 3s back",
+        "Max delay: 3s"
+    }), 
+    MOVE_EXTRLONG(new TaskGroupDefaultMove(4000, 0.15, true), "Move ExtrLong", new String[]{ 
+        "Move Long",
+        "Moves forward for 4 seconds",
+        "Max delay: 11s"
+    }),
+    MOVE_BACK(new TaskGroupDefaultMove(2000, 0.15, false), "Move Back", new String[]{ 
+        "Move Back",
+        "Moves backwards for 2 seconds",
+        "Max delay: 13s"
+    }),
+    MOVE_EXTRLONG_BACK(new TaskGroupDefaultMove(4000, 0.15, false), "Move Back ExtrLong", new String[]{ 
+        "Move Back Long",
+        "Moves backwards for 4 seconds",
+        "Max delay: 11s"
+    }),
+    SHOOT(new TaskGroupShoot(5000), "Shoot", new String[] {
+        "Shoot",
+        "Just shoot for 6 seconds",
+        "Max delay: 9s"
+    }),
+    SHOOT_LONG_NO_BACK(new TaskGroupMoveShoot(3000, 5000, 0), "Move Long & Shoot (No Back)", new String[]{ 
+        "Move Long & Shoot",
+        "Moves forward and shoot.",
+        "Note: 3s forward, no back",
+        "3s forward, 6s shoot",
+        "max delay: 6s"
     });
-    ;
+    
     /*
     SHOOT_TURN(new TaskGroupShoot(), "Shoot Turn", new String[] {
         "Shoot Turn",

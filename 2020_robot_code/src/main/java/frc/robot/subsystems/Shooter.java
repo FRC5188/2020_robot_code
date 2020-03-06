@@ -18,7 +18,6 @@ import frc.robot.utils.Gains;
 import frc.robot.utils.InputButton;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Shooter implements Subsystem {
@@ -41,6 +40,7 @@ public class Shooter implements Subsystem {
     private int frontLineBreakTimer = 0;
     public boolean runningBelt = false;
     private int timeout = 0;
+    private int liftTime;
 
     DoubleSolenoid lifterSolenoid;
 
@@ -52,7 +52,7 @@ public class Shooter implements Subsystem {
         this.robot = robot;
         this.ctrlManager = Robot.getControllerManager();
         lifterSolenoid = new DoubleSolenoid(Constants.lifterSolenoid, Constants.lifterSolenoid2);
-        lifterSolenoid.set(Constants.SOLENOID_DOWN);
+        //lifterSolenoid.set(Constants.SOLENOID_DOWN);
         this.initCANMotors();
         this.initCurrentLimit();
 
@@ -139,19 +139,8 @@ public class Shooter implements Subsystem {
     }
 
     /*
-
         TODO: 
-        Add secondary controller
-        Seperate belt and shooter
-        Remove temp solution for ^
         Interface with other subsystems better?
-        Make solenoid less destructive?
-
-
-
-
-
-
     */
 
     private void teleopDefaultShooter() {
@@ -165,13 +154,16 @@ public class Shooter implements Subsystem {
         {
             if(!this.isSolenoidUp()) {//if piston is not up, make it before shooting
                 lifterSolenoid.set(Value.kForward);
-                // TODO: Make timer to make sure doesnt get stuck
+                liftTime = Constants.shootLiftDelay;
+                return;
+            }
+            if(liftTime > 0) {
+                liftTime -= 1;
                 return;
             }
             //shooterBottom.set(ControlMode.Velocity, -shooterSpeed);
             shooterBottom.set(ControlMode.PercentOutput, -1.0);
-            System.out.println(shooterSpeed + " " + shooterSpeedError + " " + shooterBottom.getSelectedSensorVelocity());
-            // TODO Timeout for low voltage
+            
             if(!this.runningBelt)
                 timeout += 1;
             if(timeout > 50) {
@@ -193,7 +185,7 @@ public class Shooter implements Subsystem {
                 }
                 if(!frontLBsensor.get()) {
                     frontLineBreakTimer += 1; 
-                    if(frontLineBreakTimer > 8) { // 50 ticks per second
+                    if(frontLineBreakTimer > 8) {
                         beltBottom.set(ControlMode.PercentOutput, -Constants.intakeBeltSpeed);
                     }
                 } else {
@@ -243,8 +235,7 @@ public class Shooter implements Subsystem {
         if(runShooter)
         {
             shooterBottom.set(ControlMode.PercentOutput, -1.0);
-            //System.out.println(shooterSpeed + " " + shooterSpeedError + " " + shooterBottom.getSelectedSensorVelocity());
-            // TODO Timeout for low voltage
+            
             if(!this.runningBelt)
                 timeout += 1;
             if(timeout > 50) {
@@ -257,10 +248,6 @@ public class Shooter implements Subsystem {
             } else {
                 beltBottom.set(ControlMode.PercentOutput, 0.0);
             }
-            //shooterBottom.set(ControlMode.Velocity, shooterSpeed);
-            //if((shooterSpeed + shooterSpeedError) > shooterBottom.getSelectedSensorVelocity() & (shooterSpeed - shooterSpeedError) < shooterBottom.getSelectedSensorVelocity()){
-            //beltBottom.set(ControlMode.PercentOutput, beltSpeed);
-            //}
         } else if(runIntake) {
             if(ctrlManager.getIntakeSpeed() > 0.0) {
                 shooterBottom.set(ControlMode.PercentOutput, 0.35);
@@ -278,7 +265,6 @@ public class Shooter implements Subsystem {
             shooterBottom.set(ControlMode.PercentOutput, 0.0);
             beltBottom.set(ControlMode.PercentOutput, 0.0);
         }
-        // TODO: Autonomous reverse shooter
 	}
 
     public void resetEncoders() {

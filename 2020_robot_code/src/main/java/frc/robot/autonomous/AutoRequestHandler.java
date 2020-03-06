@@ -49,7 +49,7 @@ public class AutoRequestHandler {
         this.shooterSolenoidUp = robot.getShooter().isSolenoidUp();//changed
         this.leftEncoderDistance = robot.getDriveTrain().getLeftEncoderInches();
         this.rightEncoderDistance = robot.getDriveTrain().getRightEncoderInches();
-        // TODO: Get Gyro Info
+        
         this.gyroAngle = robot.getDriveTrain().getGyroAngle();
     }
 

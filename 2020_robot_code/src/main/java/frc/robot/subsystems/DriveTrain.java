@@ -77,7 +77,6 @@ public class DriveTrain implements Subsystem {
     }
 
     private void initCANMotors() {
-        // TODO: Test if will fail with motor not connected?
         this.leftMotor1 = new WPI_TalonFX(Constants.leftFalcon1);
         this.leftMotor2 = new WPI_TalonFX(Constants.leftFalcon2);
         this.rightMotor1 = new WPI_TalonFX(Constants.rightFalcon1);

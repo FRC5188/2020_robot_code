@@ -67,13 +67,11 @@ public class TaskRunShoot extends AutoTask {
 
     @Override
     public void initShuffle() {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void end() {
-        // TODO Auto-generated method stub
         AutoRequestHandler.getInst().setBeltOff();
     }
 
@@ -84,7 +82,6 @@ public class TaskRunShoot extends AutoTask {
 
     @Override
     public void updateShuffle() {
-        // TODO Auto-generated method stub
 
     }
 

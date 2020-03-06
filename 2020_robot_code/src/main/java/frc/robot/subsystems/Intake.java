@@ -8,7 +8,6 @@ import frc.robot.ControllerManager;
 import frc.robot.Robot;
 import frc.robot.Subsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Intake implements Subsystem {
@@ -17,7 +16,7 @@ public class Intake implements Subsystem {
     ControllerManager ctrlManager;
     Robot robot;
 
-    public Intake(Robot robot){
+    public Intake(Robot robot) {
         this.robot = robot;
         this.ctrlManager = Robot.getControllerManager();
     }
@@ -26,6 +25,8 @@ public class Intake implements Subsystem {
         //if shooter is up, dont
         if(this.robot.getShooter().isSolenoidUp()) return;
         if(ctrlManager.getButtonPressed(Constants.intakeCtrlButtonToggle)){
+            if(this.getIntakeSolenoidUp() && this.robot.getShooter().isSolenoidUp())
+                this.robot.getShooter().toggleSolenoid();
             this.toggleSolenoid();
         }
         if(this.getIntakeSolenoidUp())
@@ -33,7 +34,7 @@ public class Intake implements Subsystem {
     }
 
 	public void autonomousIntake(boolean runIntake) {
-        if(runIntake && this.getIntakeSolenoidUp())
+        if(runIntake && !this.getIntakeSolenoidUp()) && !this.robot.getShooter().isSolenoidUp())
             intakeMotor.set(ControlMode.PercentOutput, Constants.TASK_INTAKE_SPEED);
         else
             intakeMotor.set(ControlMode.PercentOutput, 0.0);
@@ -44,9 +45,9 @@ public class Intake implements Subsystem {
     }
     public void toggleSolenoid() {
         if(this.intakeSolenoid.get() == Value.kForward){
-        this.intakeSolenoid.set(Value.kReverse);
-        }else{
-        this.intakeSolenoid.set(Value.kForward);
+            this.intakeSolenoid.set(Value.kReverse);
+        } else {
+            this.intakeSolenoid.set(Value.kForward);
         }
     }
 
@@ -58,31 +59,26 @@ public class Intake implements Subsystem {
 
     @Override
     public void initShuffle() {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void operate() {
-        // TODO Auto-generated method stub
         defaultTeleop();
     }
 
     @Override
     public void test() {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void updateShuffle() {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void kill() {
-        // TODO Auto-generated method stub
 
     }
 
