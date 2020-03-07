@@ -19,4 +19,9 @@ public abstract class TaskGroup {
 
     public abstract Queue<AutoTask> retrieveTasks();
 
+	public Queue<AutoTask> resetAndRetrieveTask() {
+        tasks = new LinkedList<AutoTask>();
+        return this.retrieveTasks();
+	}
+
 }

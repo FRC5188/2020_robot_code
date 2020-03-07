@@ -162,7 +162,7 @@ public class Shooter implements Subsystem {
                 return;
             }
             //shooterBottom.set(ControlMode.Velocity, -shooterSpeed);
-            shooterBottom.set(ControlMode.PercentOutput, -1.0);
+            shooterBottom.set(ControlMode.PercentOutput, -Constants.shooterPercentSpeed);
             
             if(!this.runningBelt)
                 timeout += 1;
@@ -218,7 +218,6 @@ public class Shooter implements Subsystem {
     }
 
     public void toggleSolenoid() {
-        System.out.println(this.lifterSolenoid.get());
         if(this.lifterSolenoid.get() == Value.kForward){
             this.lifterSolenoid.set(Value.kReverse);
         }
@@ -231,10 +230,10 @@ public class Shooter implements Subsystem {
 	public void autonomousShoot(boolean runShooter, boolean runIntake) {
         shooterSpeed = Constants.AUTO_SHOOTER_SHOOTER_SPEED;
         beltSpeed = Constants.AUTO_SHOOTER_BELT_SPEED;
-        System.out.println(runShooter);
+        
         if(runShooter)
         {
-            shooterBottom.set(ControlMode.PercentOutput, -1.0);
+            shooterBottom.set(ControlMode.PercentOutput, -Constants.shooterPercentSpeed);
             
             if(!this.runningBelt)
                 timeout += 1;

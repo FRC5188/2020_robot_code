@@ -43,7 +43,7 @@ public class AutoManager {
     SimpleWidget delayWidget;
 
     public void init(Robot robot) {
-        tasks = autoSelectorSendable.getSelected().getTaskGroup().retrieveTasks();
+        tasks = autoSelectorSendable.getSelected().getTaskGroup().resetAndRetrieveTask();
         reqHandler = new AutoRequestHandler(robot);
         this.startTime = System.currentTimeMillis();
         reqHandler.init();

@@ -23,7 +23,7 @@ public class Intake implements Subsystem {
 
     void defaultTeleop() {
         //if shooter is up, dont
-        if(this.robot.getShooter().isSolenoidUp()) return;
+        //if(this.robot.getShooter().isSolenoidUp()) return;
         if(ctrlManager.getButtonPressed(Constants.intakeCtrlButtonToggle)){
             if(this.getIntakeSolenoidUp() && this.robot.getShooter().isSolenoidUp())
                 this.robot.getShooter().toggleSolenoid();

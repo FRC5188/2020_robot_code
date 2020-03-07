@@ -38,7 +38,7 @@ public class Climber implements Subsystem {
     }
     private void teleopDefaultClimber() {
         
-        if(ctrlManager.getButtonPressed(Constants.climberButtonToggle) && !this.robot.getIntake().getIntakeSolenoidUp())
+        if(ctrlManager.getButtonPressed(Constants.climberButtonToggle)) //  && !this.robot.getIntake().getIntakeSolenoidUp()
         {
             climberSolenoid.set(!climberSolenoid.get());
         }

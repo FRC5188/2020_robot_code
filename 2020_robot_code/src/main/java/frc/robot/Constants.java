@@ -44,6 +44,7 @@ public class Constants {
   public static final int BeltSupplyCurrentLimit = 30; // once current-limiting is activated, hold at __A
 
   // Shooter Teleop Variables // 750 RPM
+  public static final double shooterPercentSpeed = 0.85;
   public static final double shooterShooterSpeed = 1500.0/500.0*2000.0*2048.0/600.0; // Velocity, not percent output
   public static final double shooterBeltSpeed = 1.0; // PercentOutput
   public static final double intakeShooterSpeed = 0.5;//1500.0/500.0*2000.0*2048.0/600.0;
@@ -151,13 +152,14 @@ public class Constants {
   public static final Gains SHOOTER_CONFIG = new Gains(1023.0/20660.0,0.5,0.0,0.0,300,1.00);//0.001,5.0,1023.0/20660.0,300, 1.00);
   
   // Drive Train Variables
-  public static final double driveTrainTurnShifter = 0.65;
+  public static final double driveTrainTurnShifter = 0.5;
   public static final double driveTrainCThrottle = 1;
   public static final double driveTrainCTurn = 5;
   public static final double driveTrainDeadSpaceThrottle = 0.2;
-  public static final double driveTrainDeadSpaceTurn = 0.45;
+  public static final double driveTrainDeadSpaceTurn = 0.4;
   public static final double driveTrainThrottleShifter = 0.6;
   public static final double driveTrainMinimumThreshold = 0.005;
+
 
 
   public static class Buttons {
