@@ -37,12 +37,12 @@ public class Climber implements Subsystem {
         climber.setSelectedSensorPosition(0);
     }
     private void teleopDefaultClimber() {
-        if(ctrlManager.getButtonPressed(Constants.climberButtonToggle) && this.robot.getIntake().getIntakeSolenoidUp())
+        
+        if(ctrlManager.getButtonPressed(Constants.climberButtonToggle) && !this.robot.getIntake().getIntakeSolenoidUp())
         {
             climberSolenoid.set(!climberSolenoid.get());
         }
-
-        if (((climberSolenoid.get()) && ctrlManager.getAxis(Constants.climberCtrlAxis) < 0) || (ctrlManager.getButton(InputButton.OPERATOR_START))){
+        if (((!climberSolenoid.get()) && ctrlManager.getAxis(Constants.climberCtrlAxis) < -0.01) || (ctrlManager.getButton(InputButton.OPERATOR_START))){
             climber.set(ControlMode.PercentOutput, ctrlManager.getAxis(Constants.climberCtrlAxis));
         } else{
             climber.set(ControlMode.PercentOutput, 0);

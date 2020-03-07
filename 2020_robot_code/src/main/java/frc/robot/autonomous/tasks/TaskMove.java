@@ -89,6 +89,7 @@ public class TaskMove extends AutoTask {
         if(this.state == TaskState.CANCELLED || this.state == TaskState.FINISHED) return this.state;
         double avgDist = getAverageEncoderDist();
         AutoRequestHandler reqHandler = AutoRequestHandler.getInst();
+        System.out.println("dist " + getAverageEncoderDist());
         if(this.useQuickHack) {
             reqHandler.addThrottle(forwardOrBackward ? this.speed : -this.speed);
             if(System.currentTimeMillis() > this.endTime) {
@@ -101,14 +102,15 @@ public class TaskMove extends AutoTask {
                 this.state = TaskState.FINISHED;
                 return this.state;
             }
+            System.out.println("Speed: " + this.speed + " " + avgDist + " " + startDist + " " + (avgDist-startDist));
             reqHandler.addThrottle(Math.abs(this.speed) > 0 ? this.speed : this.pidController.calculate(avgDist));
             if(Math.abs(avgDist-startDist) < this.tolerance) {
-                // if(System.currentTimeMillis() > this.endTime) { //think this is broken for just dist and speed
-                //     this.isFinished = true;
-                //     this.state = TaskState.FINISHED;
-                // }
-                this.isFinished = true;
-                this.state = TaskState.FINISHED;
+                if(System.currentTimeMillis() > this.endTime) { //think this is broken for just dist and speed
+                    this.isFinished = true;
+                    this.state = TaskState.FINISHED;
+                }
+                // this.isFinished = true;
+                // this.state = TaskState.FINISHED;
             } else 
                 this.endTime = System.currentTimeMillis()+timeToMove;
         }
@@ -122,7 +124,7 @@ public class TaskMove extends AutoTask {
 
     @Override
     public void end() {
-
+        AutoRequestHandler.getInst().addThrottle(0);
     }
 
     @Override
