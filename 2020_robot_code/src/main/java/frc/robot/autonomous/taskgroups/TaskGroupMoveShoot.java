@@ -25,14 +25,17 @@ public class TaskGroupMoveShoot  extends TaskGroup {
     public TaskGroupMoveShoot(int time, int shootTime, int timeBack) {
         this.time = time;
         this.shootTime = shootTime;
+        this.timeBack = timeBack;
     }
 
     @Override
     public Queue<AutoTask> retrieveTasks() {
         if(!tasks.isEmpty()) return tasks;
-        tasks.add(new TaskMove(time, true, 0.15));
+        if(time > 0)
+            tasks.add(new TaskMove(time, true, 0.15));
         tasks.add(new TaskRunShoot(shootTime));
-        tasks.add(new TaskMove(timeBack, false, 0.15));
+        if(timeBack > 0)
+            tasks.add(new TaskMove(timeBack, false, 0.15));
         return tasks;
     }
 
