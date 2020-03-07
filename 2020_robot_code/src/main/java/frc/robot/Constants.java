@@ -56,7 +56,7 @@ public class Constants {
   public static final double shooterOpenRampDuration = 0.50; //seconds from zero to full throttle
 
   // Autonomous Task Move Variables
-  public static final double TASK_MOVE_PID_P = 0.1;
+  public static final double TASK_MOVE_PID_P = 0.01;
   public static final double TASK_MOVE_PID_I = 0.0;
   public static final double TASK_MOVE_PID_D = 0.0;
   public static final double TASK_MOVE_DEFAULT_TOLERANCE = 1.0;

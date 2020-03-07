@@ -103,10 +103,12 @@ public class TaskMove extends AutoTask {
             }
             reqHandler.addThrottle(Math.abs(this.speed) > 0 ? this.speed : this.pidController.calculate(avgDist));
             if(Math.abs(avgDist-startDist) < this.tolerance) {
-                if(System.currentTimeMillis() > this.endTime) {
-                    this.isFinished = true;
-                    this.state = TaskState.FINISHED;
-                }
+                // if(System.currentTimeMillis() > this.endTime) { //think this is broken for just dist and speed
+                //     this.isFinished = true;
+                //     this.state = TaskState.FINISHED;
+                // }
+                this.isFinished = true;
+                this.state = TaskState.FINISHED;
             } else 
                 this.endTime = System.currentTimeMillis()+timeToMove;
         }
