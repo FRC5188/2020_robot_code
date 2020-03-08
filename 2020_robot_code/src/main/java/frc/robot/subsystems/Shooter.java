@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.Constants;
 import frc.robot.ControllerManager;
@@ -19,6 +20,8 @@ import frc.robot.utils.InputButton;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class Shooter implements Subsystem {
 
@@ -166,7 +169,7 @@ public class Shooter implements Subsystem {
             
             if(!this.runningBelt)
                 timeout += 1;
-            if(timeout > 50) {
+            if(timeout > 70) {
                 this.runningBelt = true;
                 timeout = 0;
             }
@@ -293,9 +296,12 @@ public class Shooter implements Subsystem {
         this.initCANMotors();
         this.initCurrentLimit();
     }
-
+    ShuffleboardTab shuffle;
+    NetworkTableEntry lineBreakTrip;
     @Override
     public void initShuffle() {
+        shuffle = Shuffleboard.getTab("Teleop");
+        lineBreakTrip = shuffle.add("Line Break Trip", false).getEntry();
         this.inst = NetworkTableInstance.getDefault();
         inst.getEntry("Shooter_Speed").setNumber(0.0f);
         inst.getEntry("Belt_Speed").setNumber(0.0f);
@@ -313,7 +319,7 @@ public class Shooter implements Subsystem {
 
     @Override
     public void updateShuffle() {
-        
+        lineBreakTrip.setBoolean(frontLBsensor.get());
     }
 
     @Override

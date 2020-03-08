@@ -147,6 +147,9 @@ public class Robot extends TimedRobot {
       subsystem.operate();
     }
 
+    for(Subsystem subsystem: subsystems){
+      subsystem.updateShuffle();
+    }
   
   }
 
