@@ -145,7 +145,7 @@ public class TaskMove extends AutoTask {
     @Override
     public String serialize() {
         if(this.useQuickHack) 
-            return "Move forward for " + (timeToMove/1000.0) + " seconds\n at " + this.speed + " throttle.";
+            return "Move " + (this.forwardOrBackward ? "forward" : "backward") + " " + (timeToMove/1000.0) + " seconds\n at " + this.speed + " throttle.";
         return "Move forward "  + distance + " inches.";
     }
 

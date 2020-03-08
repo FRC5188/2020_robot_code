@@ -68,7 +68,6 @@ public class AutoManager {
         reqHandler.startPeriodic();
         AutoTask currentTask = tasks.peek(); // Get task, but don't remove it
         if(currentTask == null) {
-          System.out.println("Stopping after " + (System.currentTimeMillis()-this.startTime));
           reqHandler.endPeriodic();
           return; // Error, no tasks left to do
         }

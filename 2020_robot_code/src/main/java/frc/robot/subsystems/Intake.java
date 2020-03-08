@@ -29,7 +29,7 @@ public class Intake implements Subsystem {
                 this.robot.getShooter().toggleSolenoid();
             this.toggleSolenoid();
         }
-        if(this.getIntakeSolenoidUp())
+        if(!this.getIntakeSolenoidUp())
             intakeMotor.set(ControlMode.PercentOutput, ctrlManager.getIntakeSpeed());
     }
 
@@ -41,7 +41,7 @@ public class Intake implements Subsystem {
 	}
 
     public boolean getIntakeSolenoidUp() {
-        return this.intakeSolenoid.get() == Value.kForward;
+        return this.intakeSolenoid.get() == Value.kReverse;
     }
     public void toggleSolenoid() {
         if(this.intakeSolenoid.get() == Value.kForward){

@@ -189,6 +189,8 @@ public class DriveTrain implements Subsystem {
         
         if(ctrlManager.getButton(Constants.throttleShiftButton))
             throttleShifter = 1.0;
+        else
+            throttleShifter = Constants.driveTrainThrottleShifter;
         
         throttle = throttle > 0 ? Math.pow(Math.abs(throttle),cThrottle) : -Math.pow(Math.abs(throttle),cThrottle);
         turn = turn > 0 ? Math.pow(Math.abs(turn),cTurn) : -Math.pow(Math.abs(turn),cTurn);
