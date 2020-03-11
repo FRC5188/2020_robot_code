@@ -29,8 +29,7 @@ public class AutoManager {
 
     Queue<AutoTask> tasks;
     AutoRequestHandler reqHandler;
-    int timeCount = 0;
-    boolean started = false;
+    boolean started;
     long startTime;
 
     // Shuffleboard Fields
@@ -46,6 +45,7 @@ public class AutoManager {
         tasks = autoSelectorSendable.getSelected().getTaskGroup().resetAndRetrieveTask();
         reqHandler = new AutoRequestHandler(robot);
         this.startTime = System.currentTimeMillis();
+        this.started = false;
         reqHandler.init();
     }
 
@@ -53,9 +53,6 @@ public class AutoManager {
         if(!this.started) {
             if(System.currentTimeMillis()-this.startTime < delayWidget.getEntry().getNumber(0).doubleValue()*1000.0)
                 return;
-            this.started = true;
-            AutoTask currentTask = tasks.peek();
-            currentTask.init();
         }
         if(!DriverStation.getInstance().isAutonomous()) {
             if(tasks.isEmpty()) return;
@@ -66,6 +63,11 @@ public class AutoManager {
             return;
         }
         reqHandler.startPeriodic();
+        if(!this.started) {
+          this.started = true;
+          AutoTask currentTask = tasks.peek();
+          currentTask.init();
+        }
         AutoTask currentTask = tasks.peek(); // Get task, but don't remove it
         if(currentTask == null) {
           reqHandler.endPeriodic();

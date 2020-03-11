@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -54,6 +55,7 @@ public class DriveTrain implements Subsystem {
         this.initGyro();
         this.initOdometry();
         this.initVision();
+        this.resetEncoders();
 
         // TODO: Remove Testing Code
         ShuffleboardTab tab = Shuffleboard.getTab("Drive Variables");
@@ -93,6 +95,15 @@ public class DriveTrain implements Subsystem {
 
         this.leftMotor1.setInverted(InvertType.InvertMotorOutput);
         this.leftMotor2.setInverted(InvertType.FollowMaster);
+
+        int idx = 0;
+        int timeout = 30;
+        
+        this.leftMotor1.configSelectedFeedbackSensor(
+            TalonFXFeedbackDevice.IntegratedSensor,idx,timeout);
+            
+        this.rightMotor1.configSelectedFeedbackSensor(
+            TalonFXFeedbackDevice.IntegratedSensor,idx,timeout);
 
         this.leftMotor2.follow(leftMotor1);
         this.rightMotor2.follow(rightMotor1);

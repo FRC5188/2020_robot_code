@@ -155,29 +155,46 @@ public class Shooter implements Subsystem {
         */
         if(ctrlManager.getButton(Constants.shooterCtrlShoot))
         {
-            if(!this.isSolenoidUp()) {//if piston is not up, make it before shooting
-                lifterSolenoid.set(Value.kForward);
-                liftTime = Constants.shootLiftDelay;
-                return;
-            }
-            if(liftTime > 0) {
-                liftTime -= 1;
-                return;
-            }
-            //shooterBottom.set(ControlMode.Velocity, -shooterSpeed);
-            shooterBottom.set(ControlMode.PercentOutput, -Constants.shooterPercentSpeed);
-            
-            if(!this.runningBelt)
-                timeout += 1;
-            if(timeout > 70) {
-                this.runningBelt = true;
-                timeout = 0;
-            }
-            if(this.runningBelt || (shooterSpeed - shooterSpeedError) < -shooterBottom.getSelectedSensorVelocity()){
-                this.runningBelt = true;
-                beltBottom.set(ControlMode.PercentOutput, beltSpeed);
+            if(this.robot.getIntake().getIntakeSolenoidUp() && !this.isSolenoidUp()) {
+                shooterBottom.set(ControlMode.PercentOutput, -Constants.shooterSlowSpeed);
+                
+                if(!this.runningBelt)
+                    timeout += 1;
+                if(timeout > 1) {
+                    this.runningBelt = true;
+                    timeout = 0;
+                }
+                if(this.runningBelt || (shooterSpeed - shooterSpeedError) < -shooterBottom.getSelectedSensorVelocity()){
+                    this.runningBelt = true;
+                    beltBottom.set(ControlMode.PercentOutput, beltSpeed);
+                } else {
+                    beltBottom.set(ControlMode.PercentOutput, 0.0);
+                }
             } else {
-                beltBottom.set(ControlMode.PercentOutput, 0.0);
+                if(!this.isSolenoidUp()) {//if piston is not up, make it before shooting
+                    lifterSolenoid.set(Value.kForward);
+                    liftTime = Constants.shootLiftDelay;
+                    return;
+                }
+                if(liftTime > 0) {
+                    liftTime -= 1;
+                    return;
+                }
+                //shooterBottom.set(ControlMode.Velocity, -shooterSpeed);
+                shooterBottom.set(ControlMode.PercentOutput, -Constants.shooterPercentSpeed);
+                
+                if(!this.runningBelt)
+                    timeout += 1;
+                if(timeout > 70) {
+                    this.runningBelt = true;
+                    timeout = 0;
+                }
+                if(this.runningBelt || (shooterSpeed - shooterSpeedError) < -shooterBottom.getSelectedSensorVelocity()){
+                    this.runningBelt = true;
+                    beltBottom.set(ControlMode.PercentOutput, beltSpeed);
+                } else {
+                    beltBottom.set(ControlMode.PercentOutput, 0.0);
+                }
             }
         } else {
             this.timeout = 0;
@@ -251,9 +268,7 @@ public class Shooter implements Subsystem {
                 beltBottom.set(ControlMode.PercentOutput, 0.0);
             }
         } else if(runIntake) {
-            if(ctrlManager.getIntakeSpeed() > 0.0) {
-                shooterBottom.set(ControlMode.PercentOutput, 0.35);
-            }
+            shooterBottom.set(ControlMode.PercentOutput, 0.35);
             if(!frontLBsensor.get()) {
                 frontLineBreakTimer += 1; 
                 if(frontLineBreakTimer > 8) { // 50 ticks per second

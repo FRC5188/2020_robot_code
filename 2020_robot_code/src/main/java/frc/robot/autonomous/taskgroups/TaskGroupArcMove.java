@@ -16,25 +16,12 @@ import frc.robot.autonomous.utils.TaskGroup;
 /**
  * Add your docs here.
  */
-public class TaskGroupIntake extends TaskGroup {
-
-    int time;
-    public TaskGroupIntake(int time) {
-        this.time = time;
-    }
+public class TaskGroupArcMove extends TaskGroup {
 
     @Override
     public Queue<AutoTask> retrieveTasks() {
         if(!tasks.isEmpty()) return tasks;
-        tasks.add(new ParallelTask(
-                new TaskIntake(this.time), 
-                new SequentialTask(
-                    new TaskWait(1000),
-                    new TaskMove(this.time, true, 0.15)
-                )
-            )
-        );
-        tasks.add(new TaskRunShoot(2000));
+        tasks.add(new TaskArcMove(12, 0));
         
         return tasks;
     }

@@ -71,7 +71,7 @@ public class TaskMove extends AutoTask {
 
 	@Override
     public void init() {
-        this.pidController = new PIDController(Constants.TASK_MOVE_PID_P,Constants.TASK_MOVE_PID_I,Constants.TASK_MOVE_PID_D);
+        this.pidController = new PIDController(Constants.TASK_MOVE_THROTTLE_PID_P,Constants.TASK_MOVE_THROTTLE_PID_I,Constants.TASK_MOVE_THROTTLE_PID_D);
         this.state = TaskState.RUNNING;
         this.startDist = getAverageEncoderDist();
         this.pidController.setSetpoint(this.startDist + this.distance);
@@ -89,7 +89,6 @@ public class TaskMove extends AutoTask {
         if(this.state == TaskState.CANCELLED || this.state == TaskState.FINISHED) return this.state;
         double avgDist = getAverageEncoderDist();
         AutoRequestHandler reqHandler = AutoRequestHandler.getInst();
-        System.out.println("dist " + getAverageEncoderDist());
         if(this.useQuickHack) {
             reqHandler.addThrottle(forwardOrBackward ? this.speed : -this.speed);
             if(System.currentTimeMillis() > this.endTime) {
@@ -102,8 +101,9 @@ public class TaskMove extends AutoTask {
                 this.state = TaskState.FINISHED;
                 return this.state;
             }
-            System.out.println("Speed: " + this.speed + " " + avgDist + " " + startDist + " " + (avgDist-startDist));
+            //System.out.println("Speed: " + this.speed + " " + avgDist + " " + startDist + " " + (avgDist-startDist));
             reqHandler.addThrottle(Math.abs(this.speed) > 0 ? this.speed : this.pidController.calculate(avgDist));
+            
             if(Math.abs(avgDist-startDist) < this.tolerance) {
                 if(System.currentTimeMillis() > this.endTime) { //think this is broken for just dist and speed
                     this.isFinished = true;
@@ -113,6 +113,7 @@ public class TaskMove extends AutoTask {
                 // this.state = TaskState.FINISHED;
             } else 
                 this.endTime = System.currentTimeMillis()+timeToMove;
+            
         }
         return this.state;
     }

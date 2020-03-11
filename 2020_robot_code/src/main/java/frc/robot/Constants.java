@@ -50,21 +50,24 @@ public class Constants {
   public static final double intakeShooterSpeed = 0.5;//1500.0/500.0*2000.0*2048.0/600.0;
   public static final double intakeBeltSpeed = 0.25;
   public static final int shootLiftDelay = 20;
+  public static final double shooterSlowSpeed = 0.3;
 
-
-  public static final double ENCODER_TICKS_PER_INCH  = 941.1;
+  public static final double ENCODER_TICKS_PER_INCH  = 770.0/12.0;
   public static final double openRampDuration = 0.5; //seconds from zero to full throttle
   public static final double shooterOpenRampDuration = 0.50; //seconds from zero to full throttle
 
   // Autonomous Task Move Variables
-  public static final double TASK_MOVE_PID_P = 0.01;
-  public static final double TASK_MOVE_PID_I = 0.0;
-  public static final double TASK_MOVE_PID_D = 0.0;
+  public static final double TASK_MOVE_THROTTLE_PID_P = 0.02;
+  public static final double TASK_MOVE_THROTTLE_PID_I = 0.0;
+  public static final double TASK_MOVE_THROTTLE_PID_D = 0.0;
+  public static final double TASK_MOVE_TURN_PID_P = 0.01;
+  public static final double TASK_MOVE_TURN_PID_I = 0.0;
+  public static final double TASK_MOVE_TURN_PID_D = 0.0;
   public static final double TASK_MOVE_DEFAULT_TOLERANCE = 1.0;
   public static final int TASK_MOVE_DEFAULT_TIME = 60; // MS
 
   // Autonomous Task Turn Variables
-  public static final double TASK_TURN_PID_P = 0.1;
+  public static final double TASK_TURN_PID_P = 0.02;
   public static final double TASK_TURN_PID_I = 0.0;
   public static final double TASK_TURN_PID_D = 0.0;
   public static final double TASK_TURN_DEFAULT_TOLERANCE = 1.0;
@@ -159,8 +162,6 @@ public class Constants {
   public static final double driveTrainDeadSpaceTurn = 0.4;
   public static final double driveTrainThrottleShifter = 0.6;
   public static final double driveTrainMinimumThreshold = 0.005;
-
-
 
   public static class Buttons {
 

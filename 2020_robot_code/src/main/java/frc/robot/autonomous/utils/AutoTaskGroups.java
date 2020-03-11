@@ -62,6 +62,16 @@ public enum AutoTaskGroups {
         "3s forward, 6s shoot",
         "max delay: 6s"
     }),
+    SHOOT_LONG_BACK(new TaskGroupMoveShoot(3000, 5000, 10000), "Move Long & Shoot Back 10", new String[]{ 
+        "Move Long & Shoot Back 10",
+        "Moves forward, shoot, and move back.",
+        "Note: 3s forward, back 10",
+        "3s forward, 6s shoot, back 10",
+        "max delay: 6s"
+    }),
+    ARC_MOVE(new TaskGroupArcMove(), "Arc Move", new String[] {
+        "Arc move 12 inch"
+    }),
     TEST_MOVE_DIST_36(new TaskGroupMoveDist(36, 0.15), "Test Move Dist 36in", new String[] {
         "Test Move Dist 36in",
         "Move forward 36 inches",
@@ -81,6 +91,9 @@ public enum AutoTaskGroups {
         "Test Move Dist Fast",
         "Move forward 36 inches",
         "at 0.2 throttle"
+    }),
+    TEST_INTAKE(new TaskGroupIntake(3000), "Test Intake", new String[] {
+        "Test Intake"
     });
     
     /*

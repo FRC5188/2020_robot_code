@@ -44,9 +44,18 @@ public class TaskIntake extends AutoTask {
             this.state = TaskState.FINISHED;
             return this.state;
         }
-        if(!AutoRequestHandler.getInst().getIntakeSolenoidUp() && !this.solenoidToggled) {
+        //System.out.println(AutoRequestHandler.getInst().getIntakeSolenoidUp());
+        if(AutoRequestHandler.getInst().getIntakeSolenoidUp() && !this.solenoidToggled) {
             // Put solenoid up if isn't up, and wait
+            if(AutoRequestHandler.getInst().getShooterSolenoidUp())
+                AutoRequestHandler.getInst().toggleShooterSolenoid();
+            
             AutoRequestHandler.getInst().toggleIntakeSolenoid();
+            this.solenoidToggled = true;
+            this.solenoidTime = System.currentTimeMillis() + 1000;
+        }
+        if(AutoRequestHandler.getInst().getShooterSolenoidUp() && !this.solenoidToggled) {
+            AutoRequestHandler.getInst().toggleShooterSolenoid();
             this.solenoidToggled = true;
             this.solenoidTime = System.currentTimeMillis() + 1000;
         }

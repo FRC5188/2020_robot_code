@@ -1,5 +1,6 @@
 package frc.robot.autonomous;
 
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import frc.robot.Robot;
 
 public class AutoRequestHandler {
@@ -21,6 +22,8 @@ public class AutoRequestHandler {
     private double gyroAngle;
     private boolean intakeSolenoidUp;
     private boolean shooterSolenoidUp;
+    private double odometryX;
+    private double odometryY;
 
     public AutoRequestHandler(Robot robot) {
         inst = this;
@@ -49,7 +52,9 @@ public class AutoRequestHandler {
         this.shooterSolenoidUp = robot.getShooter().isSolenoidUp();//changed
         this.leftEncoderDistance = robot.getDriveTrain().getLeftEncoderInches();
         this.rightEncoderDistance = robot.getDriveTrain().getRightEncoderInches();
-        
+        Translation2d odometryPosition = robot.getDriveTrain().getOdometryPosition().getTranslation();
+        this.odometryX = odometryPosition.getX();
+        this.odometryY = odometryPosition.getY();
         this.gyroAngle = robot.getDriveTrain().getGyroAngle();
     }
 
@@ -89,10 +94,13 @@ public class AutoRequestHandler {
         robot.getDriveTrain().autonomousDefaultDrive(this.throttle, this.turn);
         robot.getShooter().autonomousShoot(this.runShooter, this.runIntake);
         robot.getIntake().autonomousIntake(this.runIntake);
-        if(this.toggleIntakeSolenoid)
+        //System.out.println(toggleIntakeSolenoid + " " + this.toggleShooterSolenoid);
+        if(this.toggleIntakeSolenoid) {
             robot.getIntake().toggleSolenoid();
-        if(this.toggleShooterSolenoid)
+        }
+        if(this.toggleShooterSolenoid) {
             robot.getShooter().toggleSolenoid();
+        }
     }
 
 	public void runShooter() {
@@ -114,12 +122,24 @@ public class AutoRequestHandler {
 	public void init() {
         if(robot.getIntake().getIntakeSolenoidUp())
             robot.getIntake().toggleSolenoid();
-        if(!robot.getShooter().isSolenoidUp())//changed this, might need 
+        if(robot.getShooter().isSolenoidUp())//changed this, might need 
             robot.getShooter().toggleSolenoid();
 	}
 
 	public void setBeltOff() {
         this.robot.getShooter().runningBelt = false;
+	}
+
+	public double getOdometryX() {
+		return this.odometryX;
+	}
+
+	public double getOdometryY() {
+		return this.odometryY;
+	}
+
+	public double getGyroAngleRadians() {
+		return Math.toRadians(this.gyroAngle);
 	}
 
 }

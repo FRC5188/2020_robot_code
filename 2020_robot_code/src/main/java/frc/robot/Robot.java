@@ -55,7 +55,6 @@ public class Robot extends TimedRobot {
     subsystems.add(climber);
     subsystems.add(colorWheel);
     autoManager.initShuffleboard();
-
     for(Subsystem subsystem: subsystems){
       subsystem.init();
       subsystem.initShuffle();
@@ -116,14 +115,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    // Was removed (for a reason?)
+    this.dt.updateOdometry();
     autoManager.periodic();
   }
 
   @Override
   public void disabledPeriodic() {
     super.disabledPeriodic();
-
     //put this here so encoders can be zeroed in disabled mode, 
     //since pid runs as soon as enabled. kinda bad....
     

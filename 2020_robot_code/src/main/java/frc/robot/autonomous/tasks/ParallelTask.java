@@ -28,8 +28,12 @@ public class ParallelTask extends AutoTask {
 
     @Override
     public TaskState periodic() {
+        boolean running = false;
         for(AutoTask t: tasks) {
             TaskState indState = t.periodic();
+            if(indState == TaskState.RUNNING)
+                running = true;
+            /*
             switch(indState) {
                 case CANCELLED:
                     break;
@@ -38,11 +42,14 @@ public class ParallelTask extends AutoTask {
                 case NOT_STARTED:
                     break; // Should never happen?
                 case RUNNING:
-                    return TaskState.RUNNING;
+                    break;
                 case UNKNOWN:
-                    return TaskState.UNKNOWN;
+                    break;
             }
+            */
         }
+        if(running)
+            return TaskState.RUNNING;
         return TaskState.FINISHED;
     }
 

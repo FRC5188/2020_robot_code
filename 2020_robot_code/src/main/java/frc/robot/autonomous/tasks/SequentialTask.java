@@ -35,15 +35,13 @@ public class SequentialTask extends AutoTask {
     public TaskState periodic() {
         if(tasks.size() == 0)
             return TaskState.FINISHED;
-
-        AutoTask task = tasks.peek();
-
         TaskState state = tasks.peek().periodic();
-        if(task.isFinished()) {
+        if(state == TaskState.FINISHED || state == TaskState.CANCELLED) {
             tasks.poll().end();
             if(tasks.size() == 0)
                 return TaskState.FINISHED;
             tasks.peek().init();
+            return TaskState.RUNNING;
         }
         return state;
     }

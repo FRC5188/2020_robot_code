@@ -24,7 +24,7 @@ public class Intake implements Subsystem {
     void defaultTeleop() {
         //if shooter is up, dont
         //if(this.robot.getShooter().isSolenoidUp()) return;
-        if(ctrlManager.getButtonPressed(Constants.intakeCtrlButtonToggle)){
+        if(ctrlManager.getButtonPressed(Constants.intakeCtrlButtonToggle) && !this.robot.getShooter().isSolenoidUp() && !this.robot.getClimber().isSolenoidUp()) {
             if(this.getIntakeSolenoidUp() && this.robot.getShooter().isSolenoidUp())
                 this.robot.getShooter().toggleSolenoid();
             this.toggleSolenoid();
@@ -41,14 +41,17 @@ public class Intake implements Subsystem {
 	}
 
     public boolean getIntakeSolenoidUp() {
-        return this.intakeSolenoid.get() == Value.kReverse;
+        return (this.intakeSolenoid.get() == Value.kOff) ? true : (this.intakeSolenoid.get() == Value.kReverse);
     }
     public void toggleSolenoid() {
-        if(this.intakeSolenoid.get() == Value.kForward){
+        if(this.intakeSolenoid.get() == Value.kOff) {
+            this.intakeSolenoid.set(Value.kForward); // TODO Test This. (and above method)
+        } else if(this.intakeSolenoid.get() == Value.kForward){
             this.intakeSolenoid.set(Value.kReverse);
         } else {
             this.intakeSolenoid.set(Value.kForward);
         }
+        
     }
 
     @Override
