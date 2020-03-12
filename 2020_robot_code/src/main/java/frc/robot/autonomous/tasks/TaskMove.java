@@ -88,6 +88,7 @@ public class TaskMove extends AutoTask {
     public TaskState periodic() {
         if(this.state == TaskState.CANCELLED || this.state == TaskState.FINISHED) return this.state;
         double avgDist = getAverageEncoderDist();
+        System.out.println("Distance: " + avgDist);
         AutoRequestHandler reqHandler = AutoRequestHandler.getInst();
         if(this.useQuickHack) {
             reqHandler.addThrottle(forwardOrBackward ? this.speed : -this.speed);

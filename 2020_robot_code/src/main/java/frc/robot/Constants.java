@@ -52,7 +52,7 @@ public class Constants {
   public static final int shootLiftDelay = 20;
   public static final double shooterSlowSpeed = 0.3;
 
-  public static final double ENCODER_TICKS_PER_INCH  = 770.0/12.0;
+  public static final double ENCODER_TICKS_PER_INCH  = 750.1758; /// 12.0;
   public static final double openRampDuration = 0.5; //seconds from zero to full throttle
   public static final double shooterOpenRampDuration = 0.50; //seconds from zero to full throttle
 

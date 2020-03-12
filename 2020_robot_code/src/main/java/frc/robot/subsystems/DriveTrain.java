@@ -57,7 +57,7 @@ public class DriveTrain implements Subsystem {
         this.initVision();
         this.resetEncoders();
 
-        // TODO: Remove Testing Code
+        // Something with Shuffleboard...
         ShuffleboardTab tab = Shuffleboard.getTab("Drive Variables");
         cThrottleEnt = tab.add("Throttle Distribution Curve", cThrottle).getEntry();
         cTurnEnt = tab.add("Turn Distribution Curve", cTurn).getEntry();
@@ -99,6 +99,7 @@ public class DriveTrain implements Subsystem {
         int idx = 0;
         int timeout = 30;
         
+        // what do those lines do?
         this.leftMotor1.configSelectedFeedbackSensor(
             TalonFXFeedbackDevice.IntegratedSensor,idx,timeout);
             
@@ -255,11 +256,12 @@ public class DriveTrain implements Subsystem {
     }
 
     public double getLeftEncoderInches(){
-        return this.leftMotor1.getSelectedSensorPosition()/Constants.ENCODER_TICKS_PER_INCH;
+
+        return leftMotor1.getSelectedSensorPosition() / Constants.ENCODER_TICKS_PER_INCH;
     }
 
     public double getRightEncoderInches(){
-        return this.rightMotor1.getSelectedSensorPosition()/Constants.ENCODER_TICKS_PER_INCH;
+        return -this.rightMotor1.getSelectedSensorPosition() / Constants.ENCODER_TICKS_PER_INCH;
     }
 
     public void tankDrive(double left, double right){

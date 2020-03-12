@@ -94,6 +94,10 @@ public enum AutoTaskGroups {
     }),
     TEST_INTAKE(new TaskGroupIntake(3000), "Test Intake", new String[] {
         "Test Intake"
+    }), 
+    TEST_TURN(new TaskGroupTurn(90), "Test Turning", new String[] {//completly untested
+        "Test Turnign", 
+        "Turn to 90 degrees"
     });
     
     /*
